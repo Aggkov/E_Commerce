@@ -1,0 +1,52 @@
+<header class="header-desktop">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <div class="header-wrap">
+        <form class="form-header" [formGroup]="searchForm" (ngSubmit)="onSearch()"
+              method="GET">
+          <input
+            class="au-input au-input-xl"
+            type="text"
+            formControlName="searchQuery"
+            placeholder="Search for data ..."
+          />
+          <button class="au-btn-submit"
+                  type="submit">
+            Search
+          </button>
+          <!-- Display validation messages -->
+          <!--  <div *ngIf="searchForm.get('searchQuery')?.invalid &&-->
+          <!--  (searchForm.get('searchQuery')?.dirty || searchForm.get('searchQuery')?.touched)">-->
+          <!--    <small class="error" *ngIf="searchForm.get('searchQuery')?.errors?.['required']">-->
+          <!--      Search term is required.</small>-->
+          <!--  </div>-->
+        </form>
+        <app-cart-status></app-cart-status>
+      </div>
+      <div class="account-wrap"></div>
+    </div>
+  </div>
+</header>
+<ul *ngIf="(suggestions$ | async) as suggestions">
+  <div *ngIf="suggestions.length > 0 && dropdownVisible">
+    <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+      {{ suggestion.name }}
+    </li>
+  </div>
+</ul>
+
+<!--<form class="form-header" (ngSubmit)="onSearch()" method="GET">-->
+<!--  <input-->
+<!--    class="au-input au-input-xl"-->
+<!--    type="text"-->
+<!--    [(ngModel)]="searchQuery"-->
+<!--    name="searchQuery"-->
+<!--    placeholder="Search for data ..."-->
+<!--  />-->
+<!--  <button class="au-btn-submit" type="submit">-->
+<!--    Search-->
+<!--  </button>-->
+<!--</form>-->
+
+
+

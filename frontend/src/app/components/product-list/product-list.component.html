@@ -1,0 +1,50 @@
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <ng-container *ngIf="currentCategoryName">
+      <h4>Category: {{ currentCategoryName }}</h4>
+    </ng-container>
+    <hr>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- loop over the collection of products -->
+        <div *ngFor="let product of products" class="col-md-3">
+          <div class="product-box">
+            <a routerLink="/products/{{product.id}}">
+              <img src="{{ product.imageUrl }}" class="img-responsive">
+            </a>
+            <a routerLink="/products/{{product.id}}">
+              <h1>{{ product.name }}</h1>
+            </a>
+            <div class="price">{{ product.unitPrice | currency:'USD' }}</div>
+            <button (click)="addToCart(product)" class="btn btn-primary btn-small">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-pagination">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-md-7">
+            <div class="row justify-content-between align-items-center">
+              <div class="col-md-9 d-flex justify-content-center">
+                <ngb-pagination [(page)]="pageNumber"
+                                [pageSize]="pageSize"
+                                [collectionSize]="theTotalElements"
+                                [maxSize]="5"
+                                [rotate]="true"
+                                [boundaryLinks]="true"
+                                (pageChange)="listProducts()">
+                </ngb-pagination>
+              </div>
+              <div class="col-md-3 d-flex justify-content-end align-items-center" style="margin-bottom: 25px;">
+                <span class="mr-2">Page Size</span>
+                <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange($event)">
+                  <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end footer -->
+    </div>
+  </div>
+</div>
