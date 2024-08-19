@@ -1,0 +1,99 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+# exclude project specific settings
+.idea/modules.xml
+.idea/workspace.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Maven / Gradle
+target/
+build/
+!.mvn/wrapper/maven-wrapper.jar
+!.gradle/wrapper/gradle-wrapper.jar
+# Exclude the following if using Gradle
+.gradle/
+.gradle-build/
+
+# Logs
+logs/
+*.log
+
+# Spring Boot
+spring-boot-app.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+
+# Java-related files
+*.class
+*.war
+*.jar
+
+# Node.js / Angular
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/dist/
+/e2e/output/
+
+# Angular test files
+*.spec.ts
+
+# Angular environment files (optional: exclude if you want to keep environment-specific settings out)
+# src/environments/environment*.ts
+
+# Ignore coverage files (for testing)
+coverage/
+
+# Ignore IDE-specific files
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+
+# Exclude sensitive files (optional: if they contain sensitive information)
+# src/main/resources/secret-key.txt
+# src/main/resources/private-key.pem
+
+# Ignore test reports
+test-output/
+test-results/
+!src/test/java/**
+
+# Ignore database files
+*.db
+*.h2.db
+*.mv.db
+
+# Exclude binary files
+*.exe
+*.dll
+*.bin
+*.lib
+
+# Exclude other generated files
+bin/
+generated/
+
+# Ignore local build outputs
+/.sass-cache/
+/.bower/
+/.cordova/
+/dist/
+/tmp/
+/temp/
+/tmp_node/
