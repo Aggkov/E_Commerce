@@ -1,7 +1,11 @@
 package com.me.ecommerce.controller;
 
+import com.me.ecommerce.dto.response.ApiResponse;
+import com.me.ecommerce.dto.response.PagedResponse;
+import com.me.ecommerce.dto.response.StateDTO;
 import com.me.ecommerce.entity.State;
 import com.me.ecommerce.service.StateService;
+import com.me.ecommerce.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,38 +27,32 @@ public class StateController {
     }
 
     @GetMapping
-    public List<State> getAllStates() {
-        return stateService.getAllStates();
+    public PagedResponse<StateDTO> getAllStates(
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size
+    ) {
+        return stateService.getAllStates(page, size);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<State> getStateById(@PathVariable Long id) {
-        Optional<State> state = stateService.getStateById(id);
-        return state.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<StateDTO> getStateById(@PathVariable Long id) {
+        return ResponseEntity.ok(stateService.getStateById(id));
     }
 
     @PostMapping
-    public State createState(@RequestBody State state) {
-        return stateService.saveState(state);
+    public ResponseEntity<State> createState(@RequestBody State state) {
+        return ResponseEntity.ok(stateService.saveState(state));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<State> updateState(@PathVariable Long id, @RequestBody State stateDetails) {
-        Optional<State> optionalState = stateService.getStateById(id);
-        if (optionalState.isPresent()) {
-            State state = optionalState.get();
-            state.setName(stateDetails.getName());
-            return ResponseEntity.ok(stateService.saveState(state));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<State> updateState(@PathVariable Long id, @RequestBody State state) {
+        return ResponseEntity.ok(stateService.updateState(id, state));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteState(@PathVariable Long id) {
-        stateService.deleteState(id);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ApiResponse> deleteState(@PathVariable Long id) {
+//        return stateService.deleteState(id);
+//    }
 
     @GetMapping("/country/{code}")
     public ResponseEntity<List<State>> getStatesByCountryCode(@PathVariable String code) {

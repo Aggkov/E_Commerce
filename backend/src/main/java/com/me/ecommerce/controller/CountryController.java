@@ -1,5 +1,6 @@
 package com.me.ecommerce.controller;
 
+import com.me.ecommerce.dto.response.ApiResponse;
 import com.me.ecommerce.dto.response.CountryDTO;
 import com.me.ecommerce.entity.Country;
 import com.me.ecommerce.service.CountryService;
@@ -34,19 +35,17 @@ public class CountryController {
     }
 
     @PostMapping
-    public Country createCountry(@RequestBody Country country) {
-        return countryService.saveCountry(country);
+    public ResponseEntity<Country> createCountry(@RequestBody Country country) {
+        return ResponseEntity.ok(countryService.saveCountry(country));
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Country> updateCountry(@PathVariable Short id, @RequestBody Country country) {
-//        return countryService.updateCountry(id, country);
-//
+    @PutMapping("/{id}")
+    public ResponseEntity<Country> updateCountry(@PathVariable Short id, @RequestBody Country country) {
+        return countryService.updateCountry(id, country);
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ApiResponse> deleteCountry(@PathVariable Short id) {
+//        return countryService.deleteCountry(id);
 //    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCountry(@PathVariable Short id) {
-        countryService.deleteCountry(id);
-        return ResponseEntity.noContent().build();
-    }
 }

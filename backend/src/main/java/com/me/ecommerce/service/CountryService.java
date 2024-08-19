@@ -16,5 +16,7 @@ public interface CountryService {
 
     void deleteCountry(Short id);
 
+    ResponseEntity<Country> updateCountry(Short id, Country country);
+
 //    ResponseEntity<Country> updateCountry(Short id, Country country);
 }

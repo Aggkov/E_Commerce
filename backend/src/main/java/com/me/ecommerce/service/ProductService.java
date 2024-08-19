@@ -6,6 +6,7 @@ import com.me.ecommerce.entity.Product;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
     PagedResponse<ProductDTO> getAllProducts(Integer page, Integer size);
@@ -13,7 +14,7 @@ public interface ProductService {
     Product saveProduct(Product product);
     void deleteProduct(Long id);
     Product updateProduct(Long id, Product product);
-    Page<ProductDTO> getProductsByCategory(Long id, Pageable pageable);
-    Page<ProductDTO> searchProductByKeywordsPaginated(String keywords, Pageable pageable);
+    PagedResponse<ProductDTO> getProductsByCategory(Long id, Integer page ,Integer size);
+    PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, Integer page ,Integer size);
     List<ProductDTO> searchProductByKeywords(String keywords);
 }

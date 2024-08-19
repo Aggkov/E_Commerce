@@ -8,6 +8,7 @@ import com.me.ecommerce.repository.CountryRepository;
 import com.me.ecommerce.service.CountryService;
 import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +49,10 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public void deleteCountry(Short id) {
         countryRepository.deleteById(id);
+    }
+
+    @Override
+    public ResponseEntity<Country> updateCountry(Short id, Country country) {
+        return null;
     }
 }

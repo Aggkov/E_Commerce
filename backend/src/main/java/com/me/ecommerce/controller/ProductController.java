@@ -1,5 +1,6 @@
 package com.me.ecommerce.controller;
 
+import com.me.ecommerce.dto.response.ApiResponse;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
@@ -44,57 +45,50 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
-    }
-
-    @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.saveProduct(product);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-    }
-
-    @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return productService.updateProduct(id, product);
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @GetMapping("/category/{id}")
-//    @GetMapping("/category")
-    public ResponseEntity<Page<ProductDTO>> getProductsByCategoryPaginated(
-//            @RequestParam(name = "id", required = true) Long id,
+    public PagedResponse<ProductDTO> getProductsByCategoryPaginated(
             @PathVariable Long id,
-            Pageable pageable) {
-        Page<ProductDTO> productDTOs = productService.getProductsByCategory(id, pageable);
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
 
-        if (productDTOs.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content if no products found
-        }
-        return ResponseEntity.ok(productDTOs); // 200 OK with the list of products
+        return productService.getProductsByCategory(id, page ,size);
     }
 
     @GetMapping("/search/paginated")
-    public ResponseEntity<Page<ProductDTO>> searchProductByKeywordsPaginated(
+    public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(
             @RequestParam(name = "keywords") String keywords,
-//            @RequestParam(name = "limit", required = false) Integer limit,
-            Pageable pageable) {
-        Page<ProductDTO> productDTOs = productService.searchProductByKeywordsPaginated(keywords,
-                pageable);
-        return ResponseEntity.ok(productDTOs);
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
+
+        return productService.searchProductByKeywordsPaginated(keywords,
+                page, size);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductDTO>> searchProductByKeywords(
-            @RequestParam(name = "keywords") String keywords,
-//            @RequestParam(name = "limit") Integer limit,
-            Pageable pageable
+            @RequestParam(name = "keywords") String keywords
     ) {
         List<ProductDTO> productDTOs = productService.searchProductByKeywords(keywords);
         return ResponseEntity.ok(productDTOs);
+    }
+
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        return ResponseEntity.ok(productService.saveProduct(product));
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
+//        return productService.deleteProduct(id);
+//    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        return ResponseEntity.ok(productService.updateProduct(id, product));
     }
 }
 

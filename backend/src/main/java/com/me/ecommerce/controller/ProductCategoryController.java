@@ -1,11 +1,13 @@
 package com.me.ecommerce.controller;
 
 
+import com.me.ecommerce.dto.response.ApiResponse;
 import com.me.ecommerce.dto.response.ProductCategoryDTO;
 import com.me.ecommerce.entity.ProductCategory;
 import com.me.ecommerce.service.ProductCategoryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,28 +31,28 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    public List<ProductCategoryDTO> getProductCategories() {
-        return productCategoryService.getAllProductCategories();
+    public ResponseEntity<List<ProductCategoryDTO>> getProductCategories() {
+        return ResponseEntity.ok(productCategoryService.getAllProductCategories());
     }
 
     @GetMapping("/{id}")
-    public ProductCategory getProductCategoryById(@PathVariable Long id) {
-        return productCategoryService.getProductCategoryById(id);
+    public ResponseEntity<ProductCategory> getProductCategoryById(@PathVariable Long id) {
+        return ResponseEntity.ok(productCategoryService.getProductCategoryById(id));
     }
 
     @PostMapping
-    public ProductCategory createProductCategory(@RequestBody ProductCategory productCategory) {
-        return productCategoryService.saveProductCategory(productCategory);
+    public ResponseEntity<ProductCategory> createProductCategory(@RequestBody ProductCategory productCategory) {
+        return ResponseEntity.ok(productCategoryService.saveProductCategory(productCategory));
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteProductCategory(@PathVariable Long id) {
-        productCategoryService.deleteProductCategory(id);
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ApiResponse> deleteProductCategory(@PathVariable Long id) {
+//        return ResponseEntity.ok(productCategoryService.deleteProductCategory(id));
+//    }
 
     @PutMapping("/{id}")
-    public ProductCategory updateProductCategory(@PathVariable Long id, @RequestBody ProductCategory productCategory) {
-        return productCategoryService.updateProductCategory(id, productCategory);
+    public ResponseEntity<ProductCategory> updateProductCategory(@PathVariable Long id, @RequestBody ProductCategory productCategory) {
+        return ResponseEntity.ok(productCategoryService.updateProductCategory(id, productCategory));
     }
 }
 
