@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS product (
   "active" BOOLEAN DEFAULT TRUE,
   "units_in_stock" INTEGER DEFAULT NULL,
   "units_sold" INTEGER DEFAULT NULL,
-  "date_created" TIMESTAMP DEFAULT NULL,
-  "last_updated" TIMESTAMP DEFAULT NULL,
+  "created_at" TIMESTAMP NOT NULL,  -- New audit field
+  "updated_at" TIMESTAMP NOT NULL,  -- New audit field
   "category_id" BIGINT NOT NULL,
   PRIMARY KEY ("id"),
   FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")

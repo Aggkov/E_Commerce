@@ -26,13 +26,13 @@ public abstract class Audit implements Serializable {
 
     @CreatedDate
     @Column(
-//            nullable = false,
+            nullable = false,
            updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
     @Column(
-//            nullable = false
+            nullable = false
     )
     private Instant updatedAt;
 
