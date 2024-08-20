@@ -13,8 +13,6 @@ public class EntityManagerProductRepositoryImpl implements EntityManagerProductR
     @PersistenceContext
     private EntityManager entityManager;
 
-
-
     @Override
     public Page<Product> searchByKeywordsPaginated(String keywords, Pageable pageable) {
         String[] tokens = SearchUtility.tokenize(keywords);
