@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {map, Observable, tap} from "rxjs";
 import {Product} from "../model/product";
 import {HttpClient} from "@angular/common/http";
-import {ProductCategory} from "../model/product-category";
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +17,7 @@ export class ProductService {
                                  pageSize: number,
                                  theCategoryId: number): Observable<GetResponseProducts> {
     const searchUrl = `${this.baseUrl}/category/${theCategoryId}?`
-      + `&page=${page}&size=${pageSize}`;
-    // return this.httpClient.get<Product[]>(this.baseUrl); // THIS IS SUFFICIENT IF JSON RETURNED IS SIMPLE
+      + `page=${page}&size=${pageSize}`;
 
     return this.httpClient.get<GetResponseProducts>(searchUrl);
     // .pipe(
@@ -48,10 +46,6 @@ export class ProductService {
     const searchUrl = `${this.baseUrl}/search/paginated?keywords=${searchQuery}`
       + `&page=${page}&size=${pageSize}`;
     return this.httpClient.get<GetResponseProducts>(searchUrl)
-    // .pipe(
-    // tap(response => console.log("getproductsbyquery:  ", response)),
-    // map(response => response.content)
-    // )
   }
 
   getProductById(theProductId: number): Observable<Product> {
@@ -73,7 +67,3 @@ interface GetResponseProducts {
   totalElements: number,
   totalPages: number
 }
-
-// interface ProductSuggestions {
-//   name: string;
-// }

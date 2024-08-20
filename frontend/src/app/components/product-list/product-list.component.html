@@ -1,7 +1,8 @@
 <div class="main-content">
   <div class="section-content section-content-p30">
+    <h4>Results: {{totalElements}}</h4>
     <ng-container *ngIf="currentCategoryName">
-      <h4>Category: {{ currentCategoryName }}</h4>
+      <h3>Category: {{ currentCategoryName }}</h3>
     </ng-container>
     <hr>
     <div class="container-fluid">
@@ -27,7 +28,7 @@
               <div class="col-md-9 d-flex justify-content-center">
                 <ngb-pagination [(page)]="pageNumber"
                                 [pageSize]="pageSize"
-                                [collectionSize]="theTotalElements"
+                                [collectionSize]="totalElements"
                                 [maxSize]="5"
                                 [rotate]="true"
                                 [boundaryLinks]="true"

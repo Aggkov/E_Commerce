@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PagedResponse<ProductDTO> getProductsByCategory(Long id, Integer page ,Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByCategory = productRepository.findByCategoryId(id, pageable);
 
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, Integer page ,Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByKeywords = productRepository.searchByKeywordsPaginated(keywords, pageable);
 

@@ -7,7 +7,6 @@ import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
 import {CartItem} from "../../model/cart-item";
 import {CartService} from "../../services/cart.service";
-import {tap} from "rxjs";
 
 @Component({
   selector: 'app-product-list',
@@ -36,7 +35,7 @@ export class ProductListComponent implements OnInit {
   // new properties for pagination
   pageNumber: number = 1;
   pageSize: number = 5;
-  theTotalElements: number = 0;
+  totalElements: number = 0;
   totalPages: number = 0;
   pageSizes : number[] = [2,5,10,20,50];
 
@@ -57,7 +56,6 @@ export class ProductListComponent implements OnInit {
   // Callbacks are executed based on observable events: When the observable emits a new value,
   // the next callback is called. If there's an error, the error callback is called.
   // When the observable completes, if a complete callback is provided, it is executed.
-
   listProducts() {
     const queryValue = this.route.snapshot.paramMap.get('query');
     const hasSearchQuery = queryValue !== null && queryValue.trim() !== '';
@@ -70,9 +68,9 @@ export class ProductListComponent implements OnInit {
 
   private showSearchedResults() {
     this.searchQuery = this.route.snapshot.paramMap.get('query')!;
+
     // if we have a different keyword than previous
     // then set thePageNumber to 1
-
     if (this.previousSearchQuery != this.searchQuery) {
       this.pageNumber = 1;
     }
@@ -86,7 +84,7 @@ export class ProductListComponent implements OnInit {
           this.products = data.content;
           this.pageNumber = data.page + 1;
           this.pageSize = data.size;
-          this.theTotalElements = data.totalElements;
+          this.totalElements = data.totalElements;
         },
         error: error => {
           console.error('Error finding products:', error);
@@ -109,11 +107,6 @@ export class ProductListComponent implements OnInit {
       this.currentCategoryId = 1;
       this.currentCategoryName = 'Books';
     }
-
-    //
-    // Check if we have a different category than previous
-    // Note: Angular will reuse a component if it is currently being viewed
-    //
 
     // if we have a different category id than previous
     // then set thePageNumber back to 1
@@ -144,43 +137,18 @@ export class ProductListComponent implements OnInit {
         this.products = data.content;
         this.pageNumber = data.page + 1;
         this.pageSize = data.size;
-        this.theTotalElements = data.totalElements;
-
-        // for (let i = 0; i < this.products.length; i++) {
-        //   const product = this.products[i];
-        //   // Perform operations with each product
-        //   console.log('Processing product:', product);
-        // }
+        this.totalElements = data.totalElements;
       },
       error: error => {
         console.error('Error fetching products:', error);
       },
     })
-    // this.products.forEach(product => {
-    //   console.log('Processing product:', product);
-    //   // Add additional processing logic here
-    // });
-
-    // this.productService.getProductList().subscribe(
-    //   data => {
-    //     this.products = data;
-    //   },
-    //   error => {
-    //     console.error('Error fetching products:', error);
-    //   }
-    // );
   }
 
   onPageSizeChange($event: Event) {
     this.pageNumber = 1;  // Reset to the first page
     this.listProducts();  // Reload the products, refresh page
   }
-
-  // updatePageSize(pageSize: string) {
-  //   this.pageSize = +pageSize;
-  //   this.pageNumber = 1;
-  //   this.listProducts();
-  // }
 
   addToCart(product: Product) {
     console.log(`adding to cart ${product.name} ${product.unitPrice}`);
