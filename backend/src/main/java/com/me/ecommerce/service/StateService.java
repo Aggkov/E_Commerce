@@ -17,7 +17,7 @@ public interface StateService {
 
     void deleteState(Long id);
 
-    List<State> getStatesByCountryCode(String code);
+    List<StateDTO> getStatesByCountryCode(String code);
 
     State updateState(Long id, State state);
 }

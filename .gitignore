@@ -1,99 +1,76 @@
-# IntelliJ IDEA
-.idea/
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/frontend/dist
+/frontend/tmp
+/frontend/out-tsc
+
+# dependencies
+/frontend/node*
+/frontend/node_modules
+
+# IDEs and editors
 *.iml
-*.iws
-out/
-# exclude project specific settings
-.idea/modules.xml
-.idea/workspace.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/jsLibraryMappings.xml
 
-# Maven / Gradle
-target/
-build/
-!.mvn/wrapper/maven-wrapper.jar
-!.gradle/wrapper/gradle-wrapper.jar
-# Exclude the following if using Gradle
-.gradle/
-.gradle-build/
 
-# Logs
-logs/
-*.log
+# profiling files
+chrome-profiler-events.json
+speed-measure-plugin.json
 
-# Spring Boot
-spring-boot-app.log
+# IDEs and editors
+.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# OS-specific files
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/frontend/.sass-cache
+/frontend/connect.lock
+/frontend/coverage
+/frontend/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/frontend/typings
+
+# System Files
 .DS_Store
 Thumbs.db
 
-# Temporary files
-*.swp
-*.swo
-*.tmp
-*.bak
-*.orig
+### backend
 
-# Java-related files
-*.class
-*.war
-*.jar
+/backend/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Node.js / Angular
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-/dist/
-/e2e/output/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Angular test files
-*.spec.ts
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
-# Angular environment files (optional: exclude if you want to keep environment-specific settings out)
-# src/environments/environment*.ts
-
-# Ignore coverage files (for testing)
-coverage/
-
-# Ignore IDE-specific files
-.idea/
-*.sublime-project
-*.sublime-workspace
-.vscode/
-
-# Exclude sensitive files (optional: if they contain sensitive information)
-# src/main/resources/secret-key.txt
-# src/main/resources/private-key.pem
-
-# Ignore test reports
-test-output/
-test-results/
-!src/test/java/**
-
-# Ignore database files
-*.db
-*.h2.db
-*.mv.db
-
-# Exclude binary files
-*.exe
-*.dll
-*.bin
-*.lib
-
-# Exclude other generated files
-bin/
-generated/
-
-# Ignore local build outputs
-/.sass-cache/
-/.bower/
-/.cordova/
-/dist/
-/tmp/
-/temp/
-/tmp_node/
+### NetBeans ###
+/backend/nbproject/private/
+/backend/build/
+/backend/nbbuild/
+/backend/dist/
+/backend/nbdist/
+/backend/.nb-gradle/

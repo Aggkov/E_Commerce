@@ -55,12 +55,7 @@ public class StateController {
 //    }
 
     @GetMapping("/country/{code}")
-    public ResponseEntity<List<State>> getStatesByCountryCode(@PathVariable String code) {
-        List<State> states = stateService.getStatesByCountryCode(code);
-        if (states.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(states);
-        }
+    public ResponseEntity<List<StateDTO>> getStatesByCountryCode(@PathVariable String code) {
+        return ResponseEntity.ok(stateService.getStatesByCountryCode(code));
     }
 }

@@ -22,7 +22,6 @@ export class CartService {
     // const storedCartItems = sessionStorage.getItem('cartItems');
     // this.cartItems = storedCartItems !== null ? JSON.parse(storedCartItems) : [];
 
-
     /*
     You can call the computeCartTotals() method in the constructor
     after loading the cart items to ensure that the totals
