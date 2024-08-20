@@ -9,11 +9,13 @@ import com.me.ecommerce.mapper.StateMapper;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.StateService;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +37,7 @@ public class StateServiceImpl implements StateService {
     }
 
     public PagedResponse<StateDTO> getAllStates(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "id");
 
         Page<State> states = stateRepository.findAll(pageable);
 
@@ -72,8 +74,15 @@ public class StateServiceImpl implements StateService {
         stateRepository.deleteById(id);
     }
 
-    public List<State> getStatesByCountryCode(String code) {
-        return stateRepository.findStatesByCountryCode(code);
+    public List<StateDTO> getStatesByCountryCode(String code) {
+        List<State> states = stateRepository.findStatesByCountryCode(code);
+        if (states.isEmpty()) {
+            throw new RuntimeException("States are empty");
+        } else {
+            return states.stream()
+                    .map(stateMapper::stateToStateDTO)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
