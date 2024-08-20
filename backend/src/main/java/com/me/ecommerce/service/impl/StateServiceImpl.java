@@ -36,28 +36,17 @@ public class StateServiceImpl implements StateService {
         this.stateMapper = stateMapper;
     }
 
-    public PagedResponse<StateDTO> getAllStates(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "id");
+    public List<StateDTO> getAllStates() {
 
-        Page<State> states = stateRepository.findAll(pageable);
+        List<State> states = stateRepository.findAll();
 
-        if (states.getNumberOfElements() == 0) {
-            return new PagedResponse<>(Collections.emptyList(),
-                    states.getNumber(), states.getSize(),
-                    states.getTotalElements(),
-                    states.getTotalPages()
-//                    , productListPage.isLast()
-            );
+        if (states.isEmpty()) {
+            throw new RuntimeException("States are empty");
         }
-        List<StateDTO> stateDTOS = states.getContent().stream()
+
+        return states.stream()
                 .map(stateMapper::stateToStateDTO)
                 .toList();
-
-        return new PagedResponse<>(stateDTOS, states.getNumber(),
-                states.getSize(), states.getTotalElements(),
-                states.getTotalPages()
-//               , albums.isLast()
-        );
     }
 
     public StateDTO getStateById(Long id) {

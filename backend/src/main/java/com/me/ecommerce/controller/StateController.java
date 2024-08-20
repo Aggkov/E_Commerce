@@ -1,6 +1,7 @@
 package com.me.ecommerce.controller;
 
 import com.me.ecommerce.dto.response.ApiResponse;
+import com.me.ecommerce.dto.response.CountryDTO;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.StateDTO;
 import com.me.ecommerce.entity.State;
@@ -27,11 +28,8 @@ public class StateController {
     }
 
     @GetMapping
-    public PagedResponse<StateDTO> getAllStates(
-            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size
-    ) {
-        return stateService.getAllStates(page, size);
+    public ResponseEntity<List<StateDTO>> getAllStates() {
+        return ResponseEntity.ok(stateService.getAllStates());
     }
 
     @GetMapping("/{id}")

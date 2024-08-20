@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface StateService {
 
-    PagedResponse<StateDTO> getAllStates(Integer page, Integer size);
+    List<StateDTO> getAllStates();
 
     StateDTO getStateById(Long id);
 
