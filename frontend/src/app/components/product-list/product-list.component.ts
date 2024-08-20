@@ -145,7 +145,7 @@ export class ProductListComponent implements OnInit {
     })
   }
 
-  onPageSizeChange($event: Event) {
+  onPageSizeChange() {
     this.pageNumber = 1;  // Reset to the first page
     this.listProducts();  // Reload the products, refresh page
   }

@@ -37,7 +37,7 @@
               </div>
               <div class="col-md-3 d-flex justify-content-end align-items-center" style="margin-bottom: 25px;">
                 <span class="mr-2">Page Size</span>
-                <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange($event)">
+                <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
                   <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
                 </select>
               </div>
