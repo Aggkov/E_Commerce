@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {FormService} from "../../services/form.service";
+import {Country} from "../../model/country";
+import {State} from "../../model/state";
 
 @Component({
   selector: 'app-checkout',
@@ -26,9 +28,13 @@ export class CheckoutComponent implements OnInit {
   currentMonth: number = new Date().getMonth() + 1;
   maxYear: number = this.currentYear + 20;
   private isBackspacePressed = false;
+  showBillingInfo: boolean = true;
+  countries: Country[] = [];
+  shippingAddressStates: State[] = [];
+  billingAddressStates: State[] = [];
 
-  creditCardYears: number[] = [];
-  creditCardMonths: number[] = [];
+  // creditCardYears: number[] = [];
+  // creditCardMonths: number[] = [];
 
   constructor(private formBuilder: FormBuilder,
               private formService: FormService) {
@@ -68,6 +74,15 @@ export class CheckoutComponent implements OnInit {
       })
     });
 
+    this.formService.getAllCountries().subscribe({
+      next: data => {
+        // console.log(JSON.stringify(data))
+        this.countries = data
+      },
+      error: error => console.log(error)
+      }
+    );
+
     // populate credit card months
     //
     // console.log("startMonth: " + startMonth);
@@ -95,6 +110,9 @@ export class CheckoutComponent implements OnInit {
     console.log(this.checkoutFormGroup?.get('customer')?.value);
     console.log("The email address is " + this.checkoutFormGroup?.get('customer')?.value.email);
     console.log(`with backticks The email address is ${this.checkoutFormGroup?.get('customer')?.value.email}`);
+
+    console.log("The shipping address country is " + this.checkoutFormGroup?.get('shippingAddress')?.value.country.name);
+    console.log("The shipping address state is " + this.checkoutFormGroup?.get('shippingAddress')?.value.state.name);
   }
 
   /*
@@ -103,18 +121,19 @@ export class CheckoutComponent implements OnInit {
    */
   copyShippingAddressToBillingAddress(checked: boolean) {
     if (checked) {
+      this.showBillingInfo = false;
       this.checkoutFormGroup.controls['billingAddress']
         .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
+      // bug fix for states
+      this.billingAddressStates = this.shippingAddressStates;
+      console.log(this.checkoutFormGroup.controls['billingAddress'].value);
     } else {
+      this.showBillingInfo = true;
       this.checkoutFormGroup.controls['billingAddress'].reset();
+      // bug fix for states
+      this.billingAddressStates = [];
+      console.log(this.checkoutFormGroup.controls['billingAddress'].value);
     }
-    // if(event?.target) {
-    //   const input = event.target as HTMLInputElement;  // Cast event.target to HTMLInputElement
-    //   if (input?.checked) {
-    //
-    //   }
-    //
-    // }
   }
 
   onExpirationDateInput(event: Event): void {
@@ -181,7 +200,6 @@ export class CheckoutComponent implements OnInit {
           formattedValue = userInput.slice(0, 2) + '/' + userInput.slice(2, 4); // Complete MM/YY format
         }
       }
-
       // Update the input value and form control
       input.value = formattedValue;
       this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
@@ -192,6 +210,32 @@ export class CheckoutComponent implements OnInit {
 
   onKeyDown(event:KeyboardEvent) {
     this.isBackspacePressed = event?.key === 'Backspace';
+  }
+
+  getStatesByCountryCode(formGroupName: string) {
+    const formGroup = this.checkoutFormGroup
+      .controls[formGroupName];
+
+    const country = formGroup.value.country;
+    const countryCode = formGroup.value.country.code;
+    const countryName = formGroup.value.country.name;
+
+    console.log(`${formGroupName} country: ${country}`);
+    console.log(`${formGroupName} country code: ${countryCode}`);
+    console.log(`${formGroupName} country name: ${countryName}`);
+
+    this.formService.getStatesByCountryCode(countryCode).subscribe({
+      next: data => {
+        if (formGroupName === 'shippingAddress') {
+          this.shippingAddressStates = data;
+        }
+        else {
+          this.billingAddressStates = data;
+        }
+        // select first item by default
+        formGroup?.get('state')?.setValue(data[0]);
+      }
+    })
   }
 }
 
