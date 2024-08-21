@@ -16,7 +16,7 @@ export class FormService {
 
   getAllCountries(): Observable<Country[]> {
     return this.httpClient.get<Country[]>(this.countriesUrl).pipe(
-      tap(response => console.log(response))
+      // tap(response => console.log(response))
     );
   }
 

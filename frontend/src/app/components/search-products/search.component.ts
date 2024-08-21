@@ -49,7 +49,7 @@ export class SearchComponent implements OnInit {
           return this.productService.searchProductByKeywords(query);
         }
       }),
-      tap(suggestions => console.log("Suggestions:", suggestions, this.dropdownVisible))
+      // tap(suggestions => console.log("Suggestions:", suggestions, this.dropdownVisible))
     );
   }
 
