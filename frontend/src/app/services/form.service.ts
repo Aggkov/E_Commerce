@@ -24,7 +24,7 @@ export class FormService {
     // search url
     const searchStatesUrl = `${this.statesUrl}/country/${theCountryCode}`;
     return this.httpClient.get<State[]>(searchStatesUrl).pipe(
-      tap(response => console.log(response))
+      // tap(response => console.log(response))
     );
   }
 
