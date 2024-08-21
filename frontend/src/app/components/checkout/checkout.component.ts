@@ -5,6 +5,7 @@ import {FormService} from "../../services/form.service";
 import {Country} from "../../model/country";
 import {State} from "../../model/state";
 import {CartService} from "../../services/cart.service";
+import {WhitespaceValidator} from "../../validators/whitespace-validator";
 
 @Component({
   selector: 'app-checkout',
@@ -45,10 +46,15 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
-        firstName: new FormControl('', [Validators.required, Validators.minLength(2)]),
-        lastName:  new FormControl('', [Validators.required, Validators.minLength(2)]),
+        firstName: new FormControl('',
+          [Validators.required,
+            Validators.minLength(2), WhitespaceValidator.onlyWhitespace]),
+        lastName:  new FormControl('',
+          [Validators.required,
+            Validators.minLength(2), WhitespaceValidator.onlyWhitespace]),
         email: new FormControl('',
-          [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$')])
+          [Validators.required,
+            Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$')])
       }),
       shippingAddress: this.formBuilder.group({
         country: [''],
@@ -106,7 +112,9 @@ export class CheckoutComponent implements OnInit {
       this.checkoutFormGroup.markAllAsTouched();
     }
     // ?. === safely access object's properties
-    // console.log(this.checkoutFormGroup?.value);
+    console.log("Entire formgroup object:", this.checkoutFormGroup?.value);
+    console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
+    // console.log(`Entire formgroup object: ${JSON.stringify(this.checkoutFormGroup?.value)}`);
     // console.log(this.checkoutFormGroup?.get('customer')?.value);
     // console.log("The email address is " + this.checkoutFormGroup?.get('customer')?.value.email);
 
