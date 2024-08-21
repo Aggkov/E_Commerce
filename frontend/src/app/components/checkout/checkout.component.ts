@@ -4,6 +4,7 @@ import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {FormService} from "../../services/form.service";
 import {Country} from "../../model/country";
 import {State} from "../../model/state";
+import {CartService} from "../../services/cart.service";
 
 @Component({
   selector: 'app-checkout',
@@ -37,7 +38,8 @@ export class CheckoutComponent implements OnInit {
   // creditCardMonths: number[] = [];
 
   constructor(private formBuilder: FormBuilder,
-              private formService: FormService) {
+              private formService: FormService,
+              private cartService: CartService) {
   }
 
   ngOnInit(): void {
@@ -74,33 +76,22 @@ export class CheckoutComponent implements OnInit {
       })
     });
 
+    this.cartService.totalPrice.subscribe({
+      next: data => this.totalPrice = data
+    });
+
+    this.cartService.totalQuantity.subscribe({
+      next: data => this.totalQuantity = data
+    });
+
     this.formService.getAllCountries().subscribe({
-      next: data => {
-        // console.log(JSON.stringify(data))
-        this.countries = data
-      },
-      error: error => console.log(error)
+        next: data => {
+          // console.log(JSON.stringify(data))
+          this.countries = data
+        },
+        error: error => console.log(error)
       }
     );
-
-    // populate credit card months
-    //
-    // console.log("startMonth: " + startMonth);
-
-    // this.formService.getCreditCardMonths(startMonth).subscribe(
-    //   data => {
-    //     // console.log("Retrieved credit card months: " + JSON.stringify(data));
-    //     this.creditCardMonths = data;
-    //   }
-    // );
-    //
-    // // populate credit card years
-    // this.formService.getCreditCardYears().subscribe(
-    //   data => {
-    //     // console.log("Retrieved credit card years: " + JSON.stringify(data));
-    //     this.creditCardYears = data;
-    //   }
-    // );
   }
 
   onSubmit() {
@@ -194,8 +185,8 @@ export class CheckoutComponent implements OnInit {
           this.invalidYear = true; // Set an error or display a message
           return;
         } else if (year === this.currentYear && month < this.currentMonth) {
-            this.invalidMonth = true;
-            return;
+          this.invalidMonth = true;
+          return;
         } else {
           formattedValue = userInput.slice(0, 2) + '/' + userInput.slice(2, 4); // Complete MM/YY format
         }
@@ -208,7 +199,7 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  onKeyDown(event:KeyboardEvent) {
+  onKeyDown(event: KeyboardEvent) {
     this.isBackspacePressed = event?.key === 'Backspace';
   }
 
@@ -228,8 +219,7 @@ export class CheckoutComponent implements OnInit {
       next: data => {
         if (formGroupName === 'shippingAddress') {
           this.shippingAddressStates = data;
-        }
-        else {
+        } else {
           this.billingAddressStates = data;
         }
         // select first item by default
