@@ -64,7 +64,7 @@ public class StateServiceImpl implements StateService {
     }
 
     public List<StateDTO> getStatesByCountryCode(String code) {
-        List<State> states = stateRepository.findStatesByCountryCode(code);
+        List<State> states = stateRepository.findStatesByCountryCodeOrderById(code);
         if (states.isEmpty()) {
             throw new RuntimeException("States are empty");
         } else {

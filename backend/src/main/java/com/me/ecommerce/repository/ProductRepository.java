@@ -28,7 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, EntityM
 //    List<Product> findByCategoryOrderById(@Param("category") ProductCategory productCategory);
 
     // behind the scenes select ... where category_id = id will be called
-    Page<Product> findByCategoryId(@Param("id") Long id, Pageable pageable);
+    Page<Product> findByCategoryIdOrderById(@Param("id") Long id, Pageable pageable);
 
      @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY p.id")
     Page<Product> findByNameContainingIgnoreCaseOrderById(@Param("name") String name, Pageable pageable);

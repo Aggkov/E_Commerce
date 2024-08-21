@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface StateRepository extends JpaRepository<State, Long> {
 
 //    @Query("SELECT s FROM State s join s.country c where c.code = :code")
-    @Query("SELECT s FROM State s WHERE s.country.code = :code")
-    List<State> findStatesByCountryCode(@Param("code") String code);
+    @Query("select s from State s where s.country.code = :code order by s.id")
+    List<State> findStatesByCountryCodeOrderById(@Param("code") String code);
 }

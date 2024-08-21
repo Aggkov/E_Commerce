@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> getProductsByCategory(Long id, Integer page ,Integer size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByCategory = productRepository.findByCategoryId(id, pageable);
+        Page<Product> productsByCategory = productRepository.findByCategoryIdOrderById(id, pageable);
 
         List<ProductDTO> productDTOS = productsByCategory.getContent().stream()
                 .map(productMapper::productToProductDTO)

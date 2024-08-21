@@ -29,7 +29,7 @@ public class CountryServiceImpl implements CountryService {
     public List<CountryDTO> getAllCountries() {
         List<Country> countries = countryRepository.findAll();
         return countries.stream()
-                .sorted(Comparator.comparing(Country::getId))
+//                .sorted(Comparator.comparing(Country::getId))
                 .map(countryMapper::countryToCountryDTO)
                 .toList();
     }
