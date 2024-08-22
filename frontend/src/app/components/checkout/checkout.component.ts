@@ -6,6 +6,8 @@ import {Country} from "../../model/country";
 import {State} from "../../model/state";
 import {CartService} from "../../services/cart.service";
 import {WhitespaceValidator} from "../../validators/whitespace-validator";
+import {CartItem} from "../../model/cart-item";
+import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
 
 @Component({
   selector: 'app-checkout',
@@ -34,7 +36,7 @@ export class CheckoutComponent implements OnInit {
   countries: Country[] = [];
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
-
+  cartItems : CartItem[] = [];
   // creditCardYears: number[] = [];
   // creditCardMonths: number[] = [];
 
@@ -44,6 +46,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.cartItems = this.cartService.cartItems;
+
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
         firstName: new FormControl('',
@@ -79,10 +83,18 @@ export class CheckoutComponent implements OnInit {
           WhitespaceValidator.onlyWhitespace])
       }),
       creditCard: this.formBuilder.group({
-        cardType: [''],
-        nameOnCard: [''],
-        cardNumber: [''],
-        securityCode: [''],
+        cardType: new FormControl('',
+          [Validators.required]),
+        nameOnCard:  new FormControl('',
+          [Validators.required,
+            Validators.minLength(2),
+          WhitespaceValidator.onlyWhitespace]),
+        cardNumber: new FormControl('',
+          [Validators.required,
+            Validators.pattern('[0-9]{16}'), LuhnCheckValidator.luhnCheck]),
+        securityCode: new FormControl('',
+          [Validators.required,
+            Validators.pattern('[0-9]{3}')]),
         expirationDate: [''],
         // expirationMonth: [''],
         // expirationYear: ['']
@@ -122,6 +134,11 @@ export class CheckoutComponent implements OnInit {
   get billingAddressState() { return this.checkoutFormGroup.get('billingAddress.state'); }
   get billingAddressZipCode() { return this.checkoutFormGroup.get('billingAddress.zipCode'); }
   get billingAddressCountry() { return this.checkoutFormGroup.get('billingAddress.country'); }
+
+  get creditCardType() { return this.checkoutFormGroup.get('creditCard.cardType'); }
+  get creditCardNameOnCard() { return this.checkoutFormGroup.get('creditCard.nameOnCard'); }
+  get creditCardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber'); }
+  get creditCardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode'); }
 
   onSubmit() {
     console.log("Handling the submit button");

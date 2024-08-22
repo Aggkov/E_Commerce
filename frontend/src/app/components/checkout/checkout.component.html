@@ -1,7 +1,7 @@
 <div class="main-content page-m">
   <div class="section-content section-content-p30">
     <div class="container-fluid">
-      <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+      <form *ngIf="cartItems.length > 0; else cartEmptyBlock"  [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
         <!-- customer form group -->
         <div formGroupName="customer" class="form-area">
           <h3>Customer</h3>
@@ -247,6 +247,11 @@
                   <option>Visa</option>
                   <option>Mastercard</option>
                 </select>
+                <div *ngIf="creditCardType?.invalid && (creditCardType?.dirty || creditCardType?.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="creditCardType?.errors?.['required']">
+                    Credit card type is required
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -255,6 +260,14 @@
             <div class="col-md-9">
               <div class="input-space">
                 <input formControlName="nameOnCard" type="text">
+                <div *ngIf="creditCardNameOnCard?.invalid && (creditCardNameOnCard?.dirty || creditCardNameOnCard?.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="creditCardNameOnCard?.errors?.['required'] || creditCardNameOnCard?.errors?.['onlyWhitespace']">
+                    Name is required
+                  </div>
+                  <div *ngIf="creditCardNameOnCard?.errors?.['minlength']">
+                    Name must be at least 2 characters long
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -263,6 +276,14 @@
             <div class="col-md-9">
               <div class="input-space">
                 <input formControlName="cardNumber" type="text">
+                <div *ngIf="creditCardNumber?.invalid && (creditCardNumber?.dirty || creditCardNumber?.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="creditCardNumber?.errors?.['required']">
+                    Card number is required
+                  </div>
+                  <div *ngIf="creditCardNumber?.errors?.['luhnCheck']">
+                    Invalid Credit Card
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -271,10 +292,17 @@
             <div class="col-md-9">
               <div class="input-space">
                 <input formControlName="securityCode" type="text">
+                <div *ngIf="creditCardSecurityCode?.invalid && (creditCardSecurityCode?.dirty || creditCardSecurityCode?.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="creditCardSecurityCode?.errors?.['required']">
+                    Security code is required
+                  </div>
+                  <div *ngIf="creditCardSecurityCode?.errors?.['pattern']">
+                    Security code must be 3 digits long
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
           <div class="row">
             <div class="col-md-2"><label>Expiration Date</label></div>
             <div class="col-md-9">
@@ -332,6 +360,9 @@
           <button type="submit" class="btn btn-info">Purchase</button>
         </div>
       </form>
+      <ng-template #cartEmptyBlock>
+        Your Cart is empty
+      </ng-template>
     </div>
   </div>
 </div>
