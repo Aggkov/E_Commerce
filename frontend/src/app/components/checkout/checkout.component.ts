@@ -179,13 +179,17 @@ export class CheckoutComponent implements OnInit {
       this.checkoutFormGroup.controls['billingAddress']
         .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
       // bug fix for states
-      this.billingAddressStates = this.shippingAddressStates;
-      console.log(this.checkoutFormGroup.controls['billingAddress'].value);
+      // this.billingAddressStates = this.shippingAddressStates;
+      this.getStatesByCountryCode('billingAddress');
+
+      console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
+      console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
     } else {
       this.showBillingInfo = true;
       this.checkoutFormGroup.controls['billingAddress'].reset();
       // bug fix for states
-      this.billingAddressStates = [];
+      // this.billingAddressStates = [];
+      console.log(this.checkoutFormGroup.controls['shippingAddress'].value);
       console.log(this.checkoutFormGroup.controls['billingAddress'].value);
     }
   }
@@ -281,7 +285,7 @@ export class CheckoutComponent implements OnInit {
     const countryCode = formGroup.value.country.code;
     const countryName = formGroup.value.country.name;
 
-    console.log(`${formGroupName} country: ${country.toString()}`);
+    console.log(`${formGroupName} country: ${JSON.stringify(country)}`);
     console.log(`${formGroupName} country code: ${countryCode}`);
     console.log(`${formGroupName} country name: ${countryName}`);
 

@@ -93,13 +93,6 @@ export class CartService {
       this.computeCartTotals();
       // this.remove(cartItem);
     }
-    // else {
-    // }
-    // if(cartItem.quantity > 0) {
-    //   cartItem.quantity--;
-    //   this.totalQuantity.next(this.totalQuantity.value - cartItem.quantity);
-    //   this.totalPrice.next(cartItem.quantity * cartItem.unitPrice);
-    // }
   }
 
   remove(cartItem: CartItem) {
