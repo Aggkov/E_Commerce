@@ -68,7 +68,7 @@
                         (change)="getStatesByCountryCode('shippingAddress')">
                   <option *ngFor="let country of countries"
                           [ngValue]="country">
-                    {{country.name}}
+                    {{ country.name }}
                   </option>
                 </select>
                 <div *ngIf="shippingAddressCountry?.invalid && (shippingAddressCountry?.dirty || shippingAddressCountry?.touched)" class="alert alert-danger mt-1">
@@ -323,30 +323,30 @@
             </div>
           </div>
 
-<!--          <div class="row">-->
-<!--            <div class="col-md-2"><label>Expiration Month</label></div>-->
-<!--            <div class="col-md-9">-->
-<!--              <div class="input-space">-->
-<!--                <select formControlName="expirationMonth">-->
-<!--                  <option *ngFor="let month of creditCardMonths">-->
-<!--                    {{ month }}-->
-<!--                  </option>-->
-<!--                </select>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="row">-->
-<!--            <div class="col-md-2"><label>Expiration Year</label></div>-->
-<!--            <div class="col-md-9">-->
-<!--              <div class="input-space">-->
-<!--                <select formControlName="expirationYear">-->
-<!--                  <option *ngFor="let year of creditCardYears">-->
-<!--                    {{ year }}-->
-<!--                  </option>-->
-<!--                </select>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-2"><label>Expiration Month</label></div>-->
+          <!--            <div class="col-md-9">-->
+          <!--              <div class="input-space">-->
+          <!--                <select formControlName="expirationMonth">-->
+          <!--                  <option *ngFor="let month of creditCardMonths">-->
+          <!--                    {{ month }}-->
+          <!--                  </option>-->
+          <!--                </select>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-2"><label>Expiration Year</label></div>-->
+          <!--            <div class="col-md-9">-->
+          <!--              <div class="input-space">-->
+          <!--                <select formControlName="expirationYear">-->
+          <!--                  <option *ngFor="let year of creditCardYears">-->
+          <!--                    {{ year }}-->
+          <!--                  </option>-->
+          <!--                </select>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </div>
         <!-- Order details -->
         <div class="form-area">

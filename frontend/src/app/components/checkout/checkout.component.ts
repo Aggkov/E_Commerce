@@ -8,6 +8,7 @@ import {CartService} from "../../services/cart.service";
 import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../model/cart-item";
 import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
+import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
 
 @Component({
   selector: 'app-checkout',
@@ -16,7 +17,8 @@ import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
     ReactiveFormsModule,
     CurrencyPipe,
     NgForOf,
-    NgIf
+    NgIf,
+    CreditCardFormatDirective
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css'
@@ -91,7 +93,7 @@ export class CheckoutComponent implements OnInit {
           WhitespaceValidator.onlyWhitespace]),
         cardNumber: new FormControl('',
           [Validators.required,
-            Validators.pattern('^[0-9]+$'),
+            // Validators.pattern('^[0-9]+$'),
             Validators.minLength(13),
             Validators.maxLength(19),
             LuhnCheckValidator.luhnCheck]),
@@ -142,6 +144,7 @@ export class CheckoutComponent implements OnInit {
   get creditCardNameOnCard() { return this.checkoutFormGroup.get('creditCard.nameOnCard'); }
   get creditCardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber'); }
   get creditCardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode'); }
+  get creditCardExpDate() { return this.checkoutFormGroup.get('creditCard.expirationDate'); }
 
   onSubmit() {
     console.log("Handling the submit button");
@@ -253,12 +256,19 @@ export class CheckoutComponent implements OnInit {
       }
       // Update the input value and form control
       input.value = formattedValue;
-      this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
+      // this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
+      this.creditCardExpDate?.patchValue({expirationDate: formattedValue}, {emitEvent: false});
 
       console.log(`Formatted value: ${formattedValue}`);
     }
   }
 
+  onCardNameInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let userInput = input.value.replace(/\D/g, ''); // Remove non-digit characters
+    let formattedValue = '';
+  }
+// 5425233430109903
   onKeyDown(event: KeyboardEvent) {
     this.isBackspacePressed = event?.key === 'Backspace';
   }
