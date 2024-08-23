@@ -106,13 +106,7 @@ export class CheckoutComponent implements OnInit {
       })
     });
 
-    this.cartService.totalPrice.subscribe({
-      next: data => this.totalPrice = data
-    });
-
-    this.cartService.totalQuantity.subscribe({
-      next: data => this.totalQuantity = data
-    });
+    this.reviewCartTotals();
 
     this.formService.getAllCountries().subscribe({
         next: data => {
@@ -122,6 +116,16 @@ export class CheckoutComponent implements OnInit {
         error: error => console.log(error)
       }
     );
+  }
+
+  reviewCartTotals() {
+    this.cartService.totalPrice.subscribe({
+      next: data => this.totalPrice = data
+    });
+
+    this.cartService.totalQuantity.subscribe({
+      next: data => this.totalQuantity = data
+    });
   }
 
   get firstName() { return this.checkoutFormGroup.get('customer.firstName'); }
