@@ -1,43 +1,43 @@
-
--- DROP TABLE product;
--- DROP TABLE product_category
+-- DROP TABLE IF EXISTS product;
+-- DROP TABLE IF EXISTS product_category;
 
 -- -----------------------------------------------------
 -- Table e-commerce.product_category
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS product_category (
-  "id" BIGSERIAL NOT NULL,
-  "category_name" VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY ("id")
-);
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  category_name VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
 
 -- -----------------------------------------------------
 -- Table e-commerce.product
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS product (
-  "id" BIGSERIAL NOT NULL,
-  "sku" VARCHAR(255) DEFAULT NULL,
-  "name" VARCHAR(255) DEFAULT NULL,
-  "description" VARCHAR(255) DEFAULT NULL,
-  "unit_price" DECIMAL(13, 2) DEFAULT NULL,
-  "image_url" VARCHAR(255) DEFAULT NULL,
-  "active" BOOLEAN DEFAULT TRUE,
-  "units_in_stock" INTEGER DEFAULT NULL,
-  "units_sold" INTEGER DEFAULT NULL,
-  "created_at" TIMESTAMP NOT NULL,  -- New audit field
-  "updated_at" TIMESTAMP NOT NULL,  -- New audit field
-  "category_id" BIGINT NOT NULL,
-  PRIMARY KEY ("id"),
-  FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")
-); 
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  sku VARCHAR(255) DEFAULT NULL,
+  name VARCHAR(255) DEFAULT NULL,
+  description VARCHAR(255) DEFAULT NULL,
+  unit_price DECIMAL(13, 2) DEFAULT NULL,
+  image_url VARCHAR(255) DEFAULT NULL,
+  active BOOLEAN DEFAULT TRUE,
+  units_in_stock INT DEFAULT NULL,
+  units_sold INT DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL,  -- New audit field, no default value
+updated_at TIMESTAMP DEFAULT NULL
+  category_id BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (category_id) REFERENCES product_category(id)
+) ENGINE=InnoDB;
 
 -- -----------------------------------------------------
 -- Categories
 -- -----------------------------------------------------
-INSERT INTO product_category(category_name) VALUES ('Books');
-INSERT INTO product_category(category_name) VALUES ('Coffee Mugs');
-INSERT INTO product_category(category_name) VALUES ('Mouse Pads');
-INSERT INTO product_category(category_name) VALUES ('Luggage Tags');
+INSERT INTO product_category (category_name) VALUES ('Books');
+INSERT INTO product_category (category_name) VALUES ('Coffee Mugs');
+INSERT INTO product_category (category_name) VALUES ('Mouse Pads');
+INSERT INTO product_category (category_name) VALUES ('Luggage Tags');
+
 
 -- -----------------------------------------------------
 -- Books

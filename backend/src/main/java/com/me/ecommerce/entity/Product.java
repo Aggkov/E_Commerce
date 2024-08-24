@@ -62,11 +62,11 @@ public class Product extends Audit {
     @Column(name = "units_sold")
     private Integer unitsSold;
 
-    @Column(name = "date_created")
-    private Instant dateCreated;
-
-    @Column(name = "last_updated")
-    private Instant lastUpdated;
+//    @Column(name = "date_created")
+//    private Instant dateCreated;
+//
+//    @Column(name = "last_updated")
+//    private Instant lastUpdated;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
