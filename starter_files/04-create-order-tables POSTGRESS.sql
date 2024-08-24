@@ -1,7 +1,3 @@
--- -----------------------------------------------------
--- Schema full-stack-ecommerce
--- -----------------------------------------------------
-
 -- No equivalent for USE in PostgreSQL; instead, connect to the database using \c full-stack-ecommerce or include the database name in your connection string.
 
 --
@@ -22,7 +18,10 @@ CREATE TABLE address (
   country VARCHAR(255),
   state VARCHAR(255),
   street VARCHAR(255),
-  zip_code VARCHAR(255)
+  zip_code VARCHAR(255),
+  state_id BIGINT,
+	CONSTRAINT "FK_state_id" FOREIGN KEY ("state_id") REFERENCES "state" ("id"),
+
 );
 
 --
@@ -32,7 +31,13 @@ CREATE TABLE customer (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR(255),
   last_name VARCHAR(255),
-  email VARCHAR(255)
+  email VARCHAR(255),
+  shipping_address_id BIGINT,
+  billing_address_id BIGINT,
+  UNIQUE (billing_address_id),
+  UNIQUE (shipping_address_id),
+  CONSTRAINT FK_billing_address_id FOREIGN KEY (billing_address_id) REFERENCES address (id),
+  CONSTRAINT FK_shipping_address_id FOREIGN KEY (shipping_address_id) REFERENCES address (id)
 );
 
 --
@@ -43,17 +48,11 @@ CREATE TABLE orders (
   order_tracking_number VARCHAR(255),
   total_price DECIMAL(19,2),
   total_quantity INT,
-  billing_address_id BIGINT,
   customer_id BIGINT,
-  shipping_address_id BIGINT,
   status VARCHAR(128),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  UNIQUE (billing_address_id),
-  UNIQUE (shipping_address_id),
-  CONSTRAINT FK_customer_id FOREIGN KEY (customer_id) REFERENCES customer (id),
-  CONSTRAINT FK_billing_address_id FOREIGN KEY (billing_address_id) REFERENCES address (id),
-  CONSTRAINT FK_shipping_address_id FOREIGN KEY (shipping_address_id) REFERENCES address (id)
+  CONSTRAINT FK_customer_id FOREIGN KEY (customer_id) REFERENCES customer (id)
 );
 
 --

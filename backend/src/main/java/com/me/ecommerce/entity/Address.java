@@ -1,10 +1,14 @@
 package com.me.ecommerce.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -18,7 +22,6 @@ import lombok.Setter;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_id_gen")
-    @SequenceGenerator(name = "address_id_gen", sequenceName = "address_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -28,9 +31,6 @@ public class Address {
     @Column(name = "country")
     private String country;
 
-    @Column(name = "state")
-    private String state;
-
     @Column(name = "street")
     private String street;
 
@@ -38,9 +38,13 @@ public class Address {
     private String zipCode;
 
     @OneToOne(mappedBy = "billingAddress")
-    private Order billingAddressOrder;
+    private Customer billingAddressCustomer;
 
     @OneToOne(mappedBy = "shippingAddress")
-    private Order shippingAddressOrder;
+    private Customer shippingAddressCustomer;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
 
 }

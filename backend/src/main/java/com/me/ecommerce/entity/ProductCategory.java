@@ -22,16 +22,13 @@ import java.util.Set;
 public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_category_id_gen")
-//    @SequenceGenerator(name = "product_category_id_gen", sequenceName = "product_category_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ColumnDefault("NULL::character varying")
     @Column(name = "category_name")
     private String categoryName;
 
     @OneToMany(mappedBy = "category")
-//    @JsonManagedReference
     private Set<Product> products = new LinkedHashSet<>();
 
 }

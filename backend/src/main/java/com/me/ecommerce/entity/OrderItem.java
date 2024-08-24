@@ -1,5 +1,6 @@
 package com.me.ecommerce.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,6 @@ import lombok.Setter;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_id_gen")
-    @SequenceGenerator(name = "order_item_id_gen", sequenceName = "order_item_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -34,12 +34,16 @@ public class OrderItem {
     @Column(name = "unit_price", precision = 19, scale = 2)
     private BigDecimal unitPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    /*
+    When you save an OrderItem,
+    you might want the associated Order
+    to be saved automatically.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
 }

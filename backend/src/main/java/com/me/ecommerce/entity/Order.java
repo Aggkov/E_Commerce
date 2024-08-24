@@ -1,5 +1,6 @@
 package com.me.ecommerce.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,7 +26,6 @@ import lombok.Setter;
 public class Order extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_id_gen")
-    @SequenceGenerator(name = "orders_id_gen", sequenceName = "orders_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -38,17 +38,10 @@ public class Order extends Audit {
     @Column(name = "total_quantity")
     private Integer totalQuantity;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_address_id")
-    private Address billingAddress;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
+    //  owner side == side with foreign key
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shipping_address_id")
-    private Address shippingAddress;
 
     @Column(name = "status", length = 128)
     private String status;
@@ -56,4 +49,13 @@ public class Order extends Audit {
     @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
+    public void add(OrderItem item) {
+        if (item != null) {
+            if (orderItems == null) {
+                orderItems = new LinkedHashSet<>();
+            }
+            orderItems.add(item);
+            item.setOrder(this);
+        }
+    }
 }

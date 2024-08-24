@@ -24,7 +24,10 @@ CREATE TABLE `address` (
   `state` varchar(255) DEFAULT NULL,
   `street` varchar(255) DEFAULT NULL,
   `zip_code` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `state_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK_state_id` FOREIGN KEY (`state_id`) REFERENCES `state` (`id`),
+
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -35,7 +38,11 @@ CREATE TABLE `customer` (
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  shipping_address_id bigint,
+  billing_address_id bigint,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK_billing_address_id` FOREIGN KEY (`billing_address_id`) REFERENCES `address` (`id`),
+  CONSTRAINT `FK_shipping_address_id` FOREIGN KEY (`shipping_address_id`) REFERENCES `address` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -56,9 +63,7 @@ CREATE TABLE `orders` (
   UNIQUE KEY `UK_billing_address_id` (`billing_address_id`),
   UNIQUE KEY `UK_shipping_address_id` (`shipping_address_id`),
   KEY `K_customer_id` (`customer_id`),
-  CONSTRAINT `FK_customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`),
-  CONSTRAINT `FK_billing_address_id` FOREIGN KEY (`billing_address_id`) REFERENCES `address` (`id`),
-  CONSTRAINT `FK_shipping_address_id` FOREIGN KEY (`shipping_address_id`) REFERENCES `address` (`id`)
+  CONSTRAINT `FK_customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --

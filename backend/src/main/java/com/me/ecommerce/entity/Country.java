@@ -20,15 +20,12 @@ public class Country {
     @Column(name = "id", nullable = false)
     private Short id;
 
-    @ColumnDefault("NULL::character varying")
     @Column(name = "code", length = 2)
     private String code;
 
-    @ColumnDefault("NULL::character varying")
     @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "country")
     private Set<State> states = new LinkedHashSet<>();
-
 }
