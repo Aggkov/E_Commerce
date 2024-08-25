@@ -15,7 +15,6 @@ DROP TABLE IF EXISTS address;
 CREATE TABLE address (
   id SERIAL PRIMARY KEY,
   city VARCHAR(255),
-  country VARCHAR(255),
   state VARCHAR(255),
   street VARCHAR(255),
   zip_code VARCHAR(255),
@@ -60,9 +59,7 @@ CREATE TABLE orders (
 --
 CREATE TABLE order_item (
   id SERIAL PRIMARY KEY,
-  image_url VARCHAR(255),
   quantity INT,
-  unit_price DECIMAL(19,2),
   order_id BIGINT,
   product_id BIGINT,
   CONSTRAINT FK_order_id FOREIGN KEY (order_id) REFERENCES orders (id),

@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -24,6 +25,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "orders")
 public class Order extends Audit {
+    @Serial
+    private static final long serialVersionUID = -9053633357085380554L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_id_gen")
     @Column(name = "id", nullable = false)

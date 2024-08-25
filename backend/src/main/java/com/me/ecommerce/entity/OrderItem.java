@@ -25,14 +25,8 @@ public class OrderItem {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "image_url")
-    private String imageUrl;
-
     @Column(name = "quantity")
     private Integer quantity;
-
-    @Column(name = "unit_price", precision = 19, scale = 2)
-    private BigDecimal unitPrice;
 
     /*
     When you save an OrderItem,

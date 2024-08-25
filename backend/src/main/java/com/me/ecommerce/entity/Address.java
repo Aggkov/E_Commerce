@@ -28,9 +28,6 @@ public class Address {
     @Column(name = "city")
     private String city;
 
-    @Column(name = "country")
-    private String country;
-
     @Column(name = "street")
     private String street;
 

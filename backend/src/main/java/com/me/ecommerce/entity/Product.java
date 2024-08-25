@@ -29,6 +29,9 @@ import java.time.Instant;
 @Entity
 @Table(name = "product")
 public class Product extends Audit {
+    @Serial
+    private static final long serialVersionUID = -6188767059145560467L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_gen")
     @Column(name = "id", nullable = false)
@@ -43,7 +46,7 @@ public class Product extends Audit {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "unit_price", precision = 13, scale = 2)
+    @Column(name = "unit_price", precision = 19, scale = 2)
     private BigDecimal unitPrice;
 
     @Column(name = "image_url")
