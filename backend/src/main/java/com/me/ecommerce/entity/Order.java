@@ -43,14 +43,19 @@ public class Order extends Audit {
     private Integer totalQuantity;
 
     //  owner side == side with foreign key
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @Column(name = "status", length = 128)
     private String status;
 
-    @OneToMany(mappedBy = "order")
+    /*
+    When you save an Order,
+    you might want the associated OrderItems
+    to be saved automatically.
+     */
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     public void add(OrderItem item) {

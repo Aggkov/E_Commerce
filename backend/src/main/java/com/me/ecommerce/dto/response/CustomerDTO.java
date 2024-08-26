@@ -14,7 +14,7 @@ public class CustomerDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -9167621179769238334L;
 
-    private Integer customerId;
+    private Integer id;
 
     private String firstName;
 
@@ -22,7 +22,8 @@ public class CustomerDTO implements Serializable {
 
     private String email;
 
+    private ShippingAddressDTO shippingAddressDTO;
+
     private BillingAddressDTO billingAddressDTO;
 
-    private ShippingAddressDTO shippingAddressDTO;
 }

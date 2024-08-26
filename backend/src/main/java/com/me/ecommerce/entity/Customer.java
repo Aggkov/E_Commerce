@@ -35,20 +35,20 @@ public class Customer {
 
     @Column(name = "email")
     private String email;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "shipping_address_id", nullable = false)
+    private Address shippingAddress;
     /*
     When you save or delete a Customer,
     you might want the associated Address
     to be saved or deleted automatically.
      */
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "billing_address_id", nullable = false)
     private Address billingAddress;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "shipping_address_id", nullable = false)
-    private Address shippingAddress;
-
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Order> orders = new LinkedHashSet<>();
 
     public void add(Order order) {

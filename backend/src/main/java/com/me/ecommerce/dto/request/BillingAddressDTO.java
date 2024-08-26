@@ -12,7 +12,7 @@ public class BillingAddressDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 7136544323694862444L;
 
-    private Integer addressId;
+    private Integer id;
 
     private String city;
 

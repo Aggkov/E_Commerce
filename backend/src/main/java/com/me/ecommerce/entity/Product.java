@@ -4,6 +4,7 @@ package com.me.ecommerce.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -66,7 +67,7 @@ public class Product extends Audit {
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
 }

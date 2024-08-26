@@ -12,7 +12,7 @@ public class ShippingAddressDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 3995643498964980631L;
 
-    private Integer addressId;
+    private Integer id;
 
     private String city;
 
