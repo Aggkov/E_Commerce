@@ -7,6 +7,7 @@ import com.me.ecommerce.dto.response.StateDTO;
 import com.me.ecommerce.entity.State;
 import com.me.ecommerce.service.StateService;
 import com.me.ecommerce.utils.AppConstants;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class StateController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StateDTO> getStateById(@PathVariable Long id) {
+    public ResponseEntity<StateDTO> getStateById(@PathVariable UUID id) {
         return ResponseEntity.ok(stateService.getStateById(id));
     }
 
@@ -43,7 +44,7 @@ public class StateController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<State> updateState(@PathVariable Long id, @RequestBody State state) {
+    public ResponseEntity<State> updateState(@PathVariable UUID id, @RequestBody State state) {
         return ResponseEntity.ok(stateService.updateState(id, state));
     }
 

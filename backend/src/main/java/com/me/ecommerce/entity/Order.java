@@ -17,6 +17,7 @@ import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,9 +30,9 @@ public class Order extends Audit {
     private static final long serialVersionUID = -9053633357085380554L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_id_gen")
+    @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private UUID id;
 
     @Column(name = "order_tracking_number")
     private String orderTrackingNumber;

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {map, Observable, tap} from "rxjs";
+import {map, Observable, pipe, tap} from "rxjs";
 import {Product} from "../model/product";
 import {HttpClient} from "@angular/common/http";
 
@@ -15,16 +15,14 @@ export class ProductService {
 
   getProductsByCategoryPaginated(page: number,
                                  pageSize: number,
-                                 theCategoryId: number): Observable<GetResponseProducts> {
-    const searchUrl = `${this.baseUrl}/category/${theCategoryId}?`
+                                 categoryId: string): Observable<GetResponseProducts> {
+    const searchUrl = `${this.baseUrl}/category/${categoryId}?`
       + `page=${page}&size=${pageSize}`;
 
-    return this.httpClient.get<GetResponseProducts>(searchUrl);
-    // .pipe(
-    //   // Log the response
-    // tap(response => console.log('API response:', response)),
-    // map(response => response.content)
-    // );
+    return this.httpClient.get<GetResponseProducts>(searchUrl)
+    .pipe(
+      // Log the response
+    tap(response => console.log('API response:', response)));
   }
 
   searchProductByKeywords(searchQuery: string,
@@ -48,9 +46,9 @@ export class ProductService {
     return this.httpClient.get<GetResponseProducts>(searchUrl)
   }
 
-  getProductById(theProductId: number): Observable<Product> {
+  getProductById(productId: string): Observable<Product> {
     // need to build URL based on product id
-    const productUrl = `${this.baseUrl}/${theProductId}`;
+    const productUrl = `${this.baseUrl}/${productId}`;
 
     return this.httpClient.get<Product>(productUrl).pipe(
       tap(response => console.log(response))

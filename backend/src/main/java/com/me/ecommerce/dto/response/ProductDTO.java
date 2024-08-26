@@ -3,6 +3,7 @@ package com.me.ecommerce.dto.response;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import lombok.Setter;
 public class ProductDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -7559629798078881826L;
-    private long id;
+    private UUID id;
     private String name;
     private BigDecimal unitPrice;
     private int unitsInStock;

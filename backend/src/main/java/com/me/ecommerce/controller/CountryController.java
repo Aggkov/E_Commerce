@@ -4,6 +4,7 @@ import com.me.ecommerce.dto.response.ApiResponse;
 import com.me.ecommerce.dto.response.CountryDTO;
 import com.me.ecommerce.entity.Country;
 import com.me.ecommerce.service.CountryService;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class CountryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CountryDTO> getCountryById(@PathVariable Short id) {
+    public ResponseEntity<CountryDTO> getCountryById(@PathVariable UUID id) {
         return ResponseEntity.ok(countryService.getCountryById(id));
     }
 
@@ -40,7 +41,7 @@ public class CountryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable Short id, @RequestBody Country country) {
+    public ResponseEntity<Country> updateCountry(@PathVariable UUID id, @RequestBody Country country) {
         return countryService.updateCountry(id, country);
     }
 

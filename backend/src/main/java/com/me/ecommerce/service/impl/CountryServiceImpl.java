@@ -7,6 +7,7 @@ import com.me.ecommerce.mapper.CountryMapper;
 import com.me.ecommerce.repository.CountryRepository;
 import com.me.ecommerce.service.CountryService;
 import java.util.Comparator;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public CountryDTO getCountryById(Short id) {
+    public CountryDTO getCountryById(UUID id) {
         return countryRepository.findById(id)
                 .map(countryMapper::countryToCountryDTO)
                 .orElseThrow(() -> new RuntimeException("Country not found"));
@@ -47,12 +48,12 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void deleteCountry(Short id) {
+    public void deleteCountry(UUID id) {
         countryRepository.deleteById(id);
     }
 
     @Override
-    public ResponseEntity<Country> updateCountry(Short id, Country country) {
+    public ResponseEntity<Country> updateCountry(UUID id, Country country) {
         return null;
     }
 }

@@ -12,8 +12,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Getter
 @Setter
@@ -21,9 +24,9 @@ import lombok.Setter;
 @Table(name = "address")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_id_gen")
+    @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     @Column(name = "city")
     private String city;
@@ -34,14 +37,32 @@ public class Address {
     @Column(name = "zip_code")
     private String zipCode;
 
-    @OneToOne(mappedBy = "billingAddress")
+    @OneToOne(mappedBy = "billingAddress", cascade = CascadeType.PERSIST)
     private Customer billingAddressCustomer;
 
-    @OneToOne(mappedBy = "shippingAddress")
+    @OneToOne(mappedBy = "shippingAddress", cascade = CascadeType.PERSIST)
     private Customer shippingAddressCustomer;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(id, address.id)
+                && Objects.equals(city, address.city)
+                && Objects.equals(street, address.street)
+                && Objects.equals(zipCode, address.zipCode)
+                && Objects.equals(billingAddressCustomer, address.billingAddressCustomer)
+                && Objects.equals(shippingAddressCustomer, address.shippingAddressCustomer)
+                && Objects.equals(state, address.state);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, city, street, zipCode, billingAddressCustomer, shippingAddressCustomer, state);
+    }
 }

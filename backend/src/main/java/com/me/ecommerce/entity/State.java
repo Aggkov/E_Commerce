@@ -14,6 +14,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,9 +25,9 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "state")
 public class State {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "state_id_gen")
+    @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     @Column(name = "name")
     private String name;

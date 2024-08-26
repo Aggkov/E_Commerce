@@ -5,19 +5,20 @@ import com.me.ecommerce.dto.response.StateDTO;
 import com.me.ecommerce.entity.State;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 
 public interface StateService {
 
     List<StateDTO> getAllStates();
 
-    StateDTO getStateById(Long id);
+    StateDTO getStateById(UUID id);
 
     State saveState(State state);
 
-    void deleteState(Long id);
+    void deleteState(UUID id);
 
     List<StateDTO> getStatesByCountryCode(String code);
 
-    State updateState(Long id, State state);
+    State updateState(UUID id, State state);
 }

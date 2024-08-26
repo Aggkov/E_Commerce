@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -34,9 +35,9 @@ public class Product extends Audit {
     private static final long serialVersionUID = -6188767059145560467L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_gen")
+    @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
-    private long id;
+    private UUID id;
 
     @Column(name = "sku")
     private String sku;

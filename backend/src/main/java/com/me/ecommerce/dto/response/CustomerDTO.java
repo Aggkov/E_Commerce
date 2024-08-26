@@ -5,6 +5,7 @@ import com.me.ecommerce.dto.request.ShippingAddressDTO;
 import com.me.ecommerce.entity.Address;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ public class CustomerDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -9167621179769238334L;
 
-    private Integer id;
+    private UUID id;
 
     private String firstName;
 

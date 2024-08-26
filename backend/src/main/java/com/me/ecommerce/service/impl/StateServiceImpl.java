@@ -9,6 +9,7 @@ import com.me.ecommerce.mapper.StateMapper;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.StateService;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ public class StateServiceImpl implements StateService {
                 .toList();
     }
 
-    public StateDTO getStateById(Long id) {
+    public StateDTO getStateById(UUID id) {
         return stateRepository.findById(id)
                 .map(stateMapper::stateToStateDTO)
                 .orElseThrow(() -> new RuntimeException("State not found"));
@@ -59,7 +60,7 @@ public class StateServiceImpl implements StateService {
         return stateRepository.save(state);
     }
 
-    public void deleteState(Long id) {
+    public void deleteState(UUID id) {
         stateRepository.deleteById(id);
     }
 
@@ -75,7 +76,7 @@ public class StateServiceImpl implements StateService {
     }
 
     @Override
-    public State updateState(Long id, State state) {
+    public State updateState(UUID id, State state) {
         State existingState = stateRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("State not found"));
 

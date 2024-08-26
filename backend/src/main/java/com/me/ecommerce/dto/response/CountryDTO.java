@@ -2,6 +2,7 @@ package com.me.ecommerce.dto.response;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ public class CountryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 4773536213554180880L;
 
-    private Short id;
+    private UUID id;
 
     private String code;
 

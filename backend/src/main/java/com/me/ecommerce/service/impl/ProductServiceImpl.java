@@ -10,6 +10,7 @@ import com.me.ecommerce.utils.AppConstants;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductDTO> getProductsByCategory(Long id, Integer page ,Integer size) {
+    public PagedResponse<ProductDTO> getProductsByCategory(UUID id, Integer page , Integer size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByCategory = productRepository.findByCategoryIdOrderById(id, pageable);
@@ -92,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
+    public ProductDTO getProductById(UUID id) {
         return productRepository.findById(id)
                 .map(productMapper::productToProductDTO)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -104,11 +105,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long id) {
+    public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
     }
 
-    public Product updateProduct(Long id, Product product) {
+    public Product updateProduct(UUID id, Product product) {
         // Find the existing product by ID
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));

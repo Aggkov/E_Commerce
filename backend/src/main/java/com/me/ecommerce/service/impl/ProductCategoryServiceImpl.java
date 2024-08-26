@@ -8,6 +8,7 @@ import com.me.ecommerce.service.ProductCategoryService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
        List<ProductCategory> productCategories = productCategoryRepository.findAll();
 
         List<ProductCategoryDTO> productCategoryDTOS = productCategories.stream()
-               .sorted(Comparator.comparing(ProductCategory::getId))
+               .sorted(Comparator.comparing(ProductCategory::getCategoryName))
                .map(productCategoryMapper::productCategoryToProductCategoryDTO)
                .toList();
 //
@@ -38,7 +39,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public ProductCategory getProductCategoryById(Long id) {
+    public ProductCategory getProductCategoryById(UUID id) {
         return productCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product Category not found"));
     }
@@ -49,12 +50,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public void deleteProductCategory(Long id) {
+    public void deleteProductCategory(UUID id) {
         productCategoryRepository.deleteById(id);
     }
 
     @Override
-    public ProductCategory updateProductCategory(Long id, ProductCategory productCategory) {
+    public ProductCategory updateProductCategory(UUID id, ProductCategory productCategory) {
         // Find the existing product category by ID
         ProductCategory existingCategory = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product Category not found"));

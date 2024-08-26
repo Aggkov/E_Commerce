@@ -6,6 +6,7 @@ import com.me.ecommerce.dto.response.ProductCategoryDTO;
 import com.me.ecommerce.entity.ProductCategory;
 import com.me.ecommerce.service.ProductCategoryService;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,7 +37,7 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductCategory> getProductCategoryById(@PathVariable Long id) {
+    public ResponseEntity<ProductCategory> getProductCategoryById(@PathVariable UUID id) {
         return ResponseEntity.ok(productCategoryService.getProductCategoryById(id));
     }
 
@@ -51,7 +52,7 @@ public class ProductCategoryController {
 //    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductCategory> updateProductCategory(@PathVariable Long id, @RequestBody ProductCategory productCategory) {
+    public ResponseEntity<ProductCategory> updateProductCategory(@PathVariable UUID id, @RequestBody ProductCategory productCategory) {
         return ResponseEntity.ok(productCategoryService.updateProductCategory(id, productCategory));
     }
 }

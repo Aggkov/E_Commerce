@@ -265,7 +265,7 @@ export class CheckoutComponent implements OnInit {
       // Update the input value and form control
       input.value = formattedValue;
       // this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
-      this.creditCardExpDate?.patchValue({expirationDate: formattedValue}, {emitEvent: false});
+      this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
 
       console.log(`Formatted value: ${formattedValue}`);
     }
