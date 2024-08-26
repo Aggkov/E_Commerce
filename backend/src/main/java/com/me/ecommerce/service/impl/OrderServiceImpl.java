@@ -21,6 +21,7 @@ import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -79,32 +80,29 @@ public class OrderServiceImpl implements OrderService {
         billingAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getBillingAddressDTO().getStateDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Billing state not found")));
 
-        addressRepository.save(shippingAddress);
-        addressRepository.save(billingAddress);
-
         // 4. Map CustomerDTO to Customer entity
         Customer customer = customerMapper.customerDTOToCustomer(orderDTO.getCustomerDTO());
         customer.setShippingAddress(shippingAddress);
         customer.setBillingAddress(billingAddress);
-
+        addressRepository.save(shippingAddress);
+        if(!Objects.equals(shippingAddress, billingAddress)) {
+            addressRepository.save(billingAddress);
+        }
         // 5. Filter, map, and persist OrderItems
-        Set<OrderItem> orderItems = orderDTO.getOrderItemDTOList().stream()
-                .map(orderItemDTO -> {
+        orderDTO.getOrderItemDTOList()
+                .forEach(orderItemDTO -> {
                     // Find the product to ensure it's managed by the persistence context
                     Product product = productRepository.findById(orderItemDTO.getProductDTO().getId())
                             .orElseThrow(() -> new RuntimeException("Product not found"));
-
                     // Map DTO to OrderItem
                     OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
                     orderItem.setProduct(product); // Set the product in each order item
                     order.add(orderItem);
-                    return orderItem;
-                })
-                .collect(Collectors.toSet());
-
+//                    return orderItem;
+                });
+//                .collect(Collectors.toSet());
         // 6. Add the order to the customer
         customer.add(order);
-
         // 7. Persist the customer (cascading should handle order and other entities)
         customerRepository.save(customer);
 
