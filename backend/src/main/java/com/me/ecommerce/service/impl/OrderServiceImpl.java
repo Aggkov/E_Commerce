@@ -74,18 +74,18 @@ public class OrderServiceImpl implements OrderService {
         Address shippingAddress = addressMapper.shippingAddressDTOToAddress(orderDTO.getCustomerDTO().getShippingAddressDTO());
         Address billingAddress = addressMapper.billingAddressDTOToAddress(orderDTO.getCustomerDTO().getBillingAddressDTO());
 
-        // Attach states to the addresses
+        // populate foreign key state in address
         shippingAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getShippingAddressDTO().getStateDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Shipping state not found")));
         billingAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getBillingAddressDTO().getStateDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Billing state not found")));
 
-        // 4. Map CustomerDTO to Customer entity
+        // parent set child, foreign key customer will be added to adress table
         Customer customer = customerMapper.customerDTOToCustomer(orderDTO.getCustomerDTO());
         customer.setAddress(shippingAddress);
         customer.setAddress(billingAddress);
 
-        // 5. Batch fetch products and map them to their IDs
+        // 5. Batch fetch products and map them to their IDs, find products requested by client dto
         Set<UUID> productIds = orderDTO.getOrderItemDTOList().stream()
                 .map(orderItemDTO -> orderItemDTO.getProductDTO().getId())
                 .collect(Collectors.toSet());
@@ -93,27 +93,23 @@ public class OrderServiceImpl implements OrderService {
         Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, product -> product));
 
-        // Now iterate through the OrderItemDTOs and create OrderItems
+        // prepare orderItem
         orderDTO.getOrderItemDTOList()
                 .forEach(orderItemDTO -> {
-                    // Retrieve the product from the map
                     Product product = productMap.get(orderItemDTO.getProductDTO().getId());
                     if (product == null) {
                         throw new RuntimeException("Product not found: " + orderItemDTO.getProductDTO().getId());
                     }
-                    // Map DTO to OrderItem
                     OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
-                    product.addOrderItem(orderItem); // Set the product in each order item
+                    // parent add child
+                    product.addOrderItem(orderItem);
+                    // parent add child
                     order.add(orderItem);
                 });
+        // parent add child
         customer.add(order);
-//        orderRepository.save(order);
+        // cascade persist
         customerRepository.save(customer);
-//                .collect(Collectors.toSet());
-        // 6. Add the order to the customer
-
-        // 7. Persist the customer (cascading should handle order and other entities)
-//        customerRepository.save(customer);
 
         return new OrderDTOResponse(orderTrackingNumber);
     }
