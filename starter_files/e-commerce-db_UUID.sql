@@ -60,8 +60,14 @@ CREATE TABLE address (
   state VARCHAR(255),
   street VARCHAR(255),
   zip_code VARCHAR(255),
+  customer_shipping_address_id UUID,
+  customer_billing_address_id UUID,	
   state_id UUID,
-  CONSTRAINT "FK_state_id" FOREIGN KEY ("state_id") REFERENCES "state" ("id")
+  UNIQUE(customer_shipping_address_id),
+  UNIQUE(customer_billing_address_id),
+  CONSTRAINT FK_customer_shipping_address_id FOREIGN KEY (customer_shipping_address_id) REFERENCES customer (id),
+  CONSTRAINT FK_customer_billing_address_id FOREIGN KEY (customer_billing_address_id) REFERENCES customer (id),
+  CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
 );
 
 -- Table structure for table `customer`
@@ -69,13 +75,7 @@ CREATE TABLE customer (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   first_name VARCHAR(255),
   last_name VARCHAR(255),
-  email VARCHAR(255),
-  shipping_address_id UUID,
-  billing_address_id UUID,
-  UNIQUE (billing_address_id),
-  UNIQUE (shipping_address_id),
-  CONSTRAINT FK_billing_address_id FOREIGN KEY (billing_address_id) REFERENCES address (id),
-  CONSTRAINT FK_shipping_address_id FOREIGN KEY (shipping_address_id) REFERENCES address (id)
+  email VARCHAR(255)
 );
 
 -- Table structure for table `orders`

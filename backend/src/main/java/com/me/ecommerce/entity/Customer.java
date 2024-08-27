@@ -37,16 +37,14 @@ public class Customer {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "shipping_address_id", nullable = false)
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST)
     private Address shippingAddress;
     /*
     When you save or delete a Customer,
     you might want the associated Address
     to be saved or deleted automatically.
      */
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "billing_address_id", nullable = false)
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST)
     private Address billingAddress;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

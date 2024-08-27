@@ -37,11 +37,13 @@ public class Address {
     @Column(name = "zip_code")
     private String zipCode;
 
-    @OneToOne(mappedBy = "billingAddress", cascade = CascadeType.PERSIST)
-    private Customer billingAddressCustomer;
-
-    @OneToOne(mappedBy = "shippingAddress", cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_shipping_address_id", nullable = false)
     private Customer shippingAddressCustomer;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_billing_address_id", nullable = false)
+    private Customer billingAddressCustomer;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "state_id", nullable = false)
