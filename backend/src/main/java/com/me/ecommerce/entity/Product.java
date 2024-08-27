@@ -71,4 +71,14 @@ public class Product extends Audit {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
+    public void addOrderItem(OrderItem orderItem) {
+        if (orderItem != null) {
+            if (orderItems == null) {
+                orderItems = new LinkedHashSet<>();
+            }
+            orderItems.add(orderItem);
+            orderItem.setProduct(this);
+        }
+    }
+
 }

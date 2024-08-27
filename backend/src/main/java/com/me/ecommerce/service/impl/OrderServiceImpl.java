@@ -21,6 +21,7 @@ import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -70,7 +71,6 @@ public class OrderServiceImpl implements OrderService {
         } while (orderRepository.findOrderTrackingNumber(orderTrackingNumber) != null);
         order.setOrderTrackingNumber(orderTrackingNumber);
 
-        // 3. Map and persist addresses
         Address shippingAddress = addressMapper.shippingAddressDTOToAddress(orderDTO.getCustomerDTO().getShippingAddressDTO());
         Address billingAddress = addressMapper.billingAddressDTOToAddress(orderDTO.getCustomerDTO().getBillingAddressDTO());
 
@@ -82,29 +82,38 @@ public class OrderServiceImpl implements OrderService {
 
         // 4. Map CustomerDTO to Customer entity
         Customer customer = customerMapper.customerDTOToCustomer(orderDTO.getCustomerDTO());
-        customer.setShippingAddress(shippingAddress);
-        customer.setBillingAddress(billingAddress);
-        addressRepository.save(shippingAddress);
-        if(!Objects.equals(shippingAddress, billingAddress)) {
-            addressRepository.save(billingAddress);
-        }
-        // 5. Filter, map, and persist OrderItems
+        customer.setAddress(shippingAddress);
+        customer.setAddress(billingAddress);
+
+        // 5. Batch fetch products and map them to their IDs
+        Set<UUID> productIds = orderDTO.getOrderItemDTOList().stream()
+                .map(orderItemDTO -> orderItemDTO.getProductDTO().getId())
+                .collect(Collectors.toSet());
+
+        Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, product -> product));
+
+        // Now iterate through the OrderItemDTOs and create OrderItems
         orderDTO.getOrderItemDTOList()
                 .forEach(orderItemDTO -> {
-                    // Find the product to ensure it's managed by the persistence context
-                    Product product = productRepository.findById(orderItemDTO.getProductDTO().getId())
-                            .orElseThrow(() -> new RuntimeException("Product not found"));
+                    // Retrieve the product from the map
+                    Product product = productMap.get(orderItemDTO.getProductDTO().getId());
+                    if (product == null) {
+                        throw new RuntimeException("Product not found: " + orderItemDTO.getProductDTO().getId());
+                    }
                     // Map DTO to OrderItem
                     OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
-                    orderItem.setProduct(product); // Set the product in each order item
+                    product.addOrderItem(orderItem); // Set the product in each order item
                     order.add(orderItem);
-//                    return orderItem;
                 });
+        customer.add(order);
+//        orderRepository.save(order);
+        customerRepository.save(customer);
 //                .collect(Collectors.toSet());
         // 6. Add the order to the customer
-        customer.add(order);
+
         // 7. Persist the customer (cascading should handle order and other entities)
-        customerRepository.save(customer);
+//        customerRepository.save(customer);
 
         return new OrderDTOResponse(orderTrackingNumber);
     }

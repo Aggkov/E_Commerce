@@ -57,7 +57,6 @@ CREATE TABLE state (
 CREATE TABLE address (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   city VARCHAR(255),
-  state VARCHAR(255),
   street VARCHAR(255),
   zip_code VARCHAR(255),
   customer_shipping_address_id UUID,

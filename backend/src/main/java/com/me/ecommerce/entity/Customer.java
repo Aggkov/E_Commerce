@@ -37,14 +37,14 @@ public class Customer {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "shippingAddressCustomer", cascade = CascadeType.PERSIST)
     private Address shippingAddress;
     /*
     When you save or delete a Customer,
     you might want the associated Address
     to be saved or deleted automatically.
      */
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "billingAddressCustomer", cascade = CascadeType.PERSIST)
     private Address billingAddress;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
@@ -58,5 +58,12 @@ public class Customer {
             orders.add(order);
             order.setCustomer(this);
         }
+    }
+
+    public void setAddress(Address address) {
+        this.setShippingAddress(address);
+        address.setShippingAddressCustomer(this);
+        this.setBillingAddress(address);
+        address.setBillingAddressCustomer(this);
     }
 }
