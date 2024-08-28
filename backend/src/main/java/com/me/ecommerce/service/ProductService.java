@@ -10,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-    PagedResponse<ProductDTO> getAllProducts(Integer page, Integer size);
+    PagedResponse<ProductDTO> getAllProducts(int page, int size);
     ProductDTO getProductById(UUID id);
     Product saveProduct(Product product);
     void deleteProduct(UUID id);
     Product updateProduct(UUID id, Product product);
-    PagedResponse<ProductDTO> getProductsByCategory(UUID id, Integer page ,Integer size);
-    PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, Integer page ,Integer size);
+    PagedResponse<ProductDTO> getProductsByCategory(UUID id, int page ,int size);
+    PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size);
     List<ProductDTO> searchProductByKeywords(String keywords);
 }

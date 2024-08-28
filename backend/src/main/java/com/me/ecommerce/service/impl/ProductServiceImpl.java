@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductDTO> getAllProducts(Integer page, Integer size) {
+    public PagedResponse<ProductDTO> getAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> products = productRepository.findAll(pageable);
@@ -47,21 +47,21 @@ public class ProductServiceImpl implements ProductService {
                     products.getNumber(), products.getSize(),
                     products.getTotalElements(),
                     products.getTotalPages()
-//                    , productListPage.isLast()
+//                    , products.isLast()
             );
         }
-        List<ProductDTO> productDTOS = products.getContent().stream()
+        List<ProductDTO> productDTOs = products.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
-        return new PagedResponse<>(productDTOS, products.getNumber(),
+        return new PagedResponse<>(productDTOs, products.getNumber(),
                 products.getSize(), products.getTotalElements(),
                 products.getTotalPages()
-//               , albums.isLast()
+//               , products.isLast()
         );
     }
 
     @Override
-    public PagedResponse<ProductDTO> getProductsByCategory(UUID id, Integer page , Integer size) {
+    public PagedResponse<ProductDTO> getProductsByCategory(UUID id, int page , int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByCategory = productRepository.findByCategoryIdOrderById(id, pageable);
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, Integer page ,Integer size) {
+    public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByKeywords = productRepository.searchByKeywordsPaginated(keywords, pageable);
