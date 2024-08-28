@@ -1,14 +1,14 @@
 package com.me.ecommerce.service.impl;
 
+import com.me.ecommerce.dto.request.BillingAddressDTO;
 import com.me.ecommerce.dto.request.OrderDTO;
-import com.me.ecommerce.dto.request.OrderItemDTO;
+import com.me.ecommerce.dto.request.ShippingAddressDTO;
 import com.me.ecommerce.dto.response.OrderDTOResponse;
 import com.me.ecommerce.entity.Address;
 import com.me.ecommerce.entity.Customer;
 import com.me.ecommerce.entity.Order;
 import com.me.ecommerce.entity.OrderItem;
 import com.me.ecommerce.entity.Product;
-import com.me.ecommerce.entity.State;
 import com.me.ecommerce.mapper.AddressMapper;
 import com.me.ecommerce.mapper.CustomerMapper;
 import com.me.ecommerce.mapper.OrderItemMapper;
@@ -22,7 +22,6 @@ import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -71,19 +70,14 @@ public class OrderServiceImpl implements OrderService {
         } while (orderRepository.findOrderTrackingNumber(orderTrackingNumber) != null);
         order.setOrderTrackingNumber(orderTrackingNumber);
 
-        Address shippingAddress = addressMapper.shippingAddressDTOToAddress(orderDTO.getCustomerDTO().getShippingAddressDTO());
-        Address billingAddress = addressMapper.billingAddressDTOToAddress(orderDTO.getCustomerDTO().getBillingAddressDTO());
+        Address shippingAddress = getShippingAddress(orderDTO);
 
-        // populate foreign key state in address
-        shippingAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getShippingAddressDTO().getStateDTO().getId())
-                .orElseThrow(() -> new RuntimeException("Shipping state not found")));
-        billingAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getBillingAddressDTO().getStateDTO().getId())
-                .orElseThrow(() -> new RuntimeException("Billing state not found")));
+        Address billingAddress = getBillingAddress(orderDTO, shippingAddress);
 
-        // parent set child, foreign key customer will be added to adress table
+        // Step 4: Create customer and link addresses
         Customer customer = customerMapper.customerDTOToCustomer(orderDTO.getCustomerDTO());
-        customer.setAddress(shippingAddress);
-        customer.setAddress(billingAddress);
+        customer.setShippingAddress(shippingAddress);
+        customer.setBillingAddress(billingAddress);
 
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
         Set<UUID> productIds = orderDTO.getOrderItemDTOList().stream()
@@ -113,6 +107,64 @@ public class OrderServiceImpl implements OrderService {
 
         return new OrderDTOResponse(orderTrackingNumber);
     }
+
+    private Address getShippingAddress(OrderDTO orderDTO) {
+        // Step 1: Check if the shipping address already exists in db
+        Optional<Address> existingShippingAddress = addressRepository.findByIdOrStreetAndZipCodeAndCityAndState(
+                orderDTO.getCustomerDTO().getShippingAddressDTO().getId(),
+                orderDTO.getCustomerDTO().getShippingAddressDTO().getStreet(),
+                orderDTO.getCustomerDTO().getShippingAddressDTO().getZipCode(),
+                orderDTO.getCustomerDTO().getShippingAddressDTO().getCity(),
+                orderDTO.getCustomerDTO().getShippingAddressDTO().getStateDTO().getId()
+        );
+
+        // Step 2: Create or use existing shipping address
+        Address shippingAddress = existingShippingAddress.orElseGet(() -> {
+            Address newAddress = addressMapper.shippingAddressDTOToAddress(orderDTO.getCustomerDTO().getShippingAddressDTO());
+            newAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getShippingAddressDTO().getStateDTO().getId())
+                    .orElseThrow(() -> new RuntimeException("Shipping state not found")));
+            return addressRepository.save(newAddress); // Save the new address
+        });
+        return shippingAddress;
+    }
+
+    private Address getBillingAddress(OrderDTO orderDTO, Address shippingAddress) {
+        // Step 3: Determine if billing address is the same as shipping address
+        Address billingAddress;
+
+        boolean shippingDTOEqualsBillingDTO = isShippingDTOEqualsBillingDTO(orderDTO);
+
+        if (shippingDTOEqualsBillingDTO) {
+            billingAddress = shippingAddress; // Reuse the shipping address
+        } else {
+            Optional<Address> existingBillingAddress = addressRepository.findByIdOrStreetAndZipCodeAndCityAndState(
+                    orderDTO.getCustomerDTO().getShippingAddressDTO().getId(),
+                    orderDTO.getCustomerDTO().getBillingAddressDTO().getStreet(),
+                    orderDTO.getCustomerDTO().getBillingAddressDTO().getZipCode(),
+                    orderDTO.getCustomerDTO().getBillingAddressDTO().getCity(),
+                    orderDTO.getCustomerDTO().getBillingAddressDTO().getStateDTO().getId()
+            );
+
+            billingAddress = existingBillingAddress.orElseGet(() -> {
+                Address newAddress = addressMapper.billingAddressDTOToAddress(orderDTO.getCustomerDTO().getBillingAddressDTO());
+                newAddress.setState(stateRepository.findById(orderDTO.getCustomerDTO().getBillingAddressDTO().getStateDTO().getId())
+                        .orElseThrow(() -> new RuntimeException("Billing state not found")));
+                return addressRepository.save(newAddress); // Save the new address
+            });
+        }
+        return billingAddress;
+    }
+
+    private static boolean isShippingDTOEqualsBillingDTO(OrderDTO orderDTO) {
+        ShippingAddressDTO shippingAddressDTO = orderDTO.getCustomerDTO().getShippingAddressDTO();
+        BillingAddressDTO billingAddressDTO = orderDTO.getCustomerDTO().getBillingAddressDTO();
+
+            return shippingAddressDTO.getStreet().equals(billingAddressDTO.getStreet()) &&
+                shippingAddressDTO.getCity().equals(billingAddressDTO.getCity()) &&
+                shippingAddressDTO.getZipCode().equals(billingAddressDTO.getZipCode()) &&
+                shippingAddressDTO.getStateDTO().getId().equals(billingAddressDTO.getStateDTO().getId());
+    }
+
 
     private String generateOrderTrackingNumber() {
         return UUID.randomUUID().toString();

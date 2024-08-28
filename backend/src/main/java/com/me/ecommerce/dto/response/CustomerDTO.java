@@ -2,7 +2,6 @@ package com.me.ecommerce.dto.response;
 
 import com.me.ecommerce.dto.request.BillingAddressDTO;
 import com.me.ecommerce.dto.request.ShippingAddressDTO;
-import com.me.ecommerce.entity.Address;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
@@ -26,5 +25,4 @@ public class CustomerDTO implements Serializable {
     private ShippingAddressDTO shippingAddressDTO;
 
     private BillingAddressDTO billingAddressDTO;
-
 }

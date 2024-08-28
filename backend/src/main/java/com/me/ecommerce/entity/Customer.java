@@ -5,12 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -37,14 +35,12 @@ public class Customer {
     @Column(name = "email")
     private String email;
 
-    @OneToOne(mappedBy = "shippingAddressCustomer", cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "shipping_address_id")
     private Address shippingAddress;
-    /*
-    When you save or delete a Customer,
-    you might want the associated Address
-    to be saved or deleted automatically.
-     */
-    @OneToOne(mappedBy = "billingAddressCustomer", cascade = CascadeType.PERSIST)
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "billing_address_id")
     private Address billingAddress;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
@@ -58,12 +54,5 @@ public class Customer {
             orders.add(order);
             order.setCustomer(this);
         }
-    }
-
-    public void setAddress(Address address) {
-        this.setShippingAddress(address);
-        address.setShippingAddressCustomer(this);
-        this.setBillingAddress(address);
-        address.setBillingAddressCustomer(this);
     }
 }

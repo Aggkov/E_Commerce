@@ -62,8 +62,6 @@ CREATE TABLE address (
   customer_shipping_address_id UUID,
   customer_billing_address_id UUID,	
   state_id UUID,
-  UNIQUE(customer_shipping_address_id),
-  UNIQUE(customer_billing_address_id),
   CONSTRAINT FK_customer_shipping_address_id FOREIGN KEY (customer_shipping_address_id) REFERENCES customer (id),
   CONSTRAINT FK_customer_billing_address_id FOREIGN KEY (customer_billing_address_id) REFERENCES customer (id),
   CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
