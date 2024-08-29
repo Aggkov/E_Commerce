@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID>, EntityManagerProductRepository {
     // behind the scenes select ... where category_id = id will be called
-    Page<Product> findByCategoryIdOrderById(@Param("id") UUID id, Pageable pageable);
+    Page<Product> findByCategoryId(@Param("id") UUID id, Pageable pageable);
 
     /*
         Spring data gives these by default

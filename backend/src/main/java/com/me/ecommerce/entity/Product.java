@@ -17,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
@@ -81,4 +82,28 @@ public class Product extends Audit {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Product product = (Product) o;
+        return active == product.active &&
+                unitsInStock == product.unitsInStock &&
+                Objects.equals(id, product.id) &&
+                Objects.equals(sku, product.sku) &&
+                Objects.equals(name, product.name) &&
+                Objects.equals(description, product.description) &&
+                Objects.equals(unitPrice, product.unitPrice) &&
+                Objects.equals(imageUrl, product.imageUrl) &&
+                Objects.equals(unitsSold, product.unitsSold) &&
+                Objects.equals(category, product.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, sku,
+                name, description, unitPrice, imageUrl,
+                active, unitsInStock, unitsSold, category);
+    }
 }

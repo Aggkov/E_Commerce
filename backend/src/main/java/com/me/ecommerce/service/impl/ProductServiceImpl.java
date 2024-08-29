@@ -6,19 +6,15 @@ import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.mapper.ProductMapper;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.ProductService;
-import com.me.ecommerce.utils.AppConstants;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -60,11 +56,10 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    @Override
-    public PagedResponse<ProductDTO> getProductsByCategory(UUID id, int page , int size) {
+    public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByCategory = productRepository.findByCategoryIdOrderById(id, pageable);
+        Page<Product> productsByCategory = productRepository.findByCategoryId(id, pageable);
 
         List<ProductDTO> productDTOS = productsByCategory.getContent().stream()
                 .map(productMapper::productToProductDTO)
@@ -82,10 +77,10 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Product> productsByKeywords = productRepository.searchByKeywordsPaginated(keywords, pageable);
 
-        List<ProductDTO> productDTOS = productsByKeywords.getContent().stream()
+        List<ProductDTO> productDTOs = productsByKeywords.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
-        return new PagedResponse<>(productDTOS, productsByKeywords.getNumber(),
+        return new PagedResponse<>(productDTOs, productsByKeywords.getNumber(),
                 productsByKeywords.getSize(), productsByKeywords.getTotalElements(),
                 productsByKeywords.getTotalPages()
 //               , albums.isLast()

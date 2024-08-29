@@ -4,13 +4,15 @@ import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.entity.ProductCategory;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ProductTestFactory {
 
-    public static List<Product> createProducts(ProductCategory category) {
-        List<Product> products = new ArrayList<>();
+    public static Set<Product> createProducts(ProductCategory category) {
+        Set<Product> products = new LinkedHashSet<>();
 
         Product product1 = new Product();
         product1.setId(UUID.randomUUID());

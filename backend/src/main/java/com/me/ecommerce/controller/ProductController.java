@@ -1,6 +1,5 @@
 package com.me.ecommerce.controller;
 
-import com.me.ecommerce.dto.response.ApiResponse;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
@@ -9,13 +8,9 @@ import com.me.ecommerce.utils.AppConstants;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,12 +46,12 @@ public class ProductController {
     }
 
     @GetMapping("/category/{id}")
-    public PagedResponse<ProductDTO> getProductsByCategoryPaginated(
+    public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(
             @PathVariable UUID id,
             @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
 
-        return productService.getProductsByCategory(id, page ,size);
+        return productService.getProductsByCategoryIdPaginated(id, page ,size);
     }
 
     @GetMapping("/search/paginated")

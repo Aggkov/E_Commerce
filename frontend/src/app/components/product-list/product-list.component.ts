@@ -139,7 +139,7 @@ export class ProductListComponent implements OnInit {
     are called based on what happens. Subscription Management: The subscribe method returns a Subscription object that you can use to manage the subscription (e.g., to unsubscribe if necessary).
     */
     // angular pages are 1 based, spring 0 based
-    this.productService.getProductsByCategoryPaginated(this.pageNumber - 1, this.pageSize,
+    this.productService.getProductsByCategoryIdPaginated(this.pageNumber - 1, this.pageSize,
       this.currentCategoryId).subscribe({
       next: data => {
         this.products = data.content;
