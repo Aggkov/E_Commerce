@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS product (
   "units_in_stock" INTEGER DEFAULT NULL,
   "units_sold" INTEGER DEFAULT NULL,
   "created_at" TIMESTAMP NOT NULL,  -- New audit field
-  "updated_at" TIMESTAMP,  -- New audit field
+  "updated_at" TIMESTAMP DEFAULT NULL,  -- New audit field
   "category_id" UUID NOT NULL,
   CONSTRAINT "FK_product_category_id" FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")
 ); 
@@ -53,6 +53,14 @@ CREATE TABLE state (
   CONSTRAINT "FK_country_id" FOREIGN KEY ("country_id") REFERENCES "country" ("id")
 );
 
+-- Table structure for table `customer`
+CREATE TABLE customer (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  email VARCHAR(255)
+);
+
 -- Table structure for table `address`
 CREATE TABLE address (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -65,14 +73,6 @@ CREATE TABLE address (
   CONSTRAINT FK_customer_shipping_address_id FOREIGN KEY (customer_shipping_address_id) REFERENCES customer (id),
   CONSTRAINT FK_customer_billing_address_id FOREIGN KEY (customer_billing_address_id) REFERENCES customer (id),
   CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
-);
-
--- Table structure for table `customer`
-CREATE TABLE customer (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name VARCHAR(255),
-  last_name VARCHAR(255),
-  email VARCHAR(255)
 );
 
 -- Table structure for table `orders`
@@ -101,10 +101,10 @@ CREATE TABLE order_item (
 -- -----------------------------------------------------
 -- Categories
 -- -----------------------------------------------------
-INSERT INTO product_category(category_name) VALUES ('Books');
-INSERT INTO product_category(category_name) VALUES ('Coffee Mugs');
-INSERT INTO product_category(category_name) VALUES ('Mouse Pads');
-INSERT INTO product_category(category_name) VALUES ('Luggage Tags');
+INSERT INTO product_category(id, category_name) VALUES ('e302d1b4-8609-417d-9f5a-ceb1fb1a9331', 'Books');
+INSERT INTO product_category(id, category_name) VALUES ('e74d708e-b0c7-42b1-bb7d-b42f7b2b0b32','Coffee Mugs');
+INSERT INTO product_category(id, category_name) VALUES ('b26be512-510f-4064-bf9c-32d525fe76aa', 'Mouse Pads');
+INSERT INTO product_category(id, category_name) VALUES ('8e9f6773-c946-462d-afc5-69ffac311b10', 'Luggage Tags');
 
 -- -----------------------------------------------------
 -- Books
@@ -226,16 +226,16 @@ INSERT INTO product (sku, name, description, image_url, active, units_in_stock, 
 
 
 -- Insert data into the "country" table
-INSERT INTO "country" (code, name) VALUES 
-('BR', 'Brazil'),
-('CA', 'Canada'),
-('DE', 'Germany'),
-('IN', 'India'),
-('TR', 'Turkey'),
-('US', 'United States');
+INSERT INTO country (id, code, name) VALUES 
+('24a88516-2a94-42da-ac03-0a8043d37572', 'BR', 'Brazil'),
+('53da6c4c-99c1-4ebd-8689-f33317702ff0', 'CA', 'Canada'),
+('07b04c34-5471-4432-9c50-d18e5f2699a4', 'DE', 'Germany'),
+('cf9fcf33-0eb8-4408-87ac-3693307822ea', 'IN', 'India'),
+('e9909d92-9955-4eed-9314-68745cc34ab3', 'TR', 'Turkey'),
+('d666418d-b248-4231-acf1-cf7d212ed993', 'US', 'United States');
 
 
-INSERT INTO "state" (name,country_id)VALUES 
+INSERT INTO state (name,country_id)VALUES 
 ('Acre','24a88516-2a94-42da-ac03-0a8043d37572'),
 ('Alagoas','24a88516-2a94-42da-ac03-0a8043d37572'),
 ('Amapá','24a88516-2a94-42da-ac03-0a8043d37572'),

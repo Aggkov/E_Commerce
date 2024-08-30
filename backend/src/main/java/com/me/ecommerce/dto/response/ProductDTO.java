@@ -13,6 +13,7 @@ public class ProductDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -7559629798078881826L;
     private UUID id;
+    private String sku;
     private String name;
     private BigDecimal unitPrice;
     private int unitsInStock;
