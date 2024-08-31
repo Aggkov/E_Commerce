@@ -73,8 +73,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.saveProduct(product));
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
+        return ResponseEntity.ok(productService.saveProduct(productDTO));
     }
 
 //    @DeleteMapping("/{id}")

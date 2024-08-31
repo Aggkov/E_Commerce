@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ProductService {
     PagedResponse<ProductDTO> getAllProducts(int page, int size);
     ProductDTO getProductById(UUID id);
-    Product saveProduct(Product product);
+    Product saveProduct(ProductDTO productDTO);
     void deleteProduct(UUID id);
     Product updateProduct(UUID id, Product product);
     PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size);

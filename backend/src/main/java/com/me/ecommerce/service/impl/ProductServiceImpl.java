@@ -88,6 +88,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDTO> searchProductByKeywords(String keywords) {
+        List<Product> products = productRepository.searchByKeywords(keywords);
+        return products.stream()
+                .map(productMapper::productToProductDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ProductDTO getProductById(UUID id) {
         return productRepository.findById(id)
                 .map(productMapper::productToProductDTO)
@@ -95,7 +103,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product saveProduct(Product product) {
+    public Product saveProduct(ProductDTO productDTO) {
+        Product product = productMapper.productDTOToProduct(productDTO);
         return productRepository.save(product);
     }
 
@@ -117,14 +126,6 @@ public class ProductServiceImpl implements ProductService {
 
         // Save and return the updated product
         return productRepository.save(existingProduct);
-    }
-
-    @Override
-    public List<ProductDTO> searchProductByKeywords(String keywords) {
-        List<Product> products = productRepository.searchByKeywords(keywords);
-        return products.stream()
-                .map(productMapper::productToProductDTO)
-                .collect(Collectors.toList());
     }
 }
 
