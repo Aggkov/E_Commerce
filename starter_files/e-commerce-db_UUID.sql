@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS product (
   "active" BOOLEAN DEFAULT TRUE,
   "units_in_stock" INTEGER DEFAULT NULL,
   "units_sold" INTEGER DEFAULT NULL,
+  "category_id" UUID NOT NULL,
   "created_at" TIMESTAMP NOT NULL,  -- New audit field
   "updated_at" TIMESTAMP DEFAULT NULL,  -- New audit field
-  "category_id" UUID NOT NULL,
   CONSTRAINT "FK_product_category_id" FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")
 ); 
 
