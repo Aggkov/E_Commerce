@@ -11,13 +11,13 @@
           </tr>
           <tr *ngFor="let cartItem of cartItems">
             <td>
-              <img src="{{ cartItem.imageUrl }}"
+              <img src="{{ cartItem.product.imageUrl }}"
                    class="img-responsive"
                    width="150px"/>
             </td>
             <td>
-              <p>{{ cartItem.name }}</p>
-              <p>{{ cartItem.unitPrice | currency: 'USD' }}</p>
+              <p>{{ cartItem.product.name }}</p>
+              <p>{{ cartItem.product.unitPrice | currency: 'USD' }}</p>
             </td>
             <td>
               <div class="items">
@@ -45,7 +45,7 @@
                 <button (click)="remove(cartItem)" class="btn btn-primary btn-sm mt-2">Remove</button>
               </div>
               <p class="mt-2">Subtotal: {{
-                  cartItem.quantity * cartItem.unitPrice
+                  cartItem.quantity * cartItem.product.unitPrice
                     | currency: 'USD'
                 }}
               </p>

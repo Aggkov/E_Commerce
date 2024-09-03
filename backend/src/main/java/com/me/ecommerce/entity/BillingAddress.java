@@ -6,8 +6,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +18,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "address")
-public class Address {
+@Table(name = "billing_address")
+public class BillingAddress {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
@@ -34,4 +38,8 @@ public class Address {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
+
+    @ManyToMany(mappedBy = "billingAddresses")
+    private Set<Customer> customers = new LinkedHashSet<>();
+
 }

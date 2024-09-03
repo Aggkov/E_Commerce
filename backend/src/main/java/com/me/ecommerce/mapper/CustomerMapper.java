@@ -6,15 +6,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = AddressMapper.class)
+@Mapper(componentModel = "spring",
+        uses = {ShippingAddressMapper.class, BillingAddressMapper.class})
 public interface CustomerMapper {
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
 //    @Mapping(target = "firstName", source = "customerDTO.firstName")
 //    @Mapping(target = "lastName", source = "customerDTO.lastName")
 //    @Mapping(target = "email", source = "customerDTO.email")
-//    @Mapping(target = "shippingAddress", source = "shippingAddressDTO")
-//    @Mapping(target = "billingAddress", source = "billingAddressDTO")
+    @Mapping(target = "shippingAddresses", ignore = true)
+    @Mapping(target = "billingAddresses", ignore = true)
     Customer customerDTOToCustomer(CustomerDTO customerDTO);
 }
 

@@ -14,9 +14,9 @@ public class OrderDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1250338489297010688L;
 
-    private OrderInfoDTO orderInfoDTO;
+    private OrderInfoDTO orderInfo;
 
-    private CustomerDTO customerDTO;
+    private CustomerDTO customer;
 
-    private Set<OrderItemDTO> orderItemDTOList = new LinkedHashSet<>();
+    private Set<OrderItemDTO> orderItemList = new LinkedHashSet<>();
 }

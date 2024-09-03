@@ -9,6 +9,13 @@ import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../model/cart-item";
 import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
+import {CheckoutService} from "../../services/checkout.service";
+import {Router} from "@angular/router";
+import {Order} from "../../model/order";
+import {Customer} from "../../model/customer";
+import {OrderInfo} from "../../model/order-info";
+import {Address} from "../../model/address";
+import {OrderItem} from "../../model/order-item";
 
 @Component({
   selector: 'app-checkout',
@@ -39,12 +46,15 @@ export class CheckoutComponent implements OnInit {
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
   cartItems : CartItem[] = [];
+  orderTrackingNumber : string = "";
   // creditCardYears: number[] = [];
   // creditCardMonths: number[] = [];
 
   constructor(private formBuilder: FormBuilder,
               private formService: FormService,
-              private cartService: CartService) {
+              private cartService: CartService,
+              private checkoutService: CheckoutService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -99,7 +109,8 @@ export class CheckoutComponent implements OnInit {
             LuhnCheckValidator.luhnCheck]),
         securityCode: new FormControl('',
           [Validators.required,
-            Validators.pattern('[0-9]{3}')]),
+            Validators.pattern('[0-9]{3}')
+          ]),
         expirationDate: [''],
         // expirationMonth: [''],
         // expirationYear: ['']
@@ -153,24 +164,86 @@ export class CheckoutComponent implements OnInit {
   onSubmit() {
     console.log("Handling the submit button");
 
-    if (this.checkoutFormGroup.invalid) {
-      this.checkoutFormGroup.markAllAsTouched();
-    }
+    // if (this.checkoutFormGroup.invalid) {
+    //   this.checkoutFormGroup.markAllAsTouched();
+    //   return;
+    // }
+
+    let shippingState: State = this.checkoutFormGroup.controls['shippingAddress'].value.state;
+    let billingState: State = this.checkoutFormGroup.controls['billingAddress'].value.state;
+
+
+    let shippingAddress = new Address(
+      this.shippingAddressCity?.value,
+      this.shippingAddressStreet?.value,
+      this.shippingAddressZipCode?.value,
+      shippingState);
+
+    let billingAddress = new Address(
+      this.billingAddressCity?.value,
+      this.billingAddressStreet?.value,
+      this.billingAddressZipCode?.value,
+      billingState);
+
+    let newCustomer = new Customer(
+      this.firstName?.value,
+      this.lastName?.value,
+      this.email?.value,
+      shippingAddress,
+      billingAddress
+    );
+
+    let orderItems: OrderItem[] = this.cartItems.map(
+      item => new OrderItem(item)
+    );
+
+    let newOrder: Order = new Order(
+      new OrderInfo(this.totalPrice, this.totalQuantity,"PENDING"),
+      newCustomer,
+      orderItems
+    );
+    console.log("order is: ",JSON.stringify(newOrder));
+
+    this.checkoutService.createOrder(newOrder).subscribe({
+        next: response => {
+          this.orderTrackingNumber = response.orderTrackingNumber;
+          alert(`Your order has been received.\nOrder tracking number:
+          ${response.orderTrackingNumber}`);
+
+          // reset cart
+          // this.resetCart();
+        },
+
+        error: err => alert(`There was an error: ${err.message}`)
+    });
     // ?. === safely access object's properties
     console.log("Entire formgroup object:", this.checkoutFormGroup?.value);
-    console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
     // console.log(`Entire formgroup object: ${JSON.stringify(this.checkoutFormGroup?.value)}`);
-    // console.log(this.checkoutFormGroup?.get('customer')?.value);
+
+    console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
     // console.log("The email address is " + this.checkoutFormGroup?.get('customer')?.value.email);
+    // console.log(this.checkoutFormGroup?.get('customer')?.value);
 
     // console.log(`with backticks The email address is ${this.checkoutFormGroup?.get('customer')?.value.email}`);
     // console.log(`with backticks The email address is ${this.checkoutFormGroup.controls['customer'].value.email}`);
-    // console.log(`with backticks The email address is ${this.checkoutFormGroup.get('customer.email')?.value}`);
 
     // console.log("The shipping address country is " + this.checkoutFormGroup?.get('shippingAddress')?.value.country.name);
     // console.log("The shipping address country is " + this.checkoutFormGroup.controls['shippingAddress'].value.country.name);
     // console.log("The shipping address country is " + this.checkoutFormGroup.get('shippingAddress.country')?.value.name);
     // console.log("The shipping address state is " + this.checkoutFormGroup?.get('shippingAddress')?.value.state.name);
+  }
+
+  resetCart() {
+    // reset cart data
+    this.cartService.cartItems = [];
+    this.cartService.totalPrice.next(0);
+    this.cartService.totalQuantity.next(0);
+
+    // reset the form
+    this.checkoutFormGroup.reset();
+
+    // navigate back to the products page
+    this.router.navigateByUrl("/products");
   }
 
   /*
@@ -265,7 +338,9 @@ export class CheckoutComponent implements OnInit {
       // Update the input value and form control
       input.value = formattedValue;
       // this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
-      this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
+      this.checkoutFormGroup.controls['creditCard'].patchValue(
+        {expirationDate: formattedValue},
+        {emitEvent: false});
 
       console.log(`Formatted value: ${formattedValue}`);
     }
@@ -302,6 +377,7 @@ export class CheckoutComponent implements OnInit {
         }
         // select first item by default
         formGroup?.get('state')?.setValue(data[0]);
+        // formGroup.value.setValue().setValue(data[0]);
       }
     })
   }

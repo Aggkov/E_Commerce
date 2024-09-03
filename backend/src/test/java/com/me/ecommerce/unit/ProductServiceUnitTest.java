@@ -188,6 +188,7 @@ public class ProductServiceUnitTest {
 
         ProductDTO response = productService.getProductById(productId);
 
+        // test product found in mock with dto returned by service
         assertNotNull(response);
         assertEquals(mockProduct.getId(), response.getId());
         assertEquals(mockProduct.getSku(), response.getSku());

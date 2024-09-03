@@ -22,7 +22,7 @@ public class CustomerDTO implements Serializable {
 
     private String email;
 
-    private ShippingAddressDTO shippingAddressDTO;
+    private ShippingAddressDTO shippingAddress;
 
-    private BillingAddressDTO billingAddressDTO;
+    private BillingAddressDTO billingAddress;
 }

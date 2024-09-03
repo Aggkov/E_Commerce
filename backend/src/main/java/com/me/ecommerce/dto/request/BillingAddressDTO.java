@@ -21,5 +21,5 @@ public class BillingAddressDTO implements Serializable {
 
     private String zipCode;
 
-    private StateDTO stateDTO;
+    private StateDTO state;
 }

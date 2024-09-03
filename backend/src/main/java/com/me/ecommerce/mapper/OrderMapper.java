@@ -16,9 +16,9 @@ public interface OrderMapper {
 
     OrderDTO orderToOrderDTO(Order order);
 
-    @Mapping(target = "totalPrice", source = "orderDTO.orderInfoDTO.totalPrice")
-    @Mapping(target = "totalQuantity", source = "orderDTO.orderInfoDTO.totalQuantity")
-    @Mapping(target = "status", source = "orderDTO.orderInfoDTO.status")
+    @Mapping(target = "totalPrice", source = "orderDTO.orderInfo.totalPrice")
+    @Mapping(target = "totalQuantity", source = "orderDTO.orderInfo.totalQuantity")
+    @Mapping(target = "status", source = "orderDTO.orderInfo.status")
 //    @Mapping(target = "customer", source = "customerDTO") // Map the entire customer object using CustomerMapper
     Order orderDTOtoOrder(OrderDTO orderDTO);
 

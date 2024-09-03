@@ -1,4 +1,4 @@
--- Drop tables with CASCADE to remove dependencies
+Drop tables with CASCADE to remove dependencies
 DROP TABLE IF EXISTS product CASCADE;
 DROP TABLE IF EXISTS product_category CASCADE;
 DROP TABLE IF EXISTS country CASCADE;
@@ -7,13 +7,15 @@ DROP TABLE IF EXISTS order_item CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS customer CASCADE;
 DROP TABLE IF EXISTS address CASCADE;
+DROP TABLE IF EXISTS customer_shipping_address CASCADE;
+DROP TABLE IF EXISTS customer_billing_address CASCADE;
 
 -- Enable the pgcrypto extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- -----------------------------------------------------
--- Table e-commerce.product_category
--- -----------------------------------------------------
+-----------------------------------------------------
+Table e-commerce.product_category
+-----------------------------------------------------
 CREATE TABLE IF NOT EXISTS product_category (
   "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   "category_name" VARCHAR(255) DEFAULT NULL
@@ -36,7 +38,7 @@ CREATE TABLE IF NOT EXISTS product (
   "category_id" UUID NOT NULL,
   "created_at" TIMESTAMP NOT NULL,  -- New audit field
   "updated_at" TIMESTAMP DEFAULT NULL,  -- New audit field
-  CONSTRAINT "FK_product_category_id" FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")
+  CONSTRAINT FK_product_category_id FOREIGN KEY (category_id) REFERENCES product_category (id)
 ); 
 ALTER TABLE product OWNER TO ecommerce_user;
 
@@ -52,11 +54,31 @@ CREATE TABLE state (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255),
   country_id UUID,
-  CONSTRAINT "FK_country_id" FOREIGN KEY ("country_id") REFERENCES "country" ("id")
+  CONSTRAINT FK_country_id FOREIGN KEY (country_id) REFERENCES country (id)
 );
 ALTER TABLE state OWNER TO ecommerce_user;
 
--- Table structure for table `customer`
+CREATE TABLE shipping_address (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  city VARCHAR(255),
+  street VARCHAR(255),
+  zip_code VARCHAR(255),
+  state_id UUID,
+  CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
+);
+ALTER TABLE shipping_address OWNER TO ecommerce_user;
+
+CREATE TABLE billing_address (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  city VARCHAR(255),
+  street VARCHAR(255),
+  zip_code VARCHAR(255),
+  state_id UUID,
+  CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
+);
+ALTER TABLE billing_address OWNER TO ecommerce_user;
+
+-- Step 2: Create the `customer` table
 CREATE TABLE customer (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   first_name VARCHAR(255),
@@ -65,20 +87,25 @@ CREATE TABLE customer (
 );
 ALTER TABLE customer OWNER TO ecommerce_user;
 
--- Table structure for table `address`
-CREATE TABLE address (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  city VARCHAR(255),
-  street VARCHAR(255),
-  zip_code VARCHAR(255),
-  customer_shipping_address_id UUID,
-  customer_billing_address_id UUID,	
-  state_id UUID,
-  CONSTRAINT FK_customer_shipping_address_id FOREIGN KEY (customer_shipping_address_id) REFERENCES customer (id),
-  CONSTRAINT FK_customer_billing_address_id FOREIGN KEY (customer_billing_address_id) REFERENCES customer (id),
-  CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
+-- Step 3: Create the `customer_shipping_address` junction table
+CREATE TABLE customer_shipping_address (
+  customer_id UUID,
+  shipping_address_id UUID,
+  PRIMARY KEY (customer_id, shipping_address_id),
+  CONSTRAINT FK_customer_id_shipping FOREIGN KEY (customer_id) REFERENCES customer (id),
+  CONSTRAINT FK_shipping_address_id_shipping FOREIGN KEY (shipping_address_id) REFERENCES shipping_address (id)
 );
-ALTER TABLE address OWNER TO ecommerce_user;
+ALTER TABLE customer_shipping_address OWNER TO ecommerce_user;
+
+-- Step 4: Create the `customer_billing_address` junction table
+CREATE TABLE customer_billing_address (
+  customer_id UUID,
+  billing_address_id UUID,
+  PRIMARY KEY (customer_id, billing_address_id),
+  CONSTRAINT FK_customer_id_billing FOREIGN KEY (customer_id) REFERENCES customer (id),
+  CONSTRAINT FK_billing_address_id_billing FOREIGN KEY (billing_address_id) REFERENCES billing_address (id)
+);
+ALTER TABLE customer_billing_address OWNER TO ecommerce_user;
 
 -- Table structure for table `orders`
 CREATE TABLE orders (
@@ -92,7 +119,7 @@ CREATE TABLE orders (
   updated_at TIMESTAMP,
   CONSTRAINT orders FOREIGN KEY (customer_id) REFERENCES customer (id)
 );
-ALTER TABLE customer OWNER TO ecommerce_user;
+ALTER TABLE orders OWNER TO ecommerce_user;
 
 -- Table structure for table `order_items`
 CREATE TABLE order_item (

@@ -39,7 +39,8 @@ export class CartService {
     if (this.cartItems.length > 0) {
       // find the item in the cart based on item id
       // if find return item else undefined
-      existingCartItem = this.cartItems.find(item => item.id === cartItem.id);
+      existingCartItem = this.cartItems.find(
+        item => item.product.id === cartItem.product.id);
       // check if we found it
       alreadyExistsInCart = (existingCartItem !== undefined);
     }
@@ -60,7 +61,7 @@ export class CartService {
     let totalQuantityValue: number = 0;
 
     for (let cartItem of this.cartItems) {
-      totalPriceValue += cartItem.quantity * cartItem.unitPrice;
+      totalPriceValue += cartItem.quantity * cartItem.product.unitPrice;
       totalQuantityValue += cartItem.quantity;
     }
 
@@ -77,9 +78,9 @@ export class CartService {
   private logCartData(totalPriceValue: number, totalQuantityValue: number) {
     console.log('Contents of the cart');
     for (let cartItem of this.cartItems) {
-      const subTotalPrice = cartItem.quantity * cartItem.unitPrice;
-      console.log(`name: ${cartItem.name}, quantity=${cartItem.quantity},
-      unitPrice=${cartItem.unitPrice}, subTotalPrice=${subTotalPrice}`);
+      const subTotalPrice = cartItem.quantity * cartItem.product.unitPrice;
+      console.log(`name: ${cartItem.product.name}, quantity=${cartItem.quantity},
+      unitPrice=${cartItem.product.unitPrice}, subTotalPrice=${subTotalPrice}`);
     }
 
     console.log(`totalPrice: ${totalPriceValue.toFixed(2)},
@@ -98,7 +99,7 @@ export class CartService {
   remove(cartItem: CartItem) {
 // get index of item in the array
     const itemIndex = this.cartItems.findIndex(
-      item => item.id === cartItem.id
+      item => item.product.id === cartItem.product.id
     );
 
     // if found, remove the item from the array at the given index

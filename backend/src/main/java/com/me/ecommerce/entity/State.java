@@ -37,6 +37,9 @@ public class State {
     private Country country;
 
     @OneToMany(mappedBy = "state")
-    private Set<Address> addresses = new LinkedHashSet<>();
+    private Set<ShippingAddress> shippingAddresses = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "state")
+    private Set<BillingAddress> billingAddresses = new LinkedHashSet<>();
 
 }
