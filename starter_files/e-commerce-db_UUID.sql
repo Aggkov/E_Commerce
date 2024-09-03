@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS product_category (
   "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   "category_name" VARCHAR(255) DEFAULT NULL
 );
+ALTER TABLE product_category OWNER TO ecommerce_user;
 
 -- -----------------------------------------------------
 -- Table e-commerce.product
@@ -37,13 +38,14 @@ CREATE TABLE IF NOT EXISTS product (
   "updated_at" TIMESTAMP DEFAULT NULL,  -- New audit field
   CONSTRAINT "FK_product_category_id" FOREIGN KEY ("category_id") REFERENCES "product_category" ("id")
 ); 
+ALTER TABLE product OWNER TO ecommerce_user;
 
 CREATE TABLE "country" (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   code varchar(2) DEFAULT NULL,
   name varchar(255) DEFAULT NULL
 );
-
+ALTER TABLE country OWNER TO ecommerce_user;
 
 -- Table structure for table `state`
 CREATE TABLE state (
@@ -52,6 +54,7 @@ CREATE TABLE state (
   country_id UUID,
   CONSTRAINT "FK_country_id" FOREIGN KEY ("country_id") REFERENCES "country" ("id")
 );
+ALTER TABLE state OWNER TO ecommerce_user;
 
 -- Table structure for table `customer`
 CREATE TABLE customer (
@@ -60,6 +63,7 @@ CREATE TABLE customer (
   last_name VARCHAR(255),
   email VARCHAR(255)
 );
+ALTER TABLE customer OWNER TO ecommerce_user;
 
 -- Table structure for table `address`
 CREATE TABLE address (
@@ -74,6 +78,7 @@ CREATE TABLE address (
   CONSTRAINT FK_customer_billing_address_id FOREIGN KEY (customer_billing_address_id) REFERENCES customer (id),
   CONSTRAINT FK_state_id FOREIGN KEY (state_id) REFERENCES state (id)
 );
+ALTER TABLE address OWNER TO ecommerce_user;
 
 -- Table structure for table `orders`
 CREATE TABLE orders (
@@ -85,8 +90,9 @@ CREATE TABLE orders (
   status VARCHAR(128),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  CONSTRAINT FK_customer_id FOREIGN KEY (customer_id) REFERENCES customer (id)
+  CONSTRAINT orders FOREIGN KEY (customer_id) REFERENCES customer (id)
 );
+ALTER TABLE customer OWNER TO ecommerce_user;
 
 -- Table structure for table `order_items`
 CREATE TABLE order_item (
@@ -97,6 +103,7 @@ CREATE TABLE order_item (
   CONSTRAINT FK_order_id FOREIGN KEY (order_id) REFERENCES orders (id),
   CONSTRAINT FK_product_id FOREIGN KEY (product_id) REFERENCES product (id)
 );
+ALTER TABLE order_item OWNER TO ecommerce_user;
 
 -- -----------------------------------------------------
 -- Categories
