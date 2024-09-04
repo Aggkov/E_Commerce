@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest  # Use the latest version of the official PostgreSQL image
+    container_name: postgres_db  # Optional: you can name your container
+    environment:
+      POSTGRES_DB: e-commerce  # This is your database name
+      POSTGRES_USER: ecommerce_user  # This is your username
+      POSTGRES_PASSWORD: ecommerce_user  # Replace with a strong password
+    ports:
+      - "5432:5432"  # Maps port 5432 on your machine to port 5432 in the container
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data  # Persist data on your local filesystem
+      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db_UUID.sql  # Run your SQL script during container startup
+
