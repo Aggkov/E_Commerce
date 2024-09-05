@@ -15,7 +15,8 @@ public class EntityManagerProductRepositoryImpl implements EntityManagerProductR
 
     @Override
     public Page<Product> searchByKeywordsPaginated(String keywords, Pageable pageable) {
-        String[] tokens = SearchUtility.tokenize(keywords);
+//        String[] tokens = SearchUtility.tokenizeWords(keywords);
+        char[] tokens = SearchUtility.tokenizeCharacters(keywords);
         StringBuilder queryBuilder = new StringBuilder("SELECT p FROM Product p WHERE ");
 
         for (int i = 0; i < tokens.length; i++) {
@@ -45,7 +46,8 @@ public class EntityManagerProductRepositoryImpl implements EntityManagerProductR
 
     @Override
     public List<Product> searchByKeywords(String keywords) {
-        String[] tokens = SearchUtility.tokenize(keywords);
+//        String[] tokens = SearchUtility.tokenizeWords(keywords);
+        char[] tokens = SearchUtility.tokenizeCharacters(keywords);
         StringBuilder queryBuilder = new StringBuilder("SELECT p FROM Product p WHERE ");
 
         for (int i = 0; i < tokens.length; i++) {
