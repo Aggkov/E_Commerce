@@ -107,18 +107,44 @@ a,a:hover{
 
 .page-wrapper{
   overflow:hidden;
-  background:#e5e5e5;
-  padding-bottom:8vh
+  background: #e3e3e3;
+  padding-bottom:8vh;
 }
 
 .page-container{
-  background:#e5e5e5;
+  background: #ececec;
   padding-left:200px
 }
 
 .main-content{
   padding-top:116px;
   min-height:100vh
+}
+
+.category-filter-icons {
+  display: flex;
+  align-items: center;
+  /*justify-content: center;*/
+  gap: 30px; /* Add space between icons and text */
+  margin-bottom: 20px; /* Space below the header */
+  margin-left: 220px; /* Adjust this value to move the icons to the left */
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the label below the icon */
+}
+
+.icon-container i {
+  font-size: 24px; /* Adjust icon size */
+  cursor: pointer;
+}
+
+.icon-label {
+  margin-top: 5px; /* Space between the icon and the label */
+  font-size: 14px; /* Adjust label text size */
+  color: #333; /* Placeholder text color */
 }
 
 aside.menu-sidebar.d-none.d-lg-block.clr{
@@ -135,7 +161,7 @@ aside.menu-sidebar.d-none.d-lg-block.clr{
  */
 
 .header-desktop{
-  background:#0da8e4;
+  background: #79d4e5;
   -webkit-box-shadow:0 2px 5px 0 rgba(0,0,0,.1);
   -moz-box-shadow:0 2px 5px 0 rgba(0,0,0,.1);
   box-shadow:0 2px 5px 0 rgba(0,0,0,.1);
@@ -518,6 +544,10 @@ input.au-input.au-input-xl{
   padding:10% 15%!important
 }
 
+/*.category-menu {*/
+/*  margin-top: 19px;*/
+/*}*/
+
 /*
  * ----------------------------
  * Products List
@@ -852,6 +882,13 @@ footer ul li{
     background:#e5e5e5;
     padding-bottom:12vh
   }
+
+  .menu-sidebar {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+
   .main-content{
     padding-top:50px;
     padding-bottom:100px

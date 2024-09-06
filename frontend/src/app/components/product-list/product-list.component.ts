@@ -8,8 +8,9 @@ import {FormsModule} from "@angular/forms";
 import {CartItem} from "../../model/cart-item";
 import {CartService} from "../../services/cart.service";
 import {ProductCategoryService} from "../../services/product-category.service";
-import {ProductCategory} from "../../model/product-category";
-import {map, Observable, tap} from "rxjs";
+import {map} from "rxjs";
+import {ProductCategoryMenuComponent} from "../product-category-menu/product-category-menu.component";
+import {FilterComponent} from "../filter/filter.component";
 
 @Component({
   selector: 'app-product-list',
@@ -22,7 +23,9 @@ import {map, Observable, tap} from "rxjs";
     RouterLink,
     RouterLinkActive,
     NgbPagination,
-    FormsModule
+    FormsModule,
+    ProductCategoryMenuComponent,
+    FilterComponent
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
@@ -30,18 +33,20 @@ import {map, Observable, tap} from "rxjs";
 export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
+  currentCategoryName: string = "";
   currentCategoryId: string = '';
   previousCategoryId: string = '';
-  productCategoryIds: string[] = [];
-  currentCategoryName: string = "";
   previousSearchQuery: string = "";
-  searchQuery: string = "";
+  currentSearchQuery: string = "";
   // new properties for pagination
   pageNumber: number = 1;
   pageSize: number = 5;
   totalElements: number = 0;
-  totalPages: number = 0;
+  // totalPages: number = 0;
   pageSizes: number[] = [2, 5, 10, 20, 50];
+  productCategoryIds: string[] = [];
+  showCategoryMenu: boolean = false;
+  showFilterMenu: boolean = false;
 
   constructor(private productService: ProductService,
               private productCategoryService: ProductCategoryService,
@@ -53,7 +58,7 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.productCategoryService.getProductCategories().pipe(
-      tap(response => console.log('Response:', response)),
+      // tap(response => console.log('Response:', response)),
       map(response => {
         this.productCategoryIds = response.map(category => category.id);
         console.log('Category IDs:', this.productCategoryIds);
@@ -86,19 +91,19 @@ export class ProductListComponent implements OnInit {
   }
 
   private showSearchedResults() {
-    this.searchQuery = this.route.snapshot.paramMap.get('query')!;
+    this.currentSearchQuery = this.route.snapshot.paramMap.get('query')!;
 
     // if we have a different keyword than previous
     // then set thePageNumber to 1
-    if (this.previousSearchQuery != this.searchQuery) {
+    if (this.previousSearchQuery != this.currentSearchQuery) {
       this.pageNumber = 1;
     }
-    this.previousSearchQuery = this.searchQuery;
+    this.previousSearchQuery = this.currentSearchQuery;
 
     this.productService.searchProductByKeywordsPaginated(
       this.pageNumber - 1,
       this.pageSize,
-      this.searchQuery).subscribe({
+      this.currentSearchQuery).subscribe({
         next: data => {
           this.products = data.content;
           this.pageNumber = data.page + 1;
@@ -115,7 +120,7 @@ export class ProductListComponent implements OnInit {
   private showProductListByCategory() {
     // check if "id" parameter is available
     const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
-    console.log('inside showProductListByCategory Category IDs:', this.productCategoryIds);
+    // console.log('inside showProductListByCategory Category IDs:', this.productCategoryIds);
     if (hasCategoryId) {
       this.currentCategoryId = this.route.snapshot.paramMap.get('id')!;
       this.currentCategoryName = this.route.snapshot.paramMap.get('name')!;
@@ -139,7 +144,9 @@ export class ProductListComponent implements OnInit {
     are called based on what happens. Subscription Management: The subscribe method returns a Subscription object that you can use to manage the subscription (e.g., to unsubscribe if necessary).
     */
     // angular pages are 1 based, spring 0 based
-    this.productService.getProductsByCategoryIdPaginated(this.pageNumber - 1, this.pageSize,
+    this.productService.getProductsByCategoryIdPaginated(
+      this.pageNumber - 1,
+      this.pageSize,
       this.currentCategoryId).subscribe({
       next: data => {
         this.products = data.content;
@@ -162,5 +169,28 @@ export class ProductListComponent implements OnInit {
     // console.log(`adding to cart ${product.name} ${product.unitPrice}`);
     const cartItem = new CartItem(product);
     this.cartService.addToCartOrIncrementQuantity(cartItem)
+  }
+
+  toggleCategoryMenu() {
+    this.showCategoryMenu = !this.showCategoryMenu;
+
+    // Optionally, close filter menu if open
+    if (this.showCategoryMenu) {
+      this.showFilterMenu = false;
+    }
+  }
+
+  // Function to toggle filter menu visibility
+  toggleFilterMenu() {
+    this.showFilterMenu = !this.showFilterMenu;
+
+    // Optionally, close category menu if open
+    if (this.showFilterMenu) {
+      this.showCategoryMenu = false;
+    }
+  }
+
+  handleFilteredProducts(filteredProducts: Product[]) {
+    this.products = filteredProducts;
   }
 }

@@ -1,6 +1,16 @@
 <div class="main-content">
   <div class="section-content section-content-p30">
-    <h4>Results: {{totalElements}}</h4>
+    <div class="category-filter-icons">
+      <div class="icon-container" (click)="toggleCategoryMenu()">
+        <i class="fa-solid fa-list"></i>
+        <span class="icon-label">Categories</span>
+      </div>
+      <div class="icon-container" (click)="toggleFilterMenu()">
+        <i class="fa-solid fa-filter"></i>
+        <span class="icon-label">Filter</span>
+      </div>
+    </div>
+    <h4>Results: {{ totalElements }}</h4>
     <ng-container *ngIf="currentCategoryName">
       <h3>Category: {{ currentCategoryName }}</h3>
     </ng-container>
@@ -17,7 +27,9 @@
               <h1>{{ product.name }}</h1>
             </a>
             <div class="price">{{ product.unitPrice | currency:'USD' }}</div>
-            <button (click)="addToCart(product)" class="btn btn-primary btn-small">Add to cart</button>
+            <button (click)="addToCart(product)" class="btn btn-primary btn-small">
+              Add to cart
+            </button>
           </div>
         </div>
       </div>
@@ -46,6 +58,9 @@
         </div>
       </div>
       <!-- end footer -->
+      <app-product-category-menu *ngIf="showCategoryMenu"></app-product-category-menu>
+      <app-filter [categoryId]="currentCategoryId" [selectedCategory]="currentCategoryName" *ngIf="showFilterMenu"
+                  (filteredProducts)="handleFilteredProducts($event)"></app-filter>
     </div>
   </div>
 </div>

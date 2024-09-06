@@ -1,5 +1,6 @@
 package com.me.ecommerce.service.impl;
 
+import com.me.ecommerce.dto.request.FilterCriteria;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
@@ -36,22 +37,22 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> getAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> products = productRepository.findAll(pageable);
+        Page<Product> productsPage = productRepository.findAll(pageable);
 
-        if (products.getNumberOfElements() == 0) {
+        if (productsPage.getNumberOfElements() == 0) {
             return new PagedResponse<>(Collections.emptyList(),
-                    products.getNumber(), products.getSize(),
-                    products.getTotalElements(),
-                    products.getTotalPages()
+                    productsPage.getNumber(), productsPage.getSize(),
+                    productsPage.getTotalElements(),
+                    productsPage.getTotalPages()
 //                    , products.isLast()
             );
         }
-        List<ProductDTO> productDTOs = products.getContent().stream()
+        List<ProductDTO> productDTOs = productsPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
-        return new PagedResponse<>(productDTOs, products.getNumber(),
-                products.getSize(), products.getTotalElements(),
-                products.getTotalPages()
+        return new PagedResponse<>(productDTOs, productsPage.getNumber(),
+                productsPage.getSize(), productsPage.getTotalElements(),
+                productsPage.getTotalPages()
 //               , products.isLast()
         );
     }
@@ -59,14 +60,14 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByCategory = productRepository.findByCategoryId(id, pageable);
+        Page<Product> productsByCategoryPage = productRepository.findByCategoryId(id, pageable);
 
-        List<ProductDTO> productDTOS = productsByCategory.getContent().stream()
+        List<ProductDTO> productDTOS = productsByCategoryPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
-        return new PagedResponse<>(productDTOS, productsByCategory.getNumber(),
-                productsByCategory.getSize(), productsByCategory.getTotalElements(),
-                productsByCategory.getTotalPages()
+        return new PagedResponse<>(productDTOS, productsByCategoryPage.getNumber(),
+                productsByCategoryPage.getSize(), productsByCategoryPage.getTotalElements(),
+                productsByCategoryPage.getTotalPages()
 //               , albums.isLast()
         );
     }
@@ -75,16 +76,32 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByKeywords = productRepository.searchByKeywordsPaginated(keywords, pageable);
+        Page<Product> productsByKeywordsPage = productRepository.searchByKeywordsPaginated(keywords, pageable);
 
-        List<ProductDTO> productDTOs = productsByKeywords.getContent().stream()
+        List<ProductDTO> productDTOs = productsByKeywordsPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
-        return new PagedResponse<>(productDTOs, productsByKeywords.getNumber(),
-                productsByKeywords.getSize(), productsByKeywords.getTotalElements(),
-                productsByKeywords.getTotalPages()
+        return new PagedResponse<>(productDTOs, productsByKeywordsPage.getNumber(),
+                productsByKeywordsPage.getSize(), productsByKeywordsPage.getTotalElements(),
+                productsByKeywordsPage.getTotalPages()
 //               , albums.isLast()
         );
+    }
+
+    @Override
+    public PagedResponse<ProductDTO> getFilteredProducts(
+            UUID categoryId, String min_price, String max_price, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
+        Page<Product> productPage = productRepository.findProductsBetweenMinPriceAndMaxPrice(
+                categoryId,
+                Double.parseDouble(min_price),
+                Double.parseDouble(max_price), pageable);
+        List<ProductDTO> productDTOS = productPage.getContent().stream()
+                .map(productMapper::productToProductDTO)
+                .toList();
+
+        return new PagedResponse<>(productDTOS, productPage.getNumber(), productPage.getSize(),
+                productPage.getTotalElements(), productPage.getTotalPages());
     }
 
     @Override

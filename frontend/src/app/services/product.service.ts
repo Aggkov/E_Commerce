@@ -20,9 +20,8 @@ export class ProductService {
       + `page=${page}&size=${pageSize}`;
 
     return this.httpClient.get<GetResponseProducts>(searchUrl)
-    .pipe(
-      // Log the response
-    tap(response => console.log('API response:', response)));
+    // .pipe(tap(response =>
+    //   console.log('API response:', response)));
   }
 
   searchProductByKeywords(searchQuery: string,
@@ -33,7 +32,7 @@ export class ProductService {
     `;
     console.log("search query is: " + searchQuery);
     return this.httpClient.get<Product[]>(searchUrl).pipe(
-      tap(response => console.log("getproductsbyquery:  ", response)),
+      // tap(response => console.log("getproductsbyquery:  ", response)),
       map(response => response)
     )
   }
@@ -50,9 +49,20 @@ export class ProductService {
     // need to build URL based on product id
     const productUrl = `${this.baseUrl}/${productId}`;
 
-    return this.httpClient.get<Product>(productUrl).pipe(
-      tap(response => console.log(response))
-    )
+    return this.httpClient.get<Product>(productUrl);
+      // .pipe(
+      // tap(response => console.log(response))
+  }
+
+  // Function to get filtered products from the backend
+  getFilteredProducts(filterData: any, categoryId: string): Observable<GetResponseProducts> {
+    return this.httpClient.get<GetResponseProducts>(`${this.baseUrl}/filter`, {
+      params: {
+        categoryId: categoryId,
+        min_price: filterData.priceFrom,
+        max_price: filterData.priceTo
+      }
+    });
   }
 }
 
@@ -65,3 +75,4 @@ interface GetResponseProducts {
   totalElements: number,
   totalPages: number
 }
+

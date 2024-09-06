@@ -5,11 +5,19 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID>, EntityManagerProductRepository {
     // behind the scenes select ... where category_id = id will be called
     Page<Product> findByCategoryId(@Param("id") UUID id, Pageable pageable);
+
+    @Query("SELECT p FROM Product p " +
+            "WHERE p.unitPrice " +
+            "BETWEEN :minPrice AND :maxPrice " +
+            "AND p.category.id = :categoryId " +
+            "ORDER BY p.createdAt")
+    Page<Product> findProductsBetweenMinPriceAndMaxPrice(UUID categoryId, Double minPrice, Double maxPrice, Pageable pageable);
 
     /*
         Spring data gives these by default

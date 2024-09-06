@@ -1,0 +1,69 @@
+<div class="page-wrapper">
+  <!-- MENU SIDEBAR-->
+  <aside class="menu-sidebar d-none d-lg-block">
+    <p>Filter Products</p>
+    <!-- Price range inputs -->
+    <div class="price-filter">
+      <label for="priceFrom">Price From:</label>
+      <input id="priceFrom" type="text" placeholder="From" [(ngModel)]="priceFrom">
+      <label for="priceTo">Price To:</label>
+      <input id="priceTo" type="text" placeholder="To" [(ngModel)]="priceTo">
+    </div>
+    <!-- Histogram placeholder -->
+<!--    <div class="price-histogram">-->
+<!--      <canvas id="priceHistogram"></canvas>-->
+<!--    </div>-->
+    <!-- Price range radio buttons -->
+    <div class="price-range">
+      <label>Price Ranges:</label>
+      <div>
+        <input type="radio" id="range1" name="priceRange"
+               [(ngModel)]="selectedPriceRange"
+               value="10-15">
+        <label for="range1">$10 - $15</label>
+      </div>
+      <div>
+        <input type="radio" id="range2" name="priceRange"
+               [(ngModel)]="selectedPriceRange"
+               value="15-20">
+        <label for="range2">$15 - $20</label>
+      </div>
+      <div>
+        <input type="radio" id="range3" name="priceRange"
+               [(ngModel)]="selectedPriceRange"
+               value="20">
+        <label for="range3">$20 and above</label>
+      </div>
+    </div>
+    <!-- Name filter checkboxes (only visible if category "books" is selected) -->
+    <div class="name-filter" *ngIf="selectedCategory === 'Books'">
+      <label for="nameFilter">Filter by Name:</label>
+      <div>
+        <input type="checkbox" id="java" [(ngModel)]="nameFilters.java">
+        <label for="java">Java</label>
+      </div>
+      <div>
+        <input type="checkbox" id="js" [(ngModel)]="nameFilters.javascript">
+        <label for="js">JavaScript</label>
+      </div>
+      <div>
+        <input type="checkbox" id="python" [(ngModel)]="nameFilters.python">
+        <label for="python">Python</label>
+      </div>
+      <div>
+        <input type="checkbox" id="vue" [(ngModel)]="nameFilters.vue">
+        <label for="vue">Vue</label>
+      </div>
+      <div>
+        <input type="checkbox" id="csharp" [(ngModel)]="nameFilters.csharp">
+        <label for="csharp">C#</label>
+      </div>
+      <div>
+        <input type="checkbox" id="sql" [(ngModel)]="nameFilters.sql">
+        <label for="sql">SQL</label>
+      </div>
+    </div>
+    <button (click)="applyFilter()" class="btn btn-primary btn-small">Apply</button>
+
+  </aside>
+</div>

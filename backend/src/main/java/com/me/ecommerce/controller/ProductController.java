@@ -1,5 +1,6 @@
 package com.me.ecommerce.controller;
 
+import com.me.ecommerce.dto.request.FilterCriteria;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
@@ -34,8 +35,8 @@ public class ProductController {
 
     @GetMapping
     public PagedResponse<ProductDTO> getAllProducts(
-            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size
     ) {
         return productService.getAllProducts(page,size);
     }
@@ -48,8 +49,8 @@ public class ProductController {
     @GetMapping("/category/{id}")
     public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(
             @PathVariable UUID id,
-            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
         return productService.getProductsByCategoryIdPaginated(id, page ,size);
     }
@@ -57,8 +58,8 @@ public class ProductController {
     @GetMapping("/search/paginated")
     public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(
             @RequestParam(name = "keywords") String keywords,
-            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
         return productService.searchProductByKeywordsPaginated(keywords,
                 page, size);
@@ -70,6 +71,16 @@ public class ProductController {
     ) {
         List<ProductDTO> productDTOs = productService.searchProductByKeywords(keywords);
         return ResponseEntity.ok(productDTOs);
+    }
+
+    @GetMapping("/filter")
+    public PagedResponse<ProductDTO> getFilteredProducts(
+            @RequestParam(name = "categoryId") UUID categoryId,
+            @RequestParam(name = "min_price") String min_price,
+            @RequestParam(name = "max_price") String max_price,
+            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+        return productService.getFilteredProducts(categoryId ,min_price, max_price, page, size);
     }
 
     @PostMapping
