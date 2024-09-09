@@ -1,13 +1,15 @@
 <div class="main-content">
   <div class="section-content section-content-p30">
     <div class="category-filter-icons">
-      <div class="icon-container" (click)="toggleCategoryMenu()">
-        <i class="fa-solid fa-list"></i>
-        <span class="icon-label">Categories</span>
-      </div>
-      <div class="icon-container" (click)="toggleFilterMenu()">
-        <i class="fa-solid fa-filter"></i>
-        <span class="icon-label">Filter</span>
+      <div class="d-flex align-items-center justify-content-start mb-3 ms-5">
+        <div class="text-center me-5" (click)="toggleCategoryMenu()">
+          <i class="fa-solid fa-list fa-2x"></i>
+          <span class="d-block mt-1">Categories</span>
+        </div>
+        <div class="text-center" (click)="toggleFilterMenu()">
+          <i class="fa-solid fa-filter fa-2x"></i>
+          <span class="d-block mt-1">Filter</span>
+        </div>
       </div>
     </div>
     <h4>Results: {{ totalElements }}</h4>
@@ -49,8 +51,12 @@
               </div>
               <div class="col-md-3 d-flex justify-content-end align-items-center" style="margin-bottom: 25px;">
                 <span class="mr-2">Page Size</span>
-                <select id="pageSizeSelect" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-                  <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+                <select id="pageSizeSelect"
+                        [(ngModel)]="pageSize"
+                        (ngModelChange)="onPageSizeChange()">
+                  <option *ngFor="let size of pageSizes"
+                          [value]="size">{{ size }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -59,8 +65,9 @@
       </div>
       <!-- end footer -->
       <app-product-category-menu *ngIf="showCategoryMenu"></app-product-category-menu>
-      <app-filter [categoryId]="currentCategoryId" [selectedCategory]="currentCategoryName" *ngIf="showFilterMenu"
-                  (filteredProducts)="handleFilteredProducts($event)"></app-filter>
+      <app-filter *ngIf="showFilterMenu"
+                  [selectedCategory]="currentCategoryName"
+                  (filterCriteria)="handleFilteredProducts($event)"></app-filter>
     </div>
   </div>
 </div>

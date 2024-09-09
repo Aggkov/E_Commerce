@@ -121,31 +121,42 @@ a,a:hover{
   min-height:100vh
 }
 
-.category-filter-icons {
-  display: flex;
-  align-items: center;
-  /*justify-content: center;*/
-  gap: 30px; /* Add space between icons and text */
-  margin-bottom: 20px; /* Space below the header */
-  margin-left: 220px; /* Adjust this value to move the icons to the left */
-}
-
-.icon-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the label below the icon */
-}
-
-.icon-container i {
-  font-size: 24px; /* Adjust icon size */
+/* You can adjust icon size directly with FontAwesome's fa-2x, fa-3x, etc., but if needed: */
+.fa-solid {
   cursor: pointer;
 }
 
 .icon-label {
-  margin-top: 5px; /* Space between the icon and the label */
-  font-size: 14px; /* Adjust label text size */
-  color: #333; /* Placeholder text color */
+  color: #333; /* Adjust text color if needed */
+  font-size: 14px; /* Optional: Can be controlled via Bootstrap's text classes if needed */
 }
+
+
+/*.category-filter-icons {*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  !*justify-content: center;*!*/
+/*  gap: 30px; !* Add space between icons and text *!*/
+/*  margin-bottom: 20px; !* Space below the header *!*/
+/*  margin-left: 220px; !* Adjust this value to move the icons to the left *!*/
+/*}*/
+
+/*.icon-container {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  align-items: center; !* Center the label below the icon *!*/
+/*}*/
+
+/*.icon-container i {*/
+/*  font-size: 24px; !* Adjust icon size *!*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*.icon-label {*/
+/*  margin-top: 5px; !* Space between the icon and the label *!*/
+/*  font-size: 14px; !* Adjust label text size *!*/
+/*  color: #333; !* Placeholder text color *!*/
+/*}*/
 
 aside.menu-sidebar.d-none.d-lg-block.clr{
   background:0 0;
@@ -297,13 +308,7 @@ input.au-input.au-input-xl{
   margin-left:11px
 }
 
-.form-header{
-  display:-webkit-box;
-  display:-webkit-flex;
-  display:-moz-box;
-  display:-ms-flexbox;
-  display:flex
-}
+
 
 .au-btn-submit{
   position:relative;

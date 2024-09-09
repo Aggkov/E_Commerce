@@ -110,7 +110,7 @@ public class ProductServiceUnitTest {
                 pageable,
                 mockProducts.size());
 
-        when(productRepository.findByCategoryId(categoryId, pageable)).thenReturn(mockPage);
+        when(productRepository.findByCategoryIdOrderByCreatedAt(categoryId, pageable)).thenReturn(mockPage);
 
         when(productMapper.productToProductDTO(any(Product.class)))
                 .thenAnswer(invocation -> {

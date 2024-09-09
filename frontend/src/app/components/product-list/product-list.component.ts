@@ -10,7 +10,7 @@ import {CartService} from "../../services/cart.service";
 import {ProductCategoryService} from "../../services/product-category.service";
 import {map} from "rxjs";
 import {ProductCategoryMenuComponent} from "../product-category-menu/product-category-menu.component";
-import {FilterComponent} from "../filter/filter.component";
+import {FilterComponent, FilterCriteria} from "../filter/filter.component";
 
 @Component({
   selector: 'app-product-list',
@@ -38,22 +38,27 @@ export class ProductListComponent implements OnInit {
   previousCategoryId: string = '';
   previousSearchQuery: string = "";
   currentSearchQuery: string = "";
+
   // new properties for pagination
   pageNumber: number = 1;
   pageSize: number = 5;
   totalElements: number = 0;
   // totalPages: number = 0;
   pageSizes: number[] = [2, 5, 10, 20, 50];
+
   productCategoryIds: string[] = [];
   showCategoryMenu: boolean = false;
   showFilterMenu: boolean = false;
+  isFiltered: boolean = false; // Flag to track whether filtering is applied
+
+  filterCriteria: FilterCriteria | null = null; // Use null when no filter is applied
 
   constructor(private productService: ProductService,
               private productCategoryService: ProductCategoryService,
               // current active route that loaded the component
               // need it to access route params
               private cartService: CartService,
-              private route: ActivatedRoute) {
+              private activeRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -66,7 +71,7 @@ export class ProductListComponent implements OnInit {
       })
     ).subscribe({
         next: () => {
-          this.route.paramMap.subscribe(() => {
+          this.activeRoute.paramMap.subscribe(() => {
             this.listProducts();
           });
         },
@@ -81,20 +86,23 @@ export class ProductListComponent implements OnInit {
   // the next callback is called. If there's an error, the error callback is called.
   // When the observable completes, if a complete callback is provided, it is executed.
   listProducts() {
-    const queryValue = this.route.snapshot.paramMap.get('query');
+    const queryValue = this.activeRoute.snapshot.paramMap.get('query');
     const hasSearchQuery = queryValue !== null && queryValue.trim() !== '';
+
     if (hasSearchQuery) {
+      this.isFiltered = false;  // Reset isFiltered if a search is done
       this.showSearchedResults();
+    } else if (this.isFiltered && this.filterCriteria) {
+      this.showFilteredProducts();
     } else {
+      this.isFiltered = false;  // Reset isFiltered if a search is done
       this.showProductListByCategory();
     }
   }
 
   private showSearchedResults() {
-    this.currentSearchQuery = this.route.snapshot.paramMap.get('query')!;
+    this.currentSearchQuery = this.activeRoute.snapshot.paramMap.get('query')!;
 
-    // if we have a different keyword than previous
-    // then set thePageNumber to 1
     if (this.previousSearchQuery != this.currentSearchQuery) {
       this.pageNumber = 1;
     }
@@ -119,11 +127,11 @@ export class ProductListComponent implements OnInit {
 
   private showProductListByCategory() {
     // check if "id" parameter is available
-    const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
+    const hasCategoryId: boolean = this.activeRoute.snapshot.paramMap.has('id');
     // console.log('inside showProductListByCategory Category IDs:', this.productCategoryIds);
     if (hasCategoryId) {
-      this.currentCategoryId = this.route.snapshot.paramMap.get('id')!;
-      this.currentCategoryName = this.route.snapshot.paramMap.get('name')!;
+      this.currentCategoryId = this.activeRoute.snapshot.paramMap.get('id')!;
+      this.currentCategoryName = this.activeRoute.snapshot.paramMap.get('name')!;
     } else {
       // not category id available ... default to first category id from array
       this.currentCategoryId = this.productCategoryIds[0];
@@ -160,8 +168,34 @@ export class ProductListComponent implements OnInit {
     })
   }
 
+  handleFilteredProducts(filterCriteria: any) {
+    // Set the filter criteria and flag that we are in filtered mode
+    this.filterCriteria = filterCriteria;
+    this.isFiltered = true;
+    this.pageNumber = 1; // Reset pagination
+    this.listProducts();
+
+  }
+
+  private showFilteredProducts() {
+    this.productService.getFilteredProducts(
+      this.filterCriteria,
+      this.currentCategoryId,
+      this.pageNumber - 1,
+      this.pageSize)
+      .subscribe({
+        next: data => {
+          this.products = data.content;
+          this.pageNumber = data.page + 1;
+          this.pageSize = data.size;
+          this.totalElements = data.totalElements;
+        },
+        error: err => console.log(err)
+      });
+  }
+
   onPageSizeChange() {
-    this.pageNumber = 1;  // Reset to the first page
+    this.pageNumber = 1;
     this.listProducts();  // Reload the products, refresh page
   }
 
@@ -173,10 +207,11 @@ export class ProductListComponent implements OnInit {
 
   toggleCategoryMenu() {
     this.showCategoryMenu = !this.showCategoryMenu;
-
-    // Optionally, close filter menu if open
     if (this.showCategoryMenu) {
       this.showFilterMenu = false;
+      this.isFiltered = false;  // Reset filtering
+      this.filterCriteria = null; // Clear filter criteria
+      this.listProducts();
     }
   }
 
@@ -188,9 +223,5 @@ export class ProductListComponent implements OnInit {
     if (this.showFilterMenu) {
       this.showCategoryMenu = false;
     }
-  }
-
-  handleFilteredProducts(filteredProducts: Product[]) {
-    this.products = filteredProducts;
   }
 }

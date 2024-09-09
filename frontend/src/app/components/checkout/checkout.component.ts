@@ -59,7 +59,6 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.cartItems = this.cartService.cartItems;
-
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
         firstName: new FormControl('',
@@ -202,7 +201,7 @@ export class CheckoutComponent implements OnInit {
       newCustomer,
       orderItems
     );
-    console.log("order is: ",JSON.stringify(newOrder));
+    // console.log("order is: ",JSON.stringify(newOrder));
 
     this.checkoutService.createOrder(newOrder).subscribe({
         next: response => {

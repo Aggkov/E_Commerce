@@ -55,14 +55,21 @@ export class ProductService {
   }
 
   // Function to get filtered products from the backend
-  getFilteredProducts(filterData: any, categoryId: string): Observable<GetResponseProducts> {
+  getFilteredProducts(filterCriteria: any,
+                      categoryId: string,
+                      page: number,
+                      pageSize: number): Observable<GetResponseProducts> {
     return this.httpClient.get<GetResponseProducts>(`${this.baseUrl}/filter`, {
       params: {
         categoryId: categoryId,
-        min_price: filterData.priceFrom,
-        max_price: filterData.priceTo
+        min_price: filterCriteria.priceFrom,
+        max_price: filterCriteria.priceTo,
+        page: page,
+        size: pageSize
       }
-    });
+    }).pipe(
+      tap(data => console.log(`filtered products are ${data.content}`))
+    );
   }
 }
 

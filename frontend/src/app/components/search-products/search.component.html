@@ -1,35 +1,38 @@
 <header class="header-desktop">
   <div class="section-content section-content-p30">
     <div class="container-fluid">
-      <div class="header-wrap">
-        <form class="form-header" [formGroup]="searchForm" (ngSubmit)="onSearch()"
+      <div class="d-flex justify-content-between align-items-center">
+        <form class="form-header position-relative d-flex"
+              [formGroup]="searchForm"
+              (ngSubmit)="onSearch()"
               method="GET">
-          <input
-            class="au-input au-input-xl"
-            type="text"
-            formControlName="searchQuery"
-            placeholder="Search for data ..."
-          />
-          <button class="au-btn-submit"
-                  type="submit">
-            Search
-          </button>
-          <!-- Display validation messages -->
-          <!--  <div *ngIf="searchForm.get('searchQuery')?.invalid &&-->
-          <!--  (searchForm.get('searchQuery')?.dirty || searchForm.get('searchQuery')?.touched)">-->
-          <!--    <small class="error" *ngIf="searchForm.get('searchQuery')?.errors?.['required']">-->
-          <!--      Search term is required.</small>-->
-          <!--  </div>-->
+          <div class="input-group">
+            <input
+              class="form-control"
+              type="text"
+              formControlName="searchQuery"
+              placeholder="Search for data ..."
+            />
+            <button class="au-btn-submit"
+                    type="submit">
+              Search
+            </button>
+          </div>
         </form>
-        <app-cart-status></app-cart-status>
+        <div class="ml-3">
+          <app-cart-status></app-cart-status>
+        </div>
       </div>
       <div class="account-wrap"></div>
     </div>
   </div>
 </header>
-<ul *ngIf="(suggestions$ | async) as suggestions">
+<ul class="list-group position-absolute w-100 mt-1"
+    *ngIf="(suggestions$ | async) as suggestions">
   <div *ngIf="suggestions.length > 0 && dropdownVisible">
-    <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
+    <li *ngFor="let suggestion of suggestions"
+        class="list-group-item list-group-item-action"
+        (click)="selectSuggestion(suggestion)">
       {{ suggestion.name }}
     </li>
   </div>

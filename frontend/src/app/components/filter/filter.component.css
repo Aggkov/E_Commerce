@@ -1,17 +1,70 @@
-.price-filter input {
-  width: 100%;
-  /*margin-bottom: 10px;*/
-  padding: 5px;
+/* General styling for the form */
+.price-filter, .price-range, .name-filter {
+  margin-bottom: 20px; /* Space between different input types */
+  margin-left: 10px;
 }
 
-/*.price-histogram {*/
-/*  margin: 20px 0;*/
-/*}*/
-
-.price-range {
-  margin: 20px 0;
+/* Smaller ellipsis around inputs */
+.input-wrapper {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.name-filter div {
-  margin-bottom: 5px;
+input[type="text"] {
+  border: 2px solid #ddd;
+  border-radius: 20px; /* Makes the input ellipsis-like */
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  width: 120px; /* Make the input smaller */
+  transition: border-color 0.3s ease-in-out;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+}
+
+/* Aligns the radio and checkbox inputs with their labels */
+.radio-wrapper, .checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+input[type="radio"], input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Label styling for readability */
+label {
+  font-size: 14px;
+  color: #333;
+  font-weight: normal;
+}
+
+/* Flexbox container for centering the button */
+.button-container {
+  display: flex;
+  justify-content: center; /* Centers the button horizontally */
+  align-items: center; /* Centers vertically if needed */
+  margin-top: 20px; /* Optional: adds space above the button */
+}
+
+/* Button styling */
+button {
+  align-items: center;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  /*margin-left: 40px;*/
+}
+
+button:hover {
+  background-color: #0056b3;
 }

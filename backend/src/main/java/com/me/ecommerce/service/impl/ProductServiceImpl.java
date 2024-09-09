@@ -60,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByCategoryPage = productRepository.findByCategoryId(id, pageable);
+        Page<Product> productsByCategoryPage = productRepository.findByCategoryIdOrderByCreatedAt(id, pageable);
 
         List<ProductDTO> productDTOS = productsByCategoryPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
