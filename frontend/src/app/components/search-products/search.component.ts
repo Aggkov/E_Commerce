@@ -4,20 +4,21 @@ import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {debounceTime, distinctUntilChanged, map, Observable, of, switchMap, tap} from "rxjs";
 import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
-import { Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {CartStatusComponent} from "../cart-status/cart-status.component";
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [
-    FormsModule,
-    NgIf,
-    ReactiveFormsModule,
-    NgForOf,
-    AsyncPipe,
-    CartStatusComponent
-  ],
+    imports: [
+        FormsModule,
+        NgIf,
+        ReactiveFormsModule,
+        NgForOf,
+        AsyncPipe,
+        CartStatusComponent,
+        RouterLink
+    ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.css'
 })
