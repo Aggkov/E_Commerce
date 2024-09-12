@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Order} from "../model/order";
+import {OrderItem} from "../model/order-item";
+import {Customer} from "../model/customer";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,8 @@ export class CheckoutService {
   }
 }
 
-interface OrderResponse {
+export interface OrderResponse {
   orderTrackingNumber: string;
+  orderItems: OrderItem [];
+  customer: Customer;
 }

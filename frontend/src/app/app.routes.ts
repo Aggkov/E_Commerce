@@ -3,6 +3,7 @@ import {ProductListComponent} from "./components/product-list/product-list.compo
 import {ProductDetailsComponent} from "./components/product-details/product-details.component";
 import {CartDetailsComponent} from "./components/cart-details/cart-details.component";
 import {CheckoutComponent} from "./components/checkout/checkout.component";
+import {OrderSuccessComponent} from "./components/order-success/order-success.component";
 
 export const routes: Routes = [
   {path: 'search/:query', component: ProductListComponent },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   {path: 'products', component: ProductListComponent},
   {path: 'cart-details', component: CartDetailsComponent},
   {path: 'checkout', component: CheckoutComponent},
+  {path: 'success', component: OrderSuccessComponent},
   {path: '', redirectTo: '/products', pathMatch: 'full'},
   {path: '**', redirectTo: '/products', pathMatch: 'full'}
 ];

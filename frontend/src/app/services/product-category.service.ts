@@ -20,7 +20,7 @@ export class ProductCategoryService {
   }
 }
 
-interface GetResponseProductCategory {
+export interface GetResponseProductCategory {
   content: ProductCategory[];
 }
 

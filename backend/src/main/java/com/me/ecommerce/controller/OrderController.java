@@ -2,9 +2,7 @@ package com.me.ecommerce.controller;
 
 import com.me.ecommerce.dto.request.OrderDTO;
 import com.me.ecommerce.dto.response.OrderDTOResponse;
-import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.service.OrderService;
-import com.me.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +25,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDTOResponse> createProduct(@RequestBody OrderDTO orderDTO) {
-        return ResponseEntity.ok(orderService.createOrder(orderDTO));
+    public ResponseEntity<OrderDTOResponse> createOrder(@RequestBody OrderDTO orderDTO) {
+        return ResponseEntity.ok(orderService.createNewOrder(orderDTO));
     }
 }

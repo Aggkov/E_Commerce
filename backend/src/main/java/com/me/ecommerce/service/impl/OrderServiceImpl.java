@@ -24,7 +24,10 @@ import com.me.ecommerce.repository.ShippingAddressRepository;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -49,18 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final StateRepository stateRepository;
 
     @Autowired
-    public OrderServiceImpl(CustomerRepository customerRepository,
-                            OrderRepository orderRepository,
-                            ProductRepository productRepository,
-                            ShippingAddressRepository shippingAddressRepository,
-                            BillingAddressRepository billingAddressRepository,
-                            OrderMapper orderMapper,
-                            OrderItemMapper orderItemMapper,
-                            CustomerMapper customerMapper,
-                            ShippingAddressMapper shippingAddressMapper,
-                            BillingAddressMapper billingAddressMapper,
-                            StateMapper stateMapper,
-                            StateRepository stateRepository) {
+    public OrderServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository, ProductRepository productRepository, ShippingAddressRepository shippingAddressRepository, BillingAddressRepository billingAddressRepository, OrderMapper orderMapper, OrderItemMapper orderItemMapper, CustomerMapper customerMapper, ShippingAddressMapper shippingAddressMapper, BillingAddressMapper billingAddressMapper, StateMapper stateMapper, StateRepository stateRepository) {
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
@@ -77,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTOResponse createOrder(OrderDTO orderDTO) {
+    public OrderDTOResponse createNewOrder(OrderDTO orderDTO) {
         // 1. Map OrderDTO to Order entity
         Order order = orderMapper.orderDTOtoOrder(orderDTO);
 
@@ -114,49 +106,41 @@ public class OrderServiceImpl implements OrderService {
 //        }
 
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
-        Set<UUID> productIds = orderDTO.getOrderItemList().stream()
-                .map(orderItemDTO -> orderItemDTO.getProduct().getId())
-                .collect(Collectors.toSet());
+        Set<UUID> productIds = orderDTO.getOrderItemList().stream().map(orderItemDTO -> orderItemDTO.getProduct().getId()).collect(Collectors.toSet());
 
-        Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream()
-                .collect(Collectors.toMap(Product::getId, product -> product));
-
+        Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream().collect(Collectors.toMap(Product::getId, product -> product));
         // prepare orderItem
-        orderDTO.getOrderItemList()
-                .forEach(orderItemDTO -> {
-                    Product product = productMap.get(orderItemDTO.getProduct().getId());
-                    if (product == null) {
-                        throw new RuntimeException("Product not found: " + orderItemDTO.getProduct().getId());
-                    }
-                    OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
-                    // parent add child
-                    product.addOrderItem(orderItem);
-                    // parent add child
-                    order.add(orderItem);
-                });
+        orderDTO.getOrderItemList().forEach(orderItemDTO -> {
+            if (productMap.containsKey(orderItemDTO.getProduct().getId())) {
+                Product product = productMap.get(orderItemDTO.getProduct().getId());
+                if (Objects.isNull(product)) {
+                    throw new RuntimeException("Product not found: " + orderItemDTO.getProduct().getId());
+                }
+                int currentUnitsInStock = product.getUnitsInStock();
+                product.setUnitsInStock(--currentUnitsInStock);
+                OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
+                // parent add child
+                product.addOrderItem(orderItem);
+                // parent add child
+                order.add(orderItem);
+            }
+        });
         // parent add child
         customer.add(order);
         // cascade persist
         customerRepository.save(customer);
 
-        return new OrderDTOResponse(orderTrackingNumber);
+        return new OrderDTOResponse(orderTrackingNumber, orderDTO);
     }
 
     private ShippingAddress getShippingAddress(OrderDTO orderDTO) {
         // Step 1: Check if the shipping address already exists in db
-        Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByIdOrStreetAndZipCodeAndCityAndState(
-                orderDTO.getCustomer().getShippingAddress().getId(),
-                orderDTO.getCustomer().getShippingAddress().getStreet(),
-                orderDTO.getCustomer().getShippingAddress().getZipCode(),
-                orderDTO.getCustomer().getShippingAddress().getCity(),
-                orderDTO.getCustomer().getShippingAddress().getState().getId()
-        );
+        Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByIdOrStreetAndZipCodeAndCityAndState(orderDTO.getCustomer().getShippingAddress().getId(), orderDTO.getCustomer().getShippingAddress().getStreet(), orderDTO.getCustomer().getShippingAddress().getZipCode(), orderDTO.getCustomer().getShippingAddress().getCity(), orderDTO.getCustomer().getShippingAddress().getState().getId());
 //         need only one address return existign or new, that address has references to cust ship and bill.
         // Step 2: Create or use existing shipping address
         ShippingAddress shippingAddress = existingShippingAddress.orElseGet(() -> {
             ShippingAddress newShippingAddress = shippingAddressMapper.shippingAddressDTOToAddress(orderDTO.getCustomer().getShippingAddress());
-            newShippingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId())
-                    .orElseThrow(() -> new RuntimeException("Shipping state not found")));
+            newShippingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId()).orElseThrow(() -> new RuntimeException("Shipping state not found")));
 //            return addressRepository.save(newAddress); // Save the new address
             return newShippingAddress;
         });
@@ -164,18 +148,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BillingAddress getBillingAddress(OrderDTO orderDTO) {
-        Optional<BillingAddress> existingBillingAddress = billingAddressRepository.findBillingAddressByIdOrStreetAndZipCodeAndCityAndState(
-                orderDTO.getCustomer().getShippingAddress().getId(),
-                orderDTO.getCustomer().getBillingAddress().getStreet(),
-                orderDTO.getCustomer().getBillingAddress().getZipCode(),
-                orderDTO.getCustomer().getBillingAddress().getCity(),
-                orderDTO.getCustomer().getBillingAddress().getState().getId()
-        );
+        Optional<BillingAddress> existingBillingAddress = billingAddressRepository.findBillingAddressByIdOrStreetAndZipCodeAndCityAndState(orderDTO.getCustomer().getShippingAddress().getId(), orderDTO.getCustomer().getBillingAddress().getStreet(), orderDTO.getCustomer().getBillingAddress().getZipCode(), orderDTO.getCustomer().getBillingAddress().getCity(), orderDTO.getCustomer().getBillingAddress().getState().getId());
 
         BillingAddress billingAddress = existingBillingAddress.orElseGet(() -> {
             BillingAddress newBillingAddress = billingAddressMapper.billingAddressDTOToAddress(orderDTO.getCustomer().getBillingAddress());
-            newBillingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId())
-                    .orElseThrow(() -> new RuntimeException("Shipping state not found")));
+            newBillingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId()).orElseThrow(() -> new RuntimeException("Shipping state not found")));
 //            return addressRepository.save(newAddress); // Save the new address
             return newBillingAddress;
         });

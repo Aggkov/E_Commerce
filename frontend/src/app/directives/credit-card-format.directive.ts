@@ -11,7 +11,8 @@ export class CreditCardFormatDirective {
 
   @HostListener('input', ['$event']) onInputChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\s+/g, ''); // Remove all existing spaces
+    // Remove all existing spaces
+    let value = input.value.replace(/\s+/g, '');
 
     // Split value into chunks of 4 digits
     let formattedValue = '';

@@ -66,7 +66,7 @@ export class ProductListComponent implements OnInit {
       // tap(response => console.log('Response:', response)),
       map(response => {
         this.productCategoryIds = response.map(category => category.id);
-        console.log('Category IDs:', this.productCategoryIds);
+        // console.log('Category IDs:', this.productCategoryIds);
         return this.productCategoryIds;
       })
     ).subscribe({

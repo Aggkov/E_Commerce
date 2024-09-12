@@ -3,7 +3,9 @@ package com.me.ecommerce.dto.request;
 import com.me.ecommerce.dto.response.CustomerDTO;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +20,5 @@ public class OrderDTO implements Serializable {
 
     private CustomerDTO customer;
 
-    private Set<OrderItemDTO> orderItemList = new LinkedHashSet<>();
+    private List<OrderItemDTO> orderItemList = new ArrayList<>();
 }

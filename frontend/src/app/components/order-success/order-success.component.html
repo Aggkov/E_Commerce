@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      Thank You for Your Purchase!
+    </div>
+    <div class="card-body">
+      <h5 class="card-title text-center">
+        We have sent you a confirmation email at
+        <strong>{{customerEmail}}
+        </strong>
+      </h5>
+      <p class="text-center">Order Tracking Number:
+        <span class="tracking-number">
+          {{orderTrackingNumber}}
+        </span></p>
+      <div class="order-details" *ngIf="orderItems.length > 0">
+        <h5>Products Purchased:</h5>
+        <div *ngFor="let item of orderItems" class="d-flex align-items-center mb-3 product-item">
+          <img [src]="item.product.imageUrl" alt="Product Image" class="me-3 product-image">
+          <!-- Product Name -->
+          <div class="product-details">
+            <span class="product-name">{{item.product.name}}</span>
+            <!-- Quantity Label and Value on Separate Lines -->
+            <div class="product-quantity">
+              <span>Quantity:</span>
+              <span class="quantity-number">{{item.quantity}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Shipping and Billing Information -->
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Shipping Address:</h5>
+          <div class="address-block">
+            <p>{{shippingStreet}}</p>
+            <p>{{shippingCity}}</p>
+            <p>{{shippingZipCode}}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5>Billing Address:</h5>
+          <div class="address-block">
+            <p>{{billingStreet}}</p>
+            <p>{{billingCity}}</p>
+            <p>{{billingZipCode}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

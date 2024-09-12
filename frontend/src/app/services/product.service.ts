@@ -75,7 +75,7 @@ export class ProductService {
 
 // defines the structure of the response data expected from the backend API.
 // json will be parsed to an embedded JavaScript object
-interface GetResponseProducts {
+export interface GetResponseProducts {
   content: Product[];
   size: number,
   page: number,

@@ -9,13 +9,14 @@ import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../model/cart-item";
 import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
-import {CheckoutService} from "../../services/checkout.service";
-import {Router} from "@angular/router";
+import {CheckoutService, OrderResponse} from "../../services/checkout.service";
+import {NavigationExtras, Router} from "@angular/router";
 import {Order} from "../../model/order";
 import {Customer} from "../../model/customer";
 import {OrderInfo} from "../../model/order-info";
 import {Address} from "../../model/address";
 import {OrderItem} from "../../model/order-item";
+// import {OrderResponse} from "../../services/checkout.service";
 
 @Component({
   selector: 'app-checkout',
@@ -210,9 +211,8 @@ export class CheckoutComponent implements OnInit {
           ${response.orderTrackingNumber}`);
 
           // reset cart
-          // this.resetCart();
+          this.resetCart(response);
         },
-
         error: err => alert(`There was an error: ${err.message}`)
     });
     // ?. === safely access object's properties
@@ -232,7 +232,7 @@ export class CheckoutComponent implements OnInit {
     // console.log("The shipping address state is " + this.checkoutFormGroup?.get('shippingAddress')?.value.state.name);
   }
 
-  resetCart() {
+  resetCart(orderResponse: OrderResponse) {
     // reset cart data
     this.cartService.cartItems = [];
     this.cartService.totalPrice.next(0);
@@ -241,8 +241,13 @@ export class CheckoutComponent implements OnInit {
     // reset the form
     this.checkoutFormGroup.reset();
 
+    // const navigationExtras: NavigationExtras = {
+    //   state: {
+    //     data: orderResponse
+    //   }
+    // };
     // navigate back to the products page
-    this.router.navigateByUrl("/products");
+    this.router.navigateByUrl("/success", { state: { orderResponse: orderResponse } });
   }
 
   /*
