@@ -27,7 +27,7 @@ cd your-repo
 
 **Backend**
 
-1. Install [PostgreSQL](https://www.postgresql.org/download/)
+1. Install [PostgreSQL](https://www.postgresql.org/download/) (Only if not using Docker)
 2. Run `docker-compose up -d` to start the docker container and load up database and data.
 3. Configure datasource in `application.properties or application.yml`. 
 Set database name: e-commerce,
