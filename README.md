@@ -5,6 +5,7 @@
 - Docker
 - Cart & order management
 - Checkout
+- Filtering
 - Pagination
 ## Technology Stacks
 **Backend**
