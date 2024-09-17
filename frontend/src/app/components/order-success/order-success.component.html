@@ -16,7 +16,7 @@
       <div class="order-details" *ngIf="orderItems.length > 0">
         <h5>Products Purchased:</h5>
         <div *ngFor="let item of orderItems" class="d-flex align-items-center mb-3 product-item">
-          <img [src]="item.product.imageUrl" alt="Product Image" class="me-3 product-image">
+          <img ngSrc="item.product.imageUrl" alt="Product Image" class="me-3 product-image" fill>
           <!-- Product Name -->
           <div class="product-details">
             <span class="product-name">{{item.product.name}}</span>

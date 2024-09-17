@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value ="/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value ="products", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:4200") // Replace with your frontend URL
 public class ProductController {
 

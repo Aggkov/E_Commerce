@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value ="/api/countries", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value ="countries", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:4200") // Replace with your frontend URL
 public class CountryController {
 

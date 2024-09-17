@@ -4,21 +4,23 @@ import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {debounceTime, distinctUntilChanged, map, Observable, of, switchMap, tap} from "rxjs";
 import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
-import {Router, RouterLink} from "@angular/router";
+import {Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {CartStatusComponent} from "../cart-status/cart-status.component";
+import {KeycloakService} from "../../services/keycloak/keycloak.service";
 
 @Component({
   selector: 'app-search',
   standalone: true,
-    imports: [
-        FormsModule,
-        NgIf,
-        ReactiveFormsModule,
-        NgForOf,
-        AsyncPipe,
-        CartStatusComponent,
-        RouterLink
-    ],
+  imports: [
+    FormsModule,
+    NgIf,
+    ReactiveFormsModule,
+    NgForOf,
+    AsyncPipe,
+    CartStatusComponent,
+    RouterLink,
+    RouterLinkActive
+  ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.css'
 })
@@ -30,7 +32,9 @@ export class SearchComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private productService: ProductService, private router: Router) {
+    private productService: ProductService,
+    private router: Router,
+    private keycloakService: KeycloakService) {
     this.searchForm = this.fb.group({
       searchQuery: ['']
     });
@@ -70,5 +74,14 @@ export class SearchComponent implements OnInit {
     if (!target.closest('.ul')) {
       this.dropdownVisible = false; // Hide dropdown if click is outside
     }
+  }
+
+  async keycloaklogout() {
+    await this.keycloakService.logout();
+  }
+
+  async keycloakLogin() {
+    // await this.keycloakService.init();
+    await this.keycloakService.login();
   }
 }

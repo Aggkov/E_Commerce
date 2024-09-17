@@ -5,12 +5,13 @@ import {Order} from "../model/order";
 import {OrderItem} from "../model/order-item";
 import {Customer} from "../model/customer";
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class CheckoutService {
 
-  private purchaseUrl = 'http://localhost:8080/api/order';
+  private purchaseUrl = 'http://localhost:8080/api/v1/order';
 
   constructor(private httpClient: HttpClient) { }
 

@@ -20,16 +20,20 @@
             </button>
           </div>
         </form>
+        <a routerLink="/admin-panel" (click)="keycloakLogin()"
+           routerLinkActive="active-link">
+          Admin
+        </a>
         <div class="ml-3">
           <app-cart-status></app-cart-status>
         </div>
+        <button class="btn btn-link" type="submit" (click)="keycloaklogout()"><i class="fas fa-door-open"></i></button>
       </div>
       <div class="account-wrap"></div>
     </div>
   </div>
 </header>
-<ul class="list-group position-absolute w-100 mt-1"
-    *ngIf="(suggestions$ | async) as suggestions">
+<ul *ngIf="(suggestions$ | async) as suggestions" class="list-group position-absolute w-100 mt-1">
   <div *ngIf="suggestions.length > 0 && dropdownVisible">
     <li *ngFor="let suggestion of suggestions"
         class="list-group-item list-group-item-action"
