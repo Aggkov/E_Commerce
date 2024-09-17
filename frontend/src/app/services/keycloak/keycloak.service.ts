@@ -14,7 +14,6 @@ export class KeycloakService {
     this.init();
   }
 
-
   // ngOnInit(): void {
   //
   // }
