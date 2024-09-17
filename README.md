@@ -7,6 +7,7 @@
 - Checkout
 - Filtering
 - Pagination
+- Keycloak
 ## Technology Stacks
 **Backend**
 - Java 17
@@ -29,14 +30,15 @@ cd your-repo
 **Backend**
 
 1. Install [PostgreSQL](https://www.postgresql.org/download/) (Only if not using Docker)
-2. Run `docker-compose up -d` to start the docker container and load up database and data.
-3. Configure datasource in `application.properties or application.yml`. 
+2. Run `docker-compose up -d` to start the docker container and load up keycloak and database.
+3. Go to localhost:9090 and log in with admin admin as credentials. Set up your own user in Keycloak.
+4. Configure datasource in `application.properties or application.yml`. 
 Set database name: e-commerce,
 username and password: ecommerce_user
-4. `cd backend`.
-5. Run `mvn -N wrapper:wrapper`.
-6. Run `mvn clean install`
-7. Run `mvn spring-boot:run`.
+5. `cd backend`.
+6. Run `mvn -N wrapper:wrapper`.
+7. Run `mvn clean install`
+8. Run `mvn spring-boot:run`.
 
 **Frontend**
 1. Install [Node.js and npm](https://www.npmjs.com/get-npm)
