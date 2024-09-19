@@ -9,9 +9,13 @@ import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',
   providers: [
-    { provide: HTTP_INTERCEPTORS, useValue: httpTokenInterceptor, multi: true }
+    // { provide: HTTP_INTERCEPTORS, useValue: httpTokenInterceptor, multi: true }
   ]
 })
+
 export class AdminPanelComponent {
 
+  constructor() {
+    console.log('in admin panel~');
+  }
 }

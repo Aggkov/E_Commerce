@@ -3,7 +3,6 @@ package com.me.ecommerce.config.KeycloakJwtAuthenticationConverter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
@@ -29,14 +28,17 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
     }
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
-        var resourceAccess = new HashMap<>(jwt.getClaim("resource_access"));
+        var account = new HashMap<>(jwt.getClaimAsMap("resource_access.account"));
 
-        var eternal = (Map<String, List<String>>) resourceAccess.get("account");
+        // (Map<?, ?>)
+//        var eternal = resourceAccess.getClaimAsMap("account");
 
-        var roles = eternal.get("roles");
+        var roles = (List<?>) account.get("roles");
 
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.replace("-", "_")))
+                .map(role -> new SimpleGrantedAuthority(
+                        "ROLE_" + ((String) role).replace("-", "_"))
+                )
                 .collect(toSet());
     }
 }

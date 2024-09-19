@@ -174,7 +174,6 @@ export class ProductListComponent implements OnInit {
     this.isFiltered = true;
     this.pageNumber = 1; // Reset pagination
     this.listProducts();
-
   }
 
   private showFilteredProducts() {

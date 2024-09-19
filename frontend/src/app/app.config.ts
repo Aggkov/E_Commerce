@@ -4,9 +4,9 @@ import {routes} from './app.routes';
 import {provideHttpClient} from '@angular/common/http';
 import {KeycloakService} from "./services/keycloak/keycloak.service";
 
-function initializeKeycloak(keycloak: KeycloakService) {
-  return () => keycloak.init();
-}
+// function initializeKeycloak(keycloak: KeycloakService) {
+//   return () => keycloak.init();
+// }
 
 export const appConfig: ApplicationConfig = {
   providers: [

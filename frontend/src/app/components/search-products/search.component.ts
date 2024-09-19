@@ -7,6 +7,7 @@ import {ProductService} from "../../services/product.service";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {CartStatusComponent} from "../cart-status/cart-status.component";
 import {KeycloakService} from "../../services/keycloak/keycloak.service";
+import {routes} from "../../app.routes";
 
 @Component({
   selector: 'app-search',
@@ -41,21 +42,22 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.suggestions$ = this.searchForm.get('searchQuery')!.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(query => {
-        if (query.trim() === "") {
-          this.dropdownVisible = false; // Hide dropdown if query is empty
-          // Return an observable of an empty array if the query is empty
-          return of([]);
-        } else {
-          this.dropdownVisible = true; // Show dropdown if there is a query
-          return this.productService.searchProductByKeywords(query);
-        }
-      }),
-      // tap(suggestions => console.log("Suggestions:", suggestions, this.dropdownVisible))
-    );
+    this.suggestions$ = this.searchForm.get('searchQuery')!.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(query => {
+          if (query.trim() === "") {
+            this.dropdownVisible = false; // Hide dropdown if query is empty
+            // Return an observable of an empty array if the query is empty
+            return of([]);
+          } else {
+            this.dropdownVisible = true; // Show dropdown if there is a query
+            return this.productService.searchProductByKeywords(query);
+          }
+        }),
+        // tap(suggestions => console.log("Suggestions:", suggestions, this.dropdownVisible))
+      );
   }
 
   onSearch(): void {
@@ -76,12 +78,22 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  async keycloaklogout() {
-    await this.keycloakService.logout();
+  keycloakLogin() {
+    // this.keycloakService.init().then(() => {
+    return this.keycloakService.login();
+    // }).catch(error => {
+    //   console.error('Login failed', error);
+    // });
   }
 
-  async keycloakLogin() {
-    // await this.keycloakService.init();
-    await this.keycloakService.login();
+  keycloakLogout() {
+    // this.keycloakService.init().then(() => {
+    return this.keycloakService.logout();
+    // }).catch(error => {
+    //   console.error('Logout failed', error);
+    // });
   }
+
+  // this.router.navigateByUrl('/products');
+  // this.router.navigate(['/products']);
 }

@@ -1,0 +1,9 @@
+<!-- silent-check-sso.html -->
+<html>
+<body>
+<script>
+  // This script is necessary for Keycloak to perform silent SSO checks
+  parent.postMessage(location.href, location.origin);
+</script>
+</body>
+</html>

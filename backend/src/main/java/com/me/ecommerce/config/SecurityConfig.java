@@ -40,8 +40,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/swagger-ui.html",
                                 "/**"
-                        ).permitAll() // Allow access without authentication
-
+                        ).permitAll()
                         // Require authentication for all other requests
                         .anyRequest().authenticated()
                 )

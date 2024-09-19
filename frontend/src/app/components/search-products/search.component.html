@@ -20,14 +20,13 @@
             </button>
           </div>
         </form>
-        <a routerLink="/admin-panel" (click)="keycloakLogin()"
-           routerLinkActive="active-link">
+        <button class="btn btn-primary" type="submit" (click)="keycloakLogin()">
           Admin
-        </a>
+        </button>
         <div class="ml-3">
           <app-cart-status></app-cart-status>
         </div>
-        <button class="btn btn-link" type="submit" (click)="keycloaklogout()"><i class="fas fa-door-open"></i></button>
+        <button class="btn btn-link" type="submit" (click)="keycloakLogout()"><i class="fas fa-door-open"></i></button>
       </div>
       <div class="account-wrap"></div>
     </div>

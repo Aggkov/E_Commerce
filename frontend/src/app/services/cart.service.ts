@@ -75,37 +75,33 @@ export class CartService {
     // this.logCartData(totalPriceValue, totalQuantityValue);
   }
 
-  private logCartData(totalPriceValue: number, totalQuantityValue: number) {
-    console.log('Contents of the cart');
-    for (let cartItem of this.cartItems) {
-      const subTotalPrice = cartItem.quantity * cartItem.product.unitPrice;
-      console.log(`name: ${cartItem.product.name}, quantity=${cartItem.quantity},
-      unitPrice=${cartItem.product.unitPrice}, subTotalPrice=${subTotalPrice}`);
-    }
-
-    console.log(`totalPrice: ${totalPriceValue.toFixed(2)},
-    totalQuantity: ${totalQuantityValue}`);
-    console.log('----');
-  }
+  // private logCartData(totalPriceValue: number, totalQuantityValue: number) {
+  //   console.log('Contents of the cart');
+  //   for (let cartItem of this.cartItems) {
+  //     const subTotalPrice = cartItem.quantity * cartItem.product.unitPrice;
+  //     console.log(`name: ${cartItem.product.name}, quantity=${cartItem.quantity},
+  //     unitPrice=${cartItem.product.unitPrice}, subTotalPrice=${subTotalPrice}`);
+  //   }
+  //
+  //   console.log(`totalPrice: ${totalPriceValue.toFixed(2)},
+  //   totalQuantity: ${totalQuantityValue}`);
+  //   console.log('----');
+  // }
 
   decrementQuantity(cartItem: CartItem) {
     if (cartItem.quantity > 0) {
       cartItem.quantity--;
       this.computeCartTotals();
-      // this.remove(cartItem);
     }
   }
 
   remove(cartItem: CartItem) {
-// get index of item in the array
     const itemIndex = this.cartItems.findIndex(
       item => item.product.id === cartItem.product.id
     );
 
-    // if found, remove the item from the array at the given index
     if (itemIndex > -1) {
       this.cartItems.splice(itemIndex, 1);
-
       this.computeCartTotals();
     }
   }
