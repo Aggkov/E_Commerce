@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
 
   // Wait until Keycloak is initialized
-  await keycloakService.init();
+  // await keycloakService.init();
 
   console.log('Keycloak Authenticated:', keycloakService.keycloak?.authenticated);
   console.log('Keycloak Token Expired:', keycloakService.keycloak?.isTokenExpired());

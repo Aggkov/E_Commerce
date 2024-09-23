@@ -95,7 +95,8 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findProductsBetweenMinPriceAndMaxPrice(
                 categoryId,
                 Double.parseDouble(min_price),
-                Double.parseDouble(max_price), pageable);
+                Double.parseDouble(max_price),
+                pageable);
         List<ProductDTO> productDTOS = productPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();

@@ -21,12 +21,16 @@
           </div>
         </form>
         <button class="btn btn-primary" type="submit" (click)="keycloakLogin()">
-          Admin
+          Sign in
+        </button>
+        <button *ngIf="isAdmin" class="btn btn-primary" type="submit" (click)="navigateToAdminPanel()">
+          Go to Admin Panel
         </button>
         <div class="ml-3">
           <app-cart-status></app-cart-status>
         </div>
-        <button class="btn btn-link" type="submit" (click)="keycloakLogout()"><i class="fas fa-door-open"></i></button>
+        <button class="btn btn-link" type="submit" (click)="keycloakLogout()">
+          <i class="fas fa-door-open"></i></button>
       </div>
       <div class="account-wrap"></div>
     </div>

@@ -1,13 +1,12 @@
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {ChangeDetectorRef, Component, HostListener, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {debounceTime, distinctUntilChanged, map, Observable, of, switchMap, tap} from "rxjs";
+import {debounceTime, distinctUntilChanged, Observable, of, switchMap} from "rxjs";
 import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {CartStatusComponent} from "../cart-status/cart-status.component";
 import {KeycloakService} from "../../services/keycloak/keycloak.service";
-import {routes} from "../../app.routes";
 
 @Component({
   selector: 'app-search',
@@ -30,6 +29,7 @@ export class SearchComponent implements OnInit {
   searchQuery: string = '';
   suggestions$: Observable<Product[]> = of([]);
   dropdownVisible = false;
+  isAdmin: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,6 +38,9 @@ export class SearchComponent implements OnInit {
     private keycloakService: KeycloakService) {
     this.searchForm = this.fb.group({
       searchQuery: ['']
+    });
+    this.keycloakService.init().then(() => {
+      this.isAdmin = this.keycloakService.hasRole('admin');
     });
   }
 
@@ -94,6 +97,8 @@ export class SearchComponent implements OnInit {
     // });
   }
 
-  // this.router.navigateByUrl('/products');
-  // this.router.navigate(['/products']);
+  navigateToAdminPanel() {
+    this.router.navigate(['/admin-panel']);
+    // this.router.navigateByUrl('/admin-panel');
+  }
 }
