@@ -86,7 +86,7 @@ export class FilterComponent implements OnInit {
     // check if priceTo is less than priceFrom
     if (!isNaN(Number(this.priceFrom)) &&
       !isNaN(Number(this.priceTo)) &&
-      this.priceFrom < this.priceFrom
+      this.priceTo < this.priceFrom
     ) {
       // Swap the values
       let tmp = "";

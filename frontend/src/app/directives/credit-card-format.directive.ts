@@ -6,7 +6,7 @@ import {Directive, ElementRef, HostListener} from '@angular/core';
 })
 export class CreditCardFormatDirective {
 
-  constructor(private el: ElementRef) {
+  constructor() {
   }
 
   @HostListener('input', ['$event']) onInputChange(event: Event) {

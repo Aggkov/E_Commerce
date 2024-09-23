@@ -16,6 +16,7 @@ import {Customer} from "../../model/customer";
 import {OrderInfo} from "../../model/order-info";
 import {Address} from "../../model/address";
 import {OrderItem} from "../../model/order-item";
+import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-card-expiration-date-format.directive";
 // import {OrderResponse} from "../../services/checkout.service";
 
 @Component({
@@ -26,7 +27,8 @@ import {OrderItem} from "../../model/order-item";
     CurrencyPipe,
     NgForOf,
     NgIf,
-    CreditCardFormatDirective
+    CreditCardFormatDirective,
+    CreditCardExpirationDateFormatDirective
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css'
@@ -36,12 +38,6 @@ export class CheckoutComponent implements OnInit {
 
   totalPrice: number = 0;
   totalQuantity: number = 0;
-  invalidYear: boolean = false;
-  invalidMonth: boolean = false;
-  currentYear: number = new Date().getFullYear() % 100;
-  currentMonth: number = new Date().getMonth() + 1;
-  maxYear: number = this.currentYear + 20;
-  private isBackspacePressed = false;
   showBillingInfo: boolean = true;
   countries: Country[] = [];
   shippingAddressStates: State[] = [];
@@ -111,7 +107,9 @@ export class CheckoutComponent implements OnInit {
           [Validators.required,
             Validators.pattern('[0-9]{3}')
           ]),
-        expirationDate: [''],
+        expirationDate: new FormControl('',
+          [Validators.required])
+        // (keydown)="onKeyDown($event)"
         // expirationMonth: [''],
         // expirationYear: ['']
       })
@@ -237,15 +235,8 @@ export class CheckoutComponent implements OnInit {
     this.cartService.cartItems = [];
     this.cartService.totalPrice.next(0);
     this.cartService.totalQuantity.next(0);
-
     // reset the form
     this.checkoutFormGroup.reset();
-
-    // const navigationExtras: NavigationExtras = {
-    //   state: {
-    //     data: orderResponse
-    //   }
-    // };
     // navigate back to the products page
     this.router.navigateByUrl("/success", { state: { orderResponse: orderResponse } });
   }
@@ -275,91 +266,6 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  onExpirationDateInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let userInput = input.value.replace(/\D/g, ''); // Remove non-digit characters
-    let formattedValue = '';
-
-    // Handle backspace: Remove one character at a time
-    if (this.isBackspacePressed) {
-      if (userInput.endsWith('/')) {
-      //   // If the last character is '/', remove it
-      formattedValue = userInput.slice(0, -1);
-      }
-      else {
-        // Otherwise, just remove the last character
-        formattedValue = userInput;
-      }
-      this.invalidYear = false;
-      this.invalidMonth = false;
-      this.isBackspacePressed = false; // Reset backspace flag
-    } else {
-      // Skip formatting if backspace was pressed
-      if (userInput.length === 1) {
-        if (parseInt(userInput[0], 10) > 1) {
-          formattedValue = '0' + userInput[0] + '/'; // Pad single digits with '0' if > 1
-        } else {
-          formattedValue = userInput[0]; // Keep the digit if it's '1'
-        }
-      }
-
-      if (userInput.length === 2) {
-        let month = parseInt(userInput.slice(0, 2), 10);
-
-        if (month > 12) {
-          formattedValue = userInput[0]; // Revert to the first digit
-        } else {
-          formattedValue = userInput.slice(0, 2) + '/'; // Add the slash after a valid month
-        }
-      }
-
-      if (userInput.length === 3) {
-        let month = parseInt(userInput.slice(0, 2), 10);
-        let yearFirstDigit = userInput[2];
-        if (month > 12) {
-          formattedValue = userInput[0]; // Revert to the first digit
-        } else {
-          formattedValue = userInput.slice(0, 2) + '/' + yearFirstDigit; // Add the first digit of the year
-        }
-      }
-
-      if (userInput.length === 4) {
-        let month = parseInt(userInput.slice(0, 2), 10);
-        let year = parseInt(userInput.slice(2, 4), 10);
-
-        if (month > 12) {
-          formattedValue = userInput[0]; // Revert to the first digit
-        } else if (year < this.currentYear || year > this.maxYear) {
-          this.invalidYear = true; // Set an error or display a message
-          return;
-        } else if (year === this.currentYear && month < this.currentMonth) {
-          this.invalidMonth = true;
-          return;
-        } else {
-          formattedValue = userInput.slice(0, 2) + '/' + userInput.slice(2, 4); // Complete MM/YY format
-        }
-      }
-      // Update the input value and form control
-      input.value = formattedValue;
-      // this.checkoutFormGroup.controls['creditCard'].patchValue({expirationDate: formattedValue}, {emitEvent: false});
-      this.checkoutFormGroup.controls['creditCard'].patchValue(
-        {expirationDate: formattedValue},
-        {emitEvent: false});
-
-      console.log(`Formatted value: ${formattedValue}`);
-    }
-  }
-
-  onCardNameInput(event: Event) {
-    const input = event.target as HTMLInputElement;
-    let userInput = input.value.replace(/\D/g, ''); // Remove non-digit characters
-    let formattedValue = '';
-  }
-// 5425233430109903
-  onKeyDown(event: KeyboardEvent) {
-    this.isBackspacePressed = event?.key === 'Backspace';
-  }
-
   getStatesByCountryCode(formGroupName: string) {
     const formGroup = this.checkoutFormGroup
       .controls[formGroupName];
@@ -381,9 +287,18 @@ export class CheckoutComponent implements OnInit {
         }
         // select first item by default
         formGroup?.get('state')?.setValue(data[0]);
-        // formGroup.value.setValue().setValue(data[0]);
       }
     })
+  }
+
+  onCardNameInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    // allow only characters, remove digits
+    let userInput = input.value.replace(/\d/g, '');
+    input.value = userInput;
+    this.creditCardNameOnCard?.patchValue(
+      userInput,
+      {emitEvent: false});
   }
 }
 

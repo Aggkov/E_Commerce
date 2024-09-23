@@ -29,11 +29,9 @@ export class LuhnCheckValidator {
           digit -= 9;
         }
       }
-
       // Sum the digits
       sum += digit;
     }
-
     // The card is valid if the sum modulo 10 is 0
     const isValid = sum % 10 === 0;
 
