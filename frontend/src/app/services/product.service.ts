@@ -59,16 +59,23 @@ export class ProductService {
                       categoryId: string,
                       page: number,
                       pageSize: number): Observable<GetResponseProducts> {
+    // Convert selected name filters (those set to true) to an array of keys
+    const selectedNameFilters = Object.keys(filterCriteria.nameFilters)
+      .filter(key => filterCriteria.nameFilters[key])
+      .join(','); // Convert the keys to a comma-separated string
+
     return this.httpClient.get<GetResponseProducts>(`${this.baseUrl}/filter`, {
       params: {
         categoryId: categoryId,
         min_price: filterCriteria.priceFrom,
         max_price: filterCriteria.priceTo,
+        price_range: filterCriteria.selectedPriceRange,
+        name_filters: selectedNameFilters, // Include selected name filters in the request
         page: page,
         size: pageSize
       }
     }).pipe(
-      tap(data => console.log(`filtered products are ${data.content}`))
+      // tap(data => console.log(`filtered products are ${JSON.stringify(data.content)}`))
     );
   }
 }

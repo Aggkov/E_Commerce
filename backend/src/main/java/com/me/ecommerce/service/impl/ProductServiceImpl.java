@@ -5,8 +5,10 @@ import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.mapper.ProductMapper;
+import com.me.ecommerce.repository.EntityManagerProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.ProductService;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +27,13 @@ import static com.me.ecommerce.utils.AppConstants.CREATED_AT;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final EntityManagerProductRepository entityManagerProductRepository;
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, EntityManagerProductRepository entityManagerProductRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.entityManagerProductRepository = entityManagerProductRepository;
         this.productMapper = productMapper;
     }
 
@@ -76,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByKeywordsPage = productRepository.searchByKeywordsPaginated(keywords, pageable);
+        Page<Product> productsByKeywordsPage = entityManagerProductRepository.searchByKeywordsPaginated(keywords, pageable);
 
         List<ProductDTO> productDTOs = productsByKeywordsPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
@@ -90,13 +94,33 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PagedResponse<ProductDTO> getFilteredProducts(
-            UUID categoryId, String min_price, String max_price, int page, int size) {
+            UUID categoryId, String min_price, String max_price, String priceRange, String nameFilters, int page, int size) {
+        // exceptions : category id is invalid, prices or (pages) bad request?
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
-        Page<Product> productPage = productRepository.findProductsBetweenMinPriceAndMaxPrice(
+
+        // Convert the comma-separated string to a List
+        List<String> nameFiltersList = nameFilters != null ? Arrays.asList(nameFilters.split(",")) : null;
+
+        // Adjust price range if selectedPriceRange is set
+        double minPrice = Double.parseDouble(min_price);
+        double maxPrice = Double.parseDouble(max_price);
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            if (range.length == 2) {
+                minPrice = Math.max(minPrice, Double.parseDouble(range[0]));
+                maxPrice = Math.min(maxPrice, Double.parseDouble(range[1]));
+            } else if (priceRange.equals("20")) {
+                minPrice = Math.max(minPrice, 20);
+            }
+        }
+
+        Page<Product> productPage = entityManagerProductRepository.getFilteredProducts(
                 categoryId,
-                Double.parseDouble(min_price),
-                Double.parseDouble(max_price),
+                minPrice,
+                maxPrice,
+                nameFiltersList,
                 pageable);
+
         List<ProductDTO> productDTOS = productPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
                 .toList();
@@ -107,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> searchProductByKeywords(String keywords) {
-        List<Product> products = productRepository.searchByKeywords(keywords);
+        List<Product> products = entityManagerProductRepository.searchByKeywords(keywords);
         return products.stream()
                 .map(productMapper::productToProductDTO)
                 .collect(Collectors.toList());

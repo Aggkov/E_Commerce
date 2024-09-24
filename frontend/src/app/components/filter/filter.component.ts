@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProductService} from "../../services/product.service";
 import {NgIf} from "@angular/common";
 
@@ -16,93 +16,97 @@ import {NgIf} from "@angular/common";
 })
 export class FilterComponent implements OnInit {
 
-  @Input() selectedCategory!: string
-  @Output() filterCriteria = new EventEmitter<any>();
+  @Input() selectedCategory!: string;
+  @Output() filterCriteria = new EventEmitter<FilterCriteria>();
 
+  filterFormGroup: FormGroup; // Reactive Form
   priceFrom!: string;
   priceTo!: string;
-  selectedPriceRange: string = '';
-  // Checkbox filters for book names
+
+  // Checkbox filters for book names as an object
   nameFilters = {
     java: false,
     javascript: false,
     python: false,
     vue: false,
     csharp: false,
-    sql: false
+    sql: false,
   };
 
-  constructor() {
+  constructor(private fb: FormBuilder) {
+    // Initialize the reactive form
+    this.filterFormGroup = this.fb.group({
+      priceFrom: [''], // Default empty values
+      priceTo: [''],
+      selectedPriceRange: [''],
+    });
   }
 
   ngOnInit(): void {
-    // this.priceForm = new FormGroup({
-    //   priceFrom: new FormControl(''),
-    //   priceTo: new FormControl('')
-    // });
-
-    // // Listen for changes on the form to check and swap the values if necessary
-    // this.priceForm.valueChanges.subscribe((values) => {
-    //   const priceFrom = parseFloat(values.priceFrom);
-    //   const priceTo = parseFloat(values.priceTo);
-    //
-    //   // Check if both values are numbers and priceTo is less than priceFrom
-    //   if (!isNaN(priceFrom) && !isNaN(priceTo) && priceTo < priceFrom) {
-    //     // Swap the values
-    //     this.priceForm.setValue({
-    //       priceFrom: priceTo.toString(),
-    //       priceTo: priceFrom.toString()
-    //     }, { emitEvent: false }); // Prevent infinite loop of valueChanges
-    //   }
-    // });
+    // Listen for changes to the selected price range and update inputs accordingly
+    this.filterFormGroup.get('selectedPriceRange')?.valueChanges.subscribe((value) => {
+      this.updatePriceRange(value);
+    });
   }
 
-  // Mock method to handle filtering based on user input
+  // Method to update price inputs when a radio button is selected
+  updatePriceRange(value: string) {
+    if (value) {
+      const [min, max] = value.split('-').map(Number);
+      this.filterFormGroup.patchValue({
+        priceFrom: !isNaN(min) ? min.toString() : '', // Set min value if exists
+        priceTo: !isNaN(max) ? max.toString() : '', // Set max value if exists, else leave blank
+      });
+    }
+  }
+
+  // Method to handle filtering based on user input
   applyFilter() {
-    this.priceFrom = this.priceFrom.trim();
-    this.priceTo = this.priceTo.trim();
-    let finalNumberFrom = "";
-    let finalNumberTo = "";
-    // find valid digits inside string
+    // Extract price values from form controls
+    this.priceFrom = this.filterFormGroup.controls['priceFrom'].value.trim();
+    this.priceTo = this.filterFormGroup.controls['priceTo'].value.trim();
+
+    let finalNumberFrom = '';
+    let finalNumberTo = '';
+
+    // Extract valid digits from priceFrom
     for (let i = 0; i < this.priceFrom.length; i++) {
       let digit = this.priceFrom[i];
-      if (!isNaN(Number(digit)) && digit !== " ") { // Ensure it's not NaN and not a space
+      if (!isNaN(Number(digit)) && digit !== ' ') {
         finalNumberFrom += digit;
       }
     }
-    // if not found set to default
-    if (finalNumberFrom === "" || isNaN(Number(finalNumberFrom))) this.priceFrom = "10";
-    else this.priceFrom = finalNumberFrom;
+    this.priceFrom = finalNumberFrom === '' || isNaN(Number(finalNumberFrom)) ? '10' : finalNumberFrom;
 
+    // Extract valid digits from priceTo
     for (let i = 0; i < this.priceTo.length; i++) {
       let digit = this.priceTo[i];
-      if (!isNaN(Number(digit)) && digit !== " ") { // Ensure it's not NaN and not a space
+      if (!isNaN(Number(digit)) && digit !== ' ') {
         finalNumberTo += digit;
       }
     }
-    if (finalNumberTo === "" || isNaN(Number(finalNumberTo))) this.priceTo = "15";
-    else this.priceTo = finalNumberTo;
+    this.priceTo = finalNumberTo === '' || isNaN(Number(finalNumberTo)) ? '15' : finalNumberTo;
 
-    // check if priceTo is less than priceFrom
-    if (!isNaN(Number(this.priceFrom)) &&
-      !isNaN(Number(this.priceTo)) &&
-      this.priceTo < this.priceFrom
-    ) {
-      // Swap the values
-      let tmp = "";
-      tmp = this.priceFrom;
-      this.priceFrom = this.priceTo;
-      this.priceTo = tmp;
+    // Check if priceTo is less than priceFrom and swap if necessary
+    if (!isNaN(Number(this.priceFrom)) && !isNaN(Number(this.priceTo)) && Number(this.priceTo) < Number(this.priceFrom)) {
+      [this.priceFrom, this.priceTo] = [this.priceTo, this.priceFrom];
     }
 
-    // this.selectedPriceRange.
-
-    const filterCriteria : FilterCriteria = {
+    // Update form controls with the potentially swapped values
+    this.filterFormGroup.patchValue({
       priceFrom: this.priceFrom,
       priceTo: this.priceTo,
-      selectedPriceRange: this.selectedPriceRange,
-      nameFilters: this.nameFilters
+    });
+
+    // Prepare the filter criteria object
+    const filterCriteria: FilterCriteria = {
+      priceFrom: this.priceFrom,
+      priceTo: this.priceTo,
+      selectedPriceRange: this.filterFormGroup.controls['selectedPriceRange'].value,
+      nameFilters: this.nameFilters,
     };
+
+    // Emit the filter criteria
     this.filterCriteria.emit(filterCriteria);
   }
 }
@@ -122,5 +126,25 @@ export interface FilterCriteria {
   selectedPriceRange: string;
   nameFilters: NameFilters;
 }
+
+// this.priceForm = new FormGroup({
+//   priceFrom: new FormControl(''),
+//   priceTo: new FormControl('')
+// });
+
+// // Listen for changes on the form to check and swap the values if necessary
+// this.priceForm.valueChanges.subscribe((values) => {
+//   const priceFrom = parseFloat(values.priceFrom);
+//   const priceTo = parseFloat(values.priceTo);
+//
+//   // Check if both values are numbers and priceTo is less than priceFrom
+//   if (!isNaN(priceFrom) && !isNaN(priceTo) && priceTo < priceFrom) {
+//     // Swap the values
+//     this.priceForm.setValue({
+//       priceFrom: priceTo.toString(),
+//       priceTo: priceFrom.toString()
+//     }, { emitEvent: false }); // Prevent infinite loop of valueChanges
+//   }
+// });
 
 

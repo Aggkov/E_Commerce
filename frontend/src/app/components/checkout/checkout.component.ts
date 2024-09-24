@@ -34,8 +34,8 @@ import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-c
   styleUrl: './checkout.component.css'
 })
 export class CheckoutComponent implements OnInit {
-  checkoutFormGroup!: FormGroup;
 
+  checkoutFormGroup!: FormGroup;
   totalPrice: number = 0;
   totalQuantity: number = 0;
   showBillingInfo: boolean = true;

@@ -78,9 +78,11 @@ public class ProductController {
             @RequestParam(name = "categoryId") UUID categoryId,
             @RequestParam(name = "min_price") String min_price,
             @RequestParam(name = "max_price") String max_price,
+            @RequestParam(name = "price_range", required = false) String priceRange,
+            @RequestParam(name = "name_filters", required = false) String nameFilters, // New parameter for selected filters
             @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return productService.getFilteredProducts(categoryId ,min_price, max_price, page, size);
+        return productService.getFilteredProducts(categoryId ,min_price, max_price, priceRange, nameFilters, page, size);
     }
 
     @PostMapping

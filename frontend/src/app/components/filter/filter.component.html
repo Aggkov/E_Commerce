@@ -2,69 +2,83 @@
   <!-- MENU SIDEBAR-->
   <aside class="menu-sidebar d-none d-lg-block">
     <!-- Price range inputs -->
-    <div class="price-filter">
-      <p>Filter Products</p>
-      <div class="input-wrapper">
-        <label for="priceFrom">Price From:</label>
-        <input id="priceFrom" type="text" placeholder="From" [(ngModel)]="priceFrom">
+    <div [formGroup]="filterFormGroup">
+      <div class="price-filter">
+        <p>Filter Products</p>
+        <div class="input-wrapper">
+          <label for="priceFrom">Price From:</label>
+          <input id="priceFrom"
+                 type="text"
+                 placeholder="From"
+                 formControlName="priceFrom">
+        </div>
+        <div class="input-wrapper">
+          <label for="priceTo">Price To:</label>
+          <input id="priceTo"
+                 type="text"
+                 placeholder="To"
+                 formControlName="priceTo">
+        </div>
       </div>
-      <div class="input-wrapper">
-        <label for="priceTo">Price To:</label>
-        <input id="priceTo" type="text" placeholder="To" [(ngModel)]="priceTo">
+      <!-- Price range radio buttons -->
+      <div class="price-range">
+        <label>Price Ranges:</label>
+        <div class="radio-wrapper">
+          <input type="radio"
+                 id="range1"
+                 formControlName="selectedPriceRange"
+                 value="10-15">
+          <label for="range1">$10 - $15</label>
+        </div>
+        <div class="radio-wrapper">
+          <input type="radio"
+                 id="range2"
+                 formControlName="selectedPriceRange"
+                 value="15-20">
+          <label for="range2">$15 - $20</label>
+        </div>
+        <div class="radio-wrapper">
+          <input type="radio"
+                 id="range3"
+                 formControlName="selectedPriceRange"
+                 value="20">
+          <label for="range3">$20 and above</label>
+        </div>
       </div>
-    </div>
-    <!-- Price range radio buttons -->
-    <div class="price-range">
-      <label>Price Ranges:</label>
-      <div class="radio-wrapper">
-        <input type="radio" id="range1" name="priceRange"
-               [(ngModel)]="selectedPriceRange"
-               value="10-15">
-        <label for="range1">$10 - $15</label>
+      <!-- Name filter checkboxes (only visible if category "books" is selected) -->
+      <div class="name-filter" *ngIf="selectedCategory === 'Books'">
+        <label for="nameFilter">Filter by Name:</label>
+        <div class="checkbox-wrapper">
+          <input type="checkbox"
+                 id="java"
+                 [(ngModel)]="nameFilters.java"
+                 [ngModelOptions]="{standalone: true}">
+          <label for="java">Java</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="js" [(ngModel)]="nameFilters.javascript" [ngModelOptions]="{standalone: true}">
+          <label for="js">JavaScript</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="python" [(ngModel)]="nameFilters.python" [ngModelOptions]="{standalone: true}">
+          <label for="python">Python</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="vue" [(ngModel)]="nameFilters.vue" [ngModelOptions]="{standalone: true}">
+          <label for="vue">Vue</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="csharp" [(ngModel)]="nameFilters.csharp" [ngModelOptions]="{standalone: true}">
+          <label for="csharp">C#</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="sql" [(ngModel)]="nameFilters.sql" [ngModelOptions]="{standalone: true}">
+          <label for="sql">SQL</label>
+        </div>
       </div>
-      <div class="radio-wrapper">
-        <input type="radio" id="range2" name="priceRange"
-               [(ngModel)]="selectedPriceRange"
-               value="15-20">
-        <label for="range2">$15 - $20</label>
+      <div class="button-container">
+        <button type="submit" (click)="applyFilter()" class="btn btn-primary btn-small">Apply</button>
       </div>
-      <div class="radio-wrapper">
-        <input type="radio" id="range3" name="priceRange"
-               [(ngModel)]="selectedPriceRange"
-               value="20">
-        <label for="range3">$20 and above</label>
-      </div>
-    </div>
-    <!-- Name filter checkboxes (only visible if category "books" is selected) -->
-    <div class="name-filter" *ngIf="selectedCategory === 'Books'">
-      <label for="nameFilter">Filter by Name:</label>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="java" [(ngModel)]="nameFilters.java">
-        <label for="java">Java</label>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="js" [(ngModel)]="nameFilters.javascript">
-        <label for="js">JavaScript</label>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="python" [(ngModel)]="nameFilters.python">
-        <label for="python">Python</label>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="vue" [(ngModel)]="nameFilters.vue">
-        <label for="vue">Vue</label>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="csharp" [(ngModel)]="nameFilters.csharp">
-        <label for="csharp">C#</label>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="sql" [(ngModel)]="nameFilters.sql">
-        <label for="sql">SQL</label>
-      </div>
-    </div>
-    <div class="button-container">
-      <button (click)="applyFilter()" class="btn btn-primary btn-small">Apply</button>
     </div>
   </aside>
 </div>
