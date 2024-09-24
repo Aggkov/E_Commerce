@@ -44,15 +44,15 @@ public class EntityManagerProductRepositoryImpl implements EntityManagerProductR
             query.setParameter("token" + i, tokens[i]);
         }
 
-//        int totalRows = query.getResultList().size();
-//        // pageable.getOffset() gives you the index of the first item on the current page.
-//        query.setFirstResult((int) pageable.getOffset());
-//        // pageable.getPageSize() returns the number of items per page.
-//        query.setMaxResults(pageable.getPageSize());
+        int totalRows = query.getResultList().size();
+        // pageable.getOffset() gives you the index of the first item on the current page.
+        query.setFirstResult((int) pageable.getOffset());
+        // pageable.getPageSize() returns the number of items per page.
+        query.setMaxResults(pageable.getPageSize());
 
         List<Product> products = query.getResultList();
 
-        return new PageImpl<>(products, pageable, products.size());
+        return new PageImpl<>(products, pageable, totalRows);
     }
 
     @Override
