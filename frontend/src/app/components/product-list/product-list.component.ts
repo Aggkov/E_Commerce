@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
 import {CurrencyPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {ActivatedRoute, RouterLink, RouterLinkActive} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
 import {CartItem} from "../../model/cart-item";
@@ -58,10 +58,17 @@ export class ProductListComponent implements OnInit {
               // current active route that loaded the component
               // need it to access route params
               private cartService: CartService,
-              private activeRoute: ActivatedRoute) {
+              private activeRoute: ActivatedRoute,
+              private router: Router) {
   }
 
   ngOnInit(): void {
+    // Subscribe to NavigationEnd to trigger refresh when navigating to the same route
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd && event.urlAfterRedirects === '/products') {
+        this.listProducts();
+      }
+    });
     this.productCategoryService.getProductCategories().pipe(
       // tap(response => console.log('Response:', response)),
       map(response => {
@@ -191,6 +198,7 @@ export class ProductListComponent implements OnInit {
         },
         error: err => console.log(err)
       });
+    this.isFiltered = false;
   }
 
   onPageSizeChange() {

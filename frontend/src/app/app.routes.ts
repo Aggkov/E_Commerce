@@ -18,5 +18,6 @@ export const routes: Routes = [
   {path: 'checkout', component: CheckoutComponent},
   {path: 'success', component: OrderSuccessComponent},
   {path: '', redirectTo: '/products', pathMatch: 'full'},
-  {path: '**', redirectTo: '/products', pathMatch: 'full'}
+  {path: '**', redirectTo: '/products', pathMatch: 'full'},
+
 ];
