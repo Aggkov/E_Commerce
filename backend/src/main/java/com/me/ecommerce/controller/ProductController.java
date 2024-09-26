@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value ="products", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "products", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:4200") // Replace with your frontend URL
 public class ProductController {
 
@@ -38,7 +38,7 @@ public class ProductController {
             @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size
     ) {
-        return productService.getAllProducts(page,size);
+        return productService.getAllProducts(page, size);
     }
 
     @GetMapping("/{id}")
@@ -52,7 +52,7 @@ public class ProductController {
             @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
-        return productService.getProductsByCategoryIdPaginated(id, page ,size);
+        return productService.getProductsByCategoryIdPaginated(id, page, size);
     }
 
     @GetMapping("/search/paginated")
@@ -73,16 +73,18 @@ public class ProductController {
         return ResponseEntity.ok(productDTOs);
     }
 
-    @GetMapping("/filter")
-    public PagedResponse<ProductDTO> getFilteredProducts(
-            @RequestParam(name = "categoryId") UUID categoryId,
-            @RequestParam(name = "min_price") String min_price,
-            @RequestParam(name = "max_price") String max_price,
-            @RequestParam(name = "price_range", required = false) String priceRange,
-            @RequestParam(name = "name_filters", required = false) String nameFilters, // New parameter for selected filters
-            @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-            @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return productService.getFilteredProducts(categoryId ,min_price, max_price, priceRange, nameFilters, page, size);
+    @PostMapping("/filter")
+    public PagedResponse<ProductDTO> getFilteredProducts(@RequestBody FilterCriteria filterCriteria
+    ) {
+        return productService.getFilteredProducts(
+                filterCriteria.getCategoryId(),
+                filterCriteria.getMinPrice(),
+                filterCriteria.getMaxPrice(),
+                filterCriteria.getPriceRange(),
+                filterCriteria.getNameFilters(),
+                filterCriteria.getPage(),
+                filterCriteria.getSize()
+        );
     }
 
     @PostMapping

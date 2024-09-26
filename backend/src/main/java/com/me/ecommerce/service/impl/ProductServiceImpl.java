@@ -1,11 +1,10 @@
 package com.me.ecommerce.service.impl;
 
-import com.me.ecommerce.dto.request.FilterCriteria;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.mapper.ProductMapper;
-import com.me.ecommerce.repository.EntityManagerProductRepository;
+import com.me.ecommerce.repository.criteria.CriteriaProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.ProductService;
 import java.util.Arrays;
@@ -27,13 +26,13 @@ import static com.me.ecommerce.utils.AppConstants.CREATED_AT;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final EntityManagerProductRepository entityManagerProductRepository;
+    private final CriteriaProductRepository criteriaProductRepository;
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, EntityManagerProductRepository entityManagerProductRepository, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CriteriaProductRepository criteriaProductRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
-        this.entityManagerProductRepository = entityManagerProductRepository;
+        this.criteriaProductRepository = criteriaProductRepository;
         this.productMapper = productMapper;
     }
 
@@ -80,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
     public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        Page<Product> productsByKeywordsPage = entityManagerProductRepository.searchByKeywordsPaginated(keywords, pageable);
+        Page<Product> productsByKeywordsPage = criteriaProductRepository.searchByKeywordsPaginated(keywords, pageable);
 
         List<ProductDTO> productDTOs = productsByKeywordsPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
@@ -94,12 +93,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PagedResponse<ProductDTO> getFilteredProducts(
-            UUID categoryId, String min_price, String max_price, String priceRange, String nameFilters, int page, int size) {
+            UUID categoryId, String min_price, String max_price, String priceRange, List<String> nameFilters, int page, int size) {
         // exceptions : category id is invalid, prices or (pages) bad request?
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
-
-        // Convert the comma-separated string to a List
-        List<String> nameFiltersList = nameFilters != null ? Arrays.asList(nameFilters.split(",")) : null;
 
         // Adjust price range if selectedPriceRange is set
         double minPrice = Double.parseDouble(min_price);
@@ -114,11 +110,11 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        Page<Product> productPage = entityManagerProductRepository.getFilteredProducts(
+        Page<Product> productPage = criteriaProductRepository.getFilteredProducts(
                 categoryId,
                 minPrice,
                 maxPrice,
-                nameFiltersList,
+                nameFilters,
                 pageable);
 
         List<ProductDTO> productDTOS = productPage.getContent().stream()
@@ -131,7 +127,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> searchProductByKeywords(String keywords) {
-        List<Product> products = entityManagerProductRepository.searchByKeywords(keywords);
+        List<Product> products = criteriaProductRepository.searchByKeywords(keywords);
         return products.stream()
                 .map(productMapper::productToProductDTO)
                 .collect(Collectors.toList());

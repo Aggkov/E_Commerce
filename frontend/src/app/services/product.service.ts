@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {map, Observable, pipe, tap} from "rxjs";
 import {Product} from "../model/product";
 import {HttpClient} from "@angular/common/http";
+import {FilterCriteria} from "../components/filter/filter.component";
 
 @Injectable({
   providedIn: 'root'
@@ -50,33 +51,29 @@ export class ProductService {
     const productUrl = `${this.baseUrl}/${productId}`;
 
     return this.httpClient.get<Product>(productUrl);
-      // .pipe(
-      // tap(response => console.log(response))
+    // .pipe(
+    // tap(response => console.log(response))
   }
 
   // Function to get filtered products from the backend
-  getFilteredProducts(filterCriteria: any,
+  getFilteredProducts(filterCriteria: FilterCriteria | null,
                       categoryId: string,
                       page: number,
                       pageSize: number): Observable<GetResponseProducts> {
-    // Convert selected name filters (those set to true) to an array of keys
-    const selectedNameFilters = Object.keys(filterCriteria.nameFilters)
-      .filter(key => filterCriteria.nameFilters[key])
-      .join(','); // Convert the keys to a comma-separated string
 
-    return this.httpClient.get<GetResponseProducts>(`${this.baseUrl}/filter`, {
-      params: {
-        categoryId: categoryId,
-        min_price: filterCriteria.priceFrom,
-        max_price: filterCriteria.priceTo,
-        price_range: filterCriteria.selectedPriceRange,
-        name_filters: selectedNameFilters, // Include selected name filters in the request
-        page: page,
-        size: pageSize
-      }
-    }).pipe(
-      // tap(data => console.log(`filtered products are ${JSON.stringify(data.content)}`))
-    );
+    // Construct the payload with filter criteria
+    const payload = {
+      categoryId: categoryId,
+      minPrice: filterCriteria?.priceFrom,
+      maxPrice: filterCriteria?.priceTo,
+      priceRange: filterCriteria?.priceRange,
+      nameFilters: Object.keys(filterCriteria?.nameFilters || {}).filter(
+        (key) => filterCriteria?.nameFilters[key]
+      ), // Convert nameFilters object to an array of selected filters
+      page: page,
+      size: pageSize,
+    };
+    return this.httpClient.post<GetResponseProducts>(`${this.baseUrl}/filter`, payload);
   }
 }
 

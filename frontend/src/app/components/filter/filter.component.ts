@@ -102,16 +102,16 @@ export class FilterComponent implements OnInit {
     const filterCriteria: FilterCriteria = {
       priceFrom: this.priceFrom,
       priceTo: this.priceTo,
-      selectedPriceRange: this.filterFormGroup.controls['selectedPriceRange'].value,
+      priceRange: this.filterFormGroup.controls['selectedPriceRange'].value,
       nameFilters: this.nameFilters,
     };
-
     // Emit the filter criteria
     this.filterCriteria.emit(filterCriteria);
   }
 }
 
 export interface NameFilters {
+  [key: string]: boolean; // Index signature allows string keys
   java: boolean;
   javascript: boolean;
   python: boolean;
@@ -123,7 +123,7 @@ export interface NameFilters {
 export interface FilterCriteria {
   priceFrom: string;
   priceTo: string;
-  selectedPriceRange: string;
+  priceRange: string;
   nameFilters: NameFilters;
 }
 

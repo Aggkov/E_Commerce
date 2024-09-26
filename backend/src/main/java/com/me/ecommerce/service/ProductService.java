@@ -18,5 +18,5 @@ public interface ProductService {
     PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size);
     PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size);
     List<ProductDTO> searchProductByKeywords(String keywords);
-    PagedResponse<ProductDTO> getFilteredProducts(UUID categoryId, String min_price, String max_price, String priceRange, String nameFilters, int page, int size);
+    PagedResponse<ProductDTO> getFilteredProducts(UUID categoryId, String min_price, String max_price, String priceRange, List<String> nameFilters, int page, int size);
 }

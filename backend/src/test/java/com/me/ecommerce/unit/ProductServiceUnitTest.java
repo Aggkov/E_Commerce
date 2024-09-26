@@ -5,7 +5,7 @@ import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.entity.ProductCategory;
 import com.me.ecommerce.mapper.ProductMapper;
-import com.me.ecommerce.repository.EntityManagerProductRepository;
+import com.me.ecommerce.repository.criteria.CriteriaProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.impl.ProductServiceImpl;
 import com.me.ecommerce.unit.utils.ProductTestHelper;
@@ -43,7 +43,7 @@ public class ProductServiceUnitTest {
     private ProductRepository productRepository;
 
     @Mock
-    private EntityManagerProductRepository entityManagerProductRepository;
+    private CriteriaProductRepository criteriaProductRepository;
 
     @Mock
     private ProductMapper productMapper;
@@ -149,7 +149,7 @@ public class ProductServiceUnitTest {
                 pageable,
                 filteredProducts.size());
 
-        when(entityManagerProductRepository.searchByKeywordsPaginated(
+        when(criteriaProductRepository.searchByKeywordsPaginated(
                 "guru java",
                 pageable))
                 .thenReturn(mockPage);
