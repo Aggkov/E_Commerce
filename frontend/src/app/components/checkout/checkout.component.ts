@@ -7,17 +7,15 @@ import {State} from "../../model/state";
 import {CartService} from "../../services/cart.service";
 import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../model/cart-item";
-import {LuhnCheckValidator} from "../../validators/luhn-check-validator";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
 import {CheckoutService, OrderResponse} from "../../services/checkout.service";
-import {NavigationExtras, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {Order} from "../../model/order";
 import {Customer} from "../../model/customer";
 import {OrderInfo} from "../../model/order-info";
 import {Address} from "../../model/address";
 import {OrderItem} from "../../model/order-item";
 import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-card-expiration-date-format.directive";
-// import {OrderResponse} from "../../services/checkout.service";
 
 @Component({
   selector: 'app-checkout',
@@ -101,8 +99,9 @@ export class CheckoutComponent implements OnInit {
           [Validators.required,
             // Validators.pattern('^[0-9]+$'),
             Validators.minLength(13),
-            Validators.maxLength(19),
-            LuhnCheckValidator.luhnCheck]),
+            Validators.maxLength(19)]
+            // LuhnCheckValidator.luhnCheck]
+        ),
         securityCode: new FormControl('',
           [Validators.required,
             Validators.pattern('[0-9]{3}')
@@ -211,7 +210,13 @@ export class CheckoutComponent implements OnInit {
           // reset cart
           this.resetCart(response);
         },
-        error: err => alert(`There was an error: ${err.message}`)
+        error: err => {
+          if (err.status === 400) {
+            // Handle validation errors
+            console.log('Validation errors:', err.error);
+            // Display errors to the user or update form controls with error messages
+          }
+        }
     });
     // ?. === safely access object's properties
     console.log("Entire formgroup object:", this.checkoutFormGroup?.value);

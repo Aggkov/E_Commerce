@@ -1,5 +1,6 @@
 package com.me.ecommerce.dto.response;
 
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,5 +14,6 @@ public class StateDTO implements Serializable {
     private static final long serialVersionUID = 1443655363200534746L;
     private UUID id;
 
+    @NotBlank(message = "State name is required")
     private String name;
 }

@@ -1,6 +1,7 @@
 package com.me.ecommerce.dto.request;
 
 import com.me.ecommerce.dto.response.CustomerDTO;
+import jakarta.validation.Valid;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,9 +17,12 @@ public class OrderDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1250338489297010688L;
 
+    @Valid
     private OrderInfoDTO orderInfo;
 
+    @Valid
     private CustomerDTO customer;
+
 
     private List<OrderItemDTO> orderItemList = new ArrayList<>();
 }

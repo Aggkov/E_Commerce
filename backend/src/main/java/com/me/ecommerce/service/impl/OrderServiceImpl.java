@@ -10,6 +10,7 @@ import com.me.ecommerce.entity.Order;
 import com.me.ecommerce.entity.OrderItem;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.entity.ShippingAddress;
+import com.me.ecommerce.exception.ResourceNotFoundException;
 import com.me.ecommerce.mapper.BillingAddressMapper;
 import com.me.ecommerce.mapper.CustomerMapper;
 import com.me.ecommerce.mapper.OrderItemMapper;
@@ -33,6 +34,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -98,13 +100,6 @@ public class OrderServiceImpl implements OrderService {
         shippingAddress.getCustomers().add(customer);
         billingAddress.getCustomers().add(customer);
 
-//        if(!shippingAddress.equals(billingAddress)) {
-//           addressRepository.save(shippingAddress);
-//           addressRepository.save(billingAddress);
-//        } else {
-//            addressRepository.save(billingAddress);
-//        }
-
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
         Set<UUID> productIds = orderDTO.getOrderItemList().stream().map(orderItemDTO -> orderItemDTO.getProduct().getId()).collect(Collectors.toSet());
 
@@ -114,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
             if (productMap.containsKey(orderItemDTO.getProduct().getId())) {
                 Product product = productMap.get(orderItemDTO.getProduct().getId());
                 if (Objects.isNull(product)) {
-                    throw new RuntimeException("Product not found: " + orderItemDTO.getProduct().getId());
+                    throw new ResourceNotFoundException("Product not found: " + orderItemDTO.getProduct().getId(), HttpStatus.NOT_FOUND);
                 }
                 int currentUnitsInStock = product.getUnitsInStock();
                 product.setUnitsInStock(--currentUnitsInStock);
@@ -135,12 +130,18 @@ public class OrderServiceImpl implements OrderService {
 
     private ShippingAddress getShippingAddress(OrderDTO orderDTO) {
         // Step 1: Check if the shipping address already exists in db
-        Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByIdOrStreetAndZipCodeAndCityAndState(orderDTO.getCustomer().getShippingAddress().getId(), orderDTO.getCustomer().getShippingAddress().getStreet(), orderDTO.getCustomer().getShippingAddress().getZipCode(), orderDTO.getCustomer().getShippingAddress().getCity(), orderDTO.getCustomer().getShippingAddress().getState().getId());
+        Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByStreetAndZipCodeAndCityAndState(
+                orderDTO.getCustomer().getShippingAddress().getStreet(),
+                orderDTO.getCustomer().getShippingAddress().getZipCode(),
+                orderDTO.getCustomer().getShippingAddress().getCity(),
+                orderDTO.getCustomer().getShippingAddress().getState().getId());
 //         need only one address return existign or new, that address has references to cust ship and bill.
         // Step 2: Create or use existing shipping address
         ShippingAddress shippingAddress = existingShippingAddress.orElseGet(() -> {
             ShippingAddress newShippingAddress = shippingAddressMapper.shippingAddressDTOToAddress(orderDTO.getCustomer().getShippingAddress());
-            newShippingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId()).orElseThrow(() -> new RuntimeException("Shipping state not found")));
+            newShippingAddress.setState(stateRepository.findById(
+                    orderDTO.getCustomer().getShippingAddress().getState().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Shipping state not found", HttpStatus.NOT_FOUND)));
 //            return addressRepository.save(newAddress); // Save the new address
             return newShippingAddress;
         });
@@ -152,7 +153,9 @@ public class OrderServiceImpl implements OrderService {
 
         BillingAddress billingAddress = existingBillingAddress.orElseGet(() -> {
             BillingAddress newBillingAddress = billingAddressMapper.billingAddressDTOToAddress(orderDTO.getCustomer().getBillingAddress());
-            newBillingAddress.setState(stateRepository.findById(orderDTO.getCustomer().getShippingAddress().getState().getId()).orElseThrow(() -> new RuntimeException("Shipping state not found")));
+            newBillingAddress.setState(stateRepository.findById(
+                    orderDTO.getCustomer().getShippingAddress().getState().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Shipping state not found", HttpStatus.NOT_FOUND)));
 //            return addressRepository.save(newAddress); // Save the new address
             return newBillingAddress;
         });

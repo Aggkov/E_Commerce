@@ -10,13 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface ShippingAddressRepository extends JpaRepository<ShippingAddress, UUID> {
 
-    @Query("SELECT a FROM ShippingAddress a WHERE a.id = :id OR " +
+    @Query("SELECT a FROM ShippingAddress a WHERE " +
             "(LOWER(a.street) = LOWER(:street) AND " +
             "LOWER(a.zipCode) = LOWER(:zipCode) AND " +
             "LOWER(a.city) = LOWER(:city) AND " +
             "a.state.id = :stateId)")
-    Optional<ShippingAddress> findShippingAddressByIdOrStreetAndZipCodeAndCityAndState(
-            @Param("id") UUID id,
+    Optional<ShippingAddress> findShippingAddressByStreetAndZipCodeAndCityAndState(
             @Param("street") String street,
             @Param("zipCode") String zipCode,
             @Param("city") String city,

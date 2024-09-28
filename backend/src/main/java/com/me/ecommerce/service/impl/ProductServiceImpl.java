@@ -3,6 +3,7 @@ package com.me.ecommerce.service.impl;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
+import com.me.ecommerce.exception.ResourceNotFoundException;
 import com.me.ecommerce.mapper.ProductMapper;
 import com.me.ecommerce.repository.criteria.CriteriaProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
@@ -10,6 +11,7 @@ import com.me.ecommerce.service.ProductService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -64,6 +67,9 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByCategoryPage = productRepository.findByCategoryIdOrderByCreatedAt(id, pageable);
+        if(productsByCategoryPage.getContent().isEmpty()) {
+            throw new ResourceNotFoundException("Products not found for this category", HttpStatus.NOT_FOUND);
+        }
 
         List<ProductDTO> productDTOS = productsByCategoryPage.getContent().stream()
                 .map(productMapper::productToProductDTO)
