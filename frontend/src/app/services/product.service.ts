@@ -14,6 +14,12 @@ export class ProductService {
   constructor(private httpClient: HttpClient) {
   }
 
+  getAllProducts(page:number,
+                 pageSize: number) : Observable<GetResponseProducts> {
+    const searchUrl = this.baseUrl;
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
+  }
+
   getProductsByCategoryIdPaginated(page: number,
                                    pageSize: number,
                                    categoryId: string): Observable<GetResponseProducts> {

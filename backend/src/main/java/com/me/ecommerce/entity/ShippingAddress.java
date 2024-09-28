@@ -42,21 +42,6 @@ public class ShippingAddress {
     private State state;
 
     @ManyToMany(mappedBy = "shippingAddresses")
-    private Set<Customer> customers = new LinkedHashSet<>();
-
-
-    //    public void setCustomerShipping(Customer customer) {
-//        if(customer != null) {
-//            this.setCustomerShippingAddress(customer);
-//            customer.setShippingAddress(this);
-//        }
-//    }
-
-//    public void setCustomerBilling(Customer customer) {
-//        if(customer != null) {
-//            this.setCustomerBillingAddress(customer);
-//            customer.setBillingAddress(this);
-//        }
-//    }
+    private Set<User> users = new LinkedHashSet<>();
 
 }

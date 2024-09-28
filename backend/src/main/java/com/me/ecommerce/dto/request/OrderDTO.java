@@ -1,13 +1,11 @@
 package com.me.ecommerce.dto.request;
 
-import com.me.ecommerce.dto.response.CustomerDTO;
+import com.me.ecommerce.dto.response.UserDTO;
 import jakarta.validation.Valid;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +19,7 @@ public class OrderDTO implements Serializable {
     private OrderInfoDTO orderInfo;
 
     @Valid
-    private CustomerDTO customer;
+    private UserDTO user;
 
 
     private List<OrderItemDTO> orderItemList = new ArrayList<>();

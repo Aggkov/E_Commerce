@@ -20,19 +20,9 @@ public class OrderDTOResponse implements Serializable {
 
     private String orderTrackingNumber;
 
-//    private Integer quantity;
-//
-//    private String name;
-//
-//    private BigDecimal unitPrice;
-//
-//    private String imageUrl;
-
     private List<OrderItemDTO> orderItems;
 
-    private CustomerDTO customer;
-
-
+    private UserDTO user;
 
     public OrderDTOResponse(String orderTrackingNumber,
                             OrderDTO orderDTO) {
@@ -47,6 +37,6 @@ public class OrderDTOResponse implements Serializable {
 //                productDTO.setImageUrl(image);
 //            });
 //        });
-        this.customer = orderDTO.getCustomer();
+        this.user = orderDTO.getUser();
     }
 }

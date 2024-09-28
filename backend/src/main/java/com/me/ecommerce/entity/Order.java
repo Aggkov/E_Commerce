@@ -45,8 +45,8 @@ public class Order extends Audit {
 
     //  owner side == side with foreign key
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "status", length = 128)
     private String status;

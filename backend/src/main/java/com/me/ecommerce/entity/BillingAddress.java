@@ -40,6 +40,6 @@ public class BillingAddress {
     private State state;
 
     @ManyToMany(mappedBy = "billingAddresses")
-    private Set<Customer> customers = new LinkedHashSet<>();
+    private Set<User> users = new LinkedHashSet<>();
 
 }

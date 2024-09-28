@@ -4,16 +4,19 @@ DROP TABLE IF EXISTS country CASCADE;
 DROP TABLE IF EXISTS state CASCADE;
 DROP TABLE IF EXISTS order_item CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
-DROP TABLE IF EXISTS customer CASCADE;
-DROP TABLE IF EXISTS address CASCADE;
-DROP TABLE IF EXISTS customer_shipping_address CASCADE;
-DROP TABLE IF EXISTS customer_billing_address CASCADE;
+DROP TABLE IF EXISTS "user" CASCADE;
+DROP TABLE IF EXISTS shipping_address CASCADE;
+DROP TABLE IF EXISTS billing_address CASCADE;
+DROP TABLE IF EXISTS user_shipping_address CASCADE;
+DROP TABLE IF EXISTS user_billing_address CASCADE;
+
+
 
 -- Enable the pgcrypto extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -----------------------------------------------------
-Table e-commerce.product_category
+-- Table e-commerce.product_category
 -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS product_category (
   "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -49,7 +52,7 @@ CREATE TABLE "country" (
 ALTER TABLE country OWNER TO ecommerce_user;
 
 -- Table structure for table `state`
-CREATE TABLE state (
+CREATE TABLE "state" (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255),
   country_id UUID,
@@ -78,33 +81,33 @@ CREATE TABLE billing_address (
 ALTER TABLE billing_address OWNER TO ecommerce_user;
 
 -- Step 2: Create the `customer` table
-CREATE TABLE customer (
+CREATE TABLE "user" (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   first_name VARCHAR(255),
   last_name VARCHAR(255),
   email VARCHAR(255)
 );
-ALTER TABLE customer OWNER TO ecommerce_user;
+ALTER TABLE "user" OWNER TO ecommerce_user;
 
 -- Step 3: Create the `customer_shipping_address` junction table
-CREATE TABLE customer_shipping_address (
-  customer_id UUID,
+CREATE TABLE user_shipping_address (
+  user_id UUID,
   shipping_address_id UUID,
-  PRIMARY KEY (customer_id, shipping_address_id),
-  CONSTRAINT FK_customer_id_shipping FOREIGN KEY (customer_id) REFERENCES customer (id),
+  PRIMARY KEY (user_id, shipping_address_id),
+  CONSTRAINT FK_user_id_shipping FOREIGN KEY (user_id) REFERENCES "user" (id),
   CONSTRAINT FK_shipping_address_id_shipping FOREIGN KEY (shipping_address_id) REFERENCES shipping_address (id)
 );
-ALTER TABLE customer_shipping_address OWNER TO ecommerce_user;
+ALTER TABLE user_shipping_address OWNER TO ecommerce_user;
 
 -- Step 4: Create the `customer_billing_address` junction table
-CREATE TABLE customer_billing_address (
-  customer_id UUID,
+CREATE TABLE user_billing_address (
+  user_id UUID,
   billing_address_id UUID,
-  PRIMARY KEY (customer_id, billing_address_id),
-  CONSTRAINT FK_customer_id_billing FOREIGN KEY (customer_id) REFERENCES customer (id),
+  PRIMARY KEY (user_id, billing_address_id),
+  CONSTRAINT FK_user_id_billing FOREIGN KEY (user_id) REFERENCES "user" (id),
   CONSTRAINT FK_billing_address_id_billing FOREIGN KEY (billing_address_id) REFERENCES billing_address (id)
 );
-ALTER TABLE customer_billing_address OWNER TO ecommerce_user;
+ALTER TABLE user_billing_address OWNER TO ecommerce_user;
 
 -- Table structure for table `orders`
 CREATE TABLE orders (
@@ -112,11 +115,11 @@ CREATE TABLE orders (
   order_tracking_number VARCHAR(255),
   total_price DECIMAL(19,2),
   total_quantity INT,
-  customer_id UUID,
+  user_id UUID,
   status VARCHAR(128),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  CONSTRAINT orders FOREIGN KEY (customer_id) REFERENCES customer (id)
+  CONSTRAINT orders FOREIGN KEY (user_id) REFERENCES "user" (id)
 );
 ALTER TABLE orders OWNER TO ecommerce_user;
 

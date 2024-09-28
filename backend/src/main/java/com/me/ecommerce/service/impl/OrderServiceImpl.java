@@ -1,32 +1,28 @@
 package com.me.ecommerce.service.impl;
 
-import com.me.ecommerce.dto.request.BillingAddressDTO;
 import com.me.ecommerce.dto.request.OrderDTO;
-import com.me.ecommerce.dto.request.ShippingAddressDTO;
 import com.me.ecommerce.dto.response.OrderDTOResponse;
 import com.me.ecommerce.entity.BillingAddress;
-import com.me.ecommerce.entity.Customer;
 import com.me.ecommerce.entity.Order;
 import com.me.ecommerce.entity.OrderItem;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.entity.ShippingAddress;
+import com.me.ecommerce.entity.User;
 import com.me.ecommerce.exception.ResourceNotFoundException;
 import com.me.ecommerce.mapper.BillingAddressMapper;
-import com.me.ecommerce.mapper.CustomerMapper;
 import com.me.ecommerce.mapper.OrderItemMapper;
 import com.me.ecommerce.mapper.OrderMapper;
 import com.me.ecommerce.mapper.ShippingAddressMapper;
 import com.me.ecommerce.mapper.StateMapper;
+import com.me.ecommerce.mapper.UserMapper;
 import com.me.ecommerce.repository.BillingAddressRepository;
-import com.me.ecommerce.repository.CustomerRepository;
+import com.me.ecommerce.repository.UserRepository;
 import com.me.ecommerce.repository.OrderRepository;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.repository.ShippingAddressRepository;
 import com.me.ecommerce.repository.StateRepository;
 import com.me.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,29 +36,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final BillingAddressRepository billingAddressRepository;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
-    private final CustomerMapper customerMapper;
+    private final UserMapper userMapper;
     private final ShippingAddressMapper shippingAddressMapper;
     private final BillingAddressMapper billingAddressMapper;
     private final StateMapper stateMapper;
     private final StateRepository stateRepository;
 
     @Autowired
-    public OrderServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository, ProductRepository productRepository, ShippingAddressRepository shippingAddressRepository, BillingAddressRepository billingAddressRepository, OrderMapper orderMapper, OrderItemMapper orderItemMapper, CustomerMapper customerMapper, ShippingAddressMapper shippingAddressMapper, BillingAddressMapper billingAddressMapper, StateMapper stateMapper, StateRepository stateRepository) {
-        this.customerRepository = customerRepository;
+    public OrderServiceImpl(UserRepository userRepository,
+                            OrderRepository orderRepository,
+                            ProductRepository productRepository,
+                            ShippingAddressRepository shippingAddressRepository,
+                            BillingAddressRepository billingAddressRepository,
+                            OrderMapper orderMapper, OrderItemMapper orderItemMapper, UserMapper userMapper, ShippingAddressMapper shippingAddressMapper, BillingAddressMapper billingAddressMapper, StateMapper stateMapper, StateRepository stateRepository) {
+        this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.billingAddressRepository = billingAddressRepository;
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
-        this.customerMapper = customerMapper;
+        this.userMapper = userMapper;
         this.shippingAddressMapper = shippingAddressMapper;
         this.billingAddressMapper = billingAddressMapper;
         this.stateMapper = stateMapper;
@@ -82,23 +83,16 @@ public class OrderServiceImpl implements OrderService {
         } while (orderRepository.findOrderTrackingNumber(orderTrackingNumber) != null);
         order.setOrderTrackingNumber(orderTrackingNumber);
 
-        Customer customer = customerMapper.customerDTOToCustomer(orderDTO.getCustomer());
-
-        /*
-        address obj has shipping and billing info
-        so 1 address obj must ref a customer if same shipp and bill
-
-        if shipp and bill diff need 2 addresses that ref the same customer
-         */
+        User user = userMapper.userDTOToUser(orderDTO.getUser());
 
         // 4. Get or create shipping and billing addresses
         ShippingAddress shippingAddress = getShippingAddress(orderDTO);
         BillingAddress billingAddress = getBillingAddress(orderDTO);
 
-        customer.getShippingAddresses().add(shippingAddress);
-        customer.getBillingAddresses().add(billingAddress);
-        shippingAddress.getCustomers().add(customer);
-        billingAddress.getCustomers().add(customer);
+        user.getShippingAddresses().add(shippingAddress);
+        user.getBillingAddresses().add(billingAddress);
+        shippingAddress.getUsers().add(user);
+        billingAddress.getUsers().add(user);
 
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
         Set<UUID> productIds = orderDTO.getOrderItemList().stream().map(orderItemDTO -> orderItemDTO.getProduct().getId()).collect(Collectors.toSet());
@@ -121,9 +115,9 @@ public class OrderServiceImpl implements OrderService {
             }
         });
         // parent add child
-        customer.add(order);
+        user.add(order);
         // cascade persist
-        customerRepository.save(customer);
+        userRepository.save(user);
 
         return new OrderDTOResponse(orderTrackingNumber, orderDTO);
     }
@@ -131,16 +125,16 @@ public class OrderServiceImpl implements OrderService {
     private ShippingAddress getShippingAddress(OrderDTO orderDTO) {
         // Step 1: Check if the shipping address already exists in db
         Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByStreetAndZipCodeAndCityAndState(
-                orderDTO.getCustomer().getShippingAddress().getStreet(),
-                orderDTO.getCustomer().getShippingAddress().getZipCode(),
-                orderDTO.getCustomer().getShippingAddress().getCity(),
-                orderDTO.getCustomer().getShippingAddress().getState().getId());
+                orderDTO.getUser().getShippingAddress().getStreet(),
+                orderDTO.getUser().getShippingAddress().getZipCode(),
+                orderDTO.getUser().getShippingAddress().getCity(),
+                orderDTO.getUser().getShippingAddress().getState().getId());
 //         need only one address return existign or new, that address has references to cust ship and bill.
         // Step 2: Create or use existing shipping address
         ShippingAddress shippingAddress = existingShippingAddress.orElseGet(() -> {
-            ShippingAddress newShippingAddress = shippingAddressMapper.shippingAddressDTOToAddress(orderDTO.getCustomer().getShippingAddress());
+            ShippingAddress newShippingAddress = shippingAddressMapper.shippingAddressDTOToAddress(orderDTO.getUser().getShippingAddress());
             newShippingAddress.setState(stateRepository.findById(
-                    orderDTO.getCustomer().getShippingAddress().getState().getId())
+                    orderDTO.getUser().getShippingAddress().getState().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Shipping state not found", HttpStatus.NOT_FOUND)));
 //            return addressRepository.save(newAddress); // Save the new address
             return newShippingAddress;
@@ -149,12 +143,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BillingAddress getBillingAddress(OrderDTO orderDTO) {
-        Optional<BillingAddress> existingBillingAddress = billingAddressRepository.findBillingAddressByIdOrStreetAndZipCodeAndCityAndState(orderDTO.getCustomer().getShippingAddress().getId(), orderDTO.getCustomer().getBillingAddress().getStreet(), orderDTO.getCustomer().getBillingAddress().getZipCode(), orderDTO.getCustomer().getBillingAddress().getCity(), orderDTO.getCustomer().getBillingAddress().getState().getId());
+        Optional<BillingAddress> existingBillingAddress = billingAddressRepository.findBillingAddressByIdOrStreetAndZipCodeAndCityAndState(orderDTO.getUser().getShippingAddress().getId(), orderDTO.getUser().getBillingAddress().getStreet(), orderDTO.getUser().getBillingAddress().getZipCode(), orderDTO.getUser().getBillingAddress().getCity(), orderDTO.getUser().getBillingAddress().getState().getId());
 
         BillingAddress billingAddress = existingBillingAddress.orElseGet(() -> {
-            BillingAddress newBillingAddress = billingAddressMapper.billingAddressDTOToAddress(orderDTO.getCustomer().getBillingAddress());
+            BillingAddress newBillingAddress = billingAddressMapper.billingAddressDTOToAddress(orderDTO.getUser().getBillingAddress());
             newBillingAddress.setState(stateRepository.findById(
-                    orderDTO.getCustomer().getShippingAddress().getState().getId())
+                    orderDTO.getUser().getShippingAddress().getState().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Shipping state not found", HttpStatus.NOT_FOUND)));
 //            return addressRepository.save(newAddress); // Save the new address
             return newBillingAddress;

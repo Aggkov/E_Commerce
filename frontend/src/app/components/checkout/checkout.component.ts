@@ -11,7 +11,7 @@ import {CreditCardFormatDirective} from "../../directives/credit-card-format.dir
 import {CheckoutService, OrderResponse} from "../../services/checkout.service";
 import {Router} from "@angular/router";
 import {Order} from "../../model/order";
-import {Customer} from "../../model/customer";
+import {User} from "../../model/user";
 import {OrderInfo} from "../../model/order-info";
 import {Address} from "../../model/address";
 import {OrderItem} from "../../model/order-item";
@@ -182,7 +182,7 @@ export class CheckoutComponent implements OnInit {
       this.billingAddressZipCode?.value,
       billingState);
 
-    let newCustomer = new Customer(
+    let newCustomer = new User(
       this.firstName?.value,
       this.lastName?.value,
       this.email?.value,

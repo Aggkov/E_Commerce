@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Order} from "../model/order";
 import {OrderItem} from "../model/order-item";
-import {Customer} from "../model/customer";
+import {User} from "../model/user";
 
 
 @Injectable({
@@ -23,5 +23,5 @@ export class CheckoutService {
 export interface OrderResponse {
   orderTrackingNumber: string;
   orderItems: OrderItem [];
-  customer: Customer;
+  customer: User;
 }
