@@ -26,6 +26,11 @@
         <button *ngIf="isAdmin" class="btn btn-primary" type="submit" (click)="navigateToAdminPanel()">
           Go to Admin Panel
         </button>
+        <div *ngIf="isUser">
+        <button class="btn btn-primary" type="submit" (click)="navigateToUserOrders()">
+          My Orders
+        </button>
+        </div>
         <div class="ml-3">
           <app-cart-status></app-cart-status>
         </div>

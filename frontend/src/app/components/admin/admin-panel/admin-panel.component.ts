@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor";
+import {KeycloakService} from "../../../services/keycloak/keycloak.service";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [],
+  imports: [
+    NgIf
+  ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',
   providers: [
@@ -13,9 +17,18 @@ import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor
   ]
 })
 
-export class AdminPanelComponent {
+export class AdminPanelComponent implements OnInit{
 
-  constructor() {
-    console.log('in admin panel~');
+  isAdminUser: boolean = false;
+
+  constructor(private keycloakService: KeycloakService) {}
+
+  async ngOnInit() {
+    await this.keycloakService.init();  // Initialize Keycloak
+    this.isAdminUser = this.keycloakService.hasRole('admin');  // Check if the user has the 'admin' role
+  }
+
+  isAdmin() {
+    return this.isAdminUser;
   }
 }

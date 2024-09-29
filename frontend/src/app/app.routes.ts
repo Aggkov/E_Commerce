@@ -6,9 +6,11 @@ import {CheckoutComponent} from "./components/checkout/checkout.component";
 import {OrderSuccessComponent} from "./components/order-success/order-success.component";
 import {AdminPanelComponent} from "./components/admin/admin-panel/admin-panel.component";
 import {authGuard} from "./guard/auth.guard";
+import {UserOrdersComponent} from "./components/user-orders/user-orders.component";
 
 export const routes: Routes = [
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [authGuard]}, // auth-guard
+  {path: 'user-orders', component: UserOrdersComponent, canActivate: [authGuard]}, // auth-guard
   {path: 'search/:query', component: ProductListComponent },
   {path: 'category/:id/:name', component: ProductListComponent},
   {path: 'category', component: ProductListComponent},

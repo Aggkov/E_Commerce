@@ -48,7 +48,6 @@ export class KeycloakService {
     try {
     const authenticated = await this.keycloak?.init({
       onLoad: 'check-sso',
-      // silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
       pkceMethod: 'S256',
     });
 
@@ -64,6 +63,7 @@ export class KeycloakService {
       console.log('Token:', this._profile.token);
     } else {
       console.warn('User is not authenticated.');
+      return;
     }
 
     this.isInitialized = true;  // Mark as initialized
@@ -78,6 +78,12 @@ export class KeycloakService {
 
   async login() {
     if (!this.isInitialized) {
+      /*
+      The await keyword is used to pause the execution
+      of the async function until the promise it is waiting for
+      is resolved or rejected. Only after init is finished then keycloak.login will
+      be executed.
+       */
       await this.init();  // Ensure initialization before login
     }
     console.log('Keycloak status at service login', this.keycloak);
@@ -101,6 +107,16 @@ export class KeycloakService {
   hasRole(role: string): boolean {
     const roles = this.keycloak?.tokenParsed?.resource_access?.['frontend']?.roles || [];
     console.log('Roles from Keycloak:', roles); // Log roles
-    return roles.includes(role);  }
+    return roles.includes(role);
+  }
+
+  async isAuthenticated() : Promise<boolean> {
+    if(this.isInitialized) {
+      if (this.keycloak?.authenticated) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 }

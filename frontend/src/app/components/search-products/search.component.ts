@@ -30,6 +30,7 @@ export class SearchComponent implements OnInit {
   suggestions$: Observable<Product[]> = of([]);
   dropdownVisible = false;
   isAdmin: boolean = false;
+  isUser: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +42,7 @@ export class SearchComponent implements OnInit {
     });
     this.keycloakService.init().then(() => {
       this.isAdmin = this.keycloakService.hasRole('admin');
+      this.isUser = this.keycloakService.hasRole('user');
     });
   }
 
@@ -100,5 +102,9 @@ export class SearchComponent implements OnInit {
   navigateToAdminPanel() {
     this.router.navigate(['/admin-panel']);
     // this.router.navigateByUrl('/admin-panel');
+  }
+
+  navigateToUserOrders() {
+    this.router.navigate(['/user-orders']);
   }
 }
