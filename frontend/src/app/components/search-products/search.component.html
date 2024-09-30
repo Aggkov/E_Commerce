@@ -12,8 +12,7 @@
               class="form-control"
               type="text"
               formControlName="searchQuery"
-              placeholder="Search for data ..."
-            />
+              placeholder="Search for data ..."/>
             <button class="au-btn-submit"
                     type="submit">
               Search
@@ -27,9 +26,9 @@
           Go to Admin Panel
         </button>
         <div *ngIf="isUser">
-        <button class="btn btn-primary" type="submit" (click)="navigateToUserOrders()">
-          My Orders
-        </button>
+          <button class="btn btn-primary" type="submit" (click)="navigateToUserOrders()">
+            My Orders
+          </button>
         </div>
         <div class="ml-3">
           <app-cart-status></app-cart-status>
@@ -42,7 +41,7 @@
   </div>
 </header>
 <ul *ngIf="(suggestions$ | async) as suggestions" class="list-group position-absolute w-100 mt-1">
-  <div *ngIf="suggestions.length > 0 && dropdownVisible">
+  <div class="suggestions" *ngIf="suggestions.length > 1 && dropdownVisible">
     <li *ngFor="let suggestion of suggestions"
         class="list-group-item list-group-item-action"
         (click)="selectSuggestion(suggestion)">
@@ -50,6 +49,8 @@
     </li>
   </div>
 </ul>
+<!-- Add an ID to the search input for reference in the HostListener -->
+<!--<input id="searchQueryInput" [formControl]="searchForm.get('searchQuery') as FormControl" class="form-control" />-->
 
 <!--<form class="form-header" (ngSubmit)="onSearch()" method="GET">-->
 <!--  <input-->

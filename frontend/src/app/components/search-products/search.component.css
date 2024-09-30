@@ -1,26 +1,28 @@
-.form-header{
-  /*flex-grow: 1;*/
-  position: relative; /* Ensure the dropdown is confined to the form */
-  display: flex;
-  justify-content: space-between;
-  /*display:-webkit-box;*/
-  /*display:-webkit-flex;*/
-  /*display:-moz-box;*/
-  /*display:-ms-flexbox;*/
-  /*display:flex*/
-}
+/*.form-header{*/
+/*  !*flex-grow: 1;*!*/
+/*  position: relative; !* Ensure the dropdown is confined to the form *!*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  !*display:-webkit-box;*!*/
+/*  !*display:-webkit-flex;*!*/
+/*  !*display:-moz-box;*!*/
+/*  !*display:-ms-flexbox;*!*/
+/*  !*display:flex*!*/
+/*}*/
 
 
-ul {
-  z-index: 1000; /* Ensure the dropdown appears above other elements */
-  max-height: 200px; /* Limit height to avoid overflow */
-  overflow-y: auto; /* Add vertical scrolling if needed */
-  background-color: white; /* Ensure the background is white */
-  border: 1px solid #ccc; /* Border around the dropdown */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
-}
+/*.suggestions.ul {*/
+/*  z-index: 500; !* Ensure the dropdown appears above other elements *!*/
+/*  max-height: 200px; !* Limit height to avoid overflow *!*/
+/*  !*overflow-y: auto; !* Add vertical scrolling if needed *!*!*/
+/*  background-color: white; !* Ensure the background is white *!*/
+/*  border: 1px solid #ccc; !* Border around the dropdown *!*/
+/*  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); !* Add subtle shadow *!*/
+/*}*/
 
-li:hover {
-  background-color: #f0f0f0;
-  cursor: pointer;
-}
+/*.suggestions.li:hover {*/
+/*  background-color: #f0f0f0;*/
+/*  cursor: pointer;*/
+/*}*/
+
+

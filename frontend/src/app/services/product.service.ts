@@ -34,12 +34,8 @@ export class ProductService {
   searchProductByKeywords(searchQuery: string,
                           // limit: number
   ): Observable<Product[]> {
-    const searchUrl = `${this.baseUrl}/search?keywords=${searchQuery}
-
-    `;
-    console.log("search query is: " + searchQuery);
+    const searchUrl = `${this.baseUrl}/search?keywords=${searchQuery}`;
     return this.httpClient.get<Product[]>(searchUrl).pipe(
-      // tap(response => console.log("getproductsbyquery:  ", response)),
       map(response => response)
     )
   }
@@ -57,8 +53,6 @@ export class ProductService {
     const productUrl = `${this.baseUrl}/${productId}`;
 
     return this.httpClient.get<Product>(productUrl);
-    // .pipe(
-    // tap(response => console.log(response))
   }
 
   // Function to get filtered products from the backend

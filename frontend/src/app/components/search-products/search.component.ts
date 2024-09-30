@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, HostListener, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {Component, HostListener, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
-import {debounceTime, distinctUntilChanged, Observable, of, switchMap} from "rxjs";
+import {debounceTime, distinctUntilChanged, Observable, of, switchMap, tap} from "rxjs";
 import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
@@ -49,7 +49,7 @@ export class SearchComponent implements OnInit {
   ngOnInit(): void {
     this.suggestions$ = this.searchForm.get('searchQuery')!.valueChanges
       .pipe(
-        debounceTime(300),
+        debounceTime(200),
         distinctUntilChanged(),
         switchMap(query => {
           if (query.trim() === "") {
@@ -60,8 +60,7 @@ export class SearchComponent implements OnInit {
             this.dropdownVisible = true; // Show dropdown if there is a query
             return this.productService.searchProductByKeywords(query);
           }
-        }),
-        // tap(suggestions => console.log("Suggestions:", suggestions, this.dropdownVisible))
+        })
       );
   }
 
@@ -72,6 +71,8 @@ export class SearchComponent implements OnInit {
 
   selectSuggestion(suggestion: Product): void {
     this.searchForm.get('searchQuery')!.setValue(suggestion.name);
+    this.dropdownVisible = false; // Hide dropdown after selection
+    // this.suggestions$ = of([]); // Clear suggestions after selection
     this.onSearch(); // Optionally perform search on suggestion select
   }
 
@@ -86,17 +87,10 @@ export class SearchComponent implements OnInit {
   keycloakLogin() {
     // this.keycloakService.init().then(() => {
     return this.keycloakService.login();
-    // }).catch(error => {
-    //   console.error('Login failed', error);
-    // });
   }
 
   keycloakLogout() {
-    // this.keycloakService.init().then(() => {
     return this.keycloakService.logout();
-    // }).catch(error => {
-    //   console.error('Logout failed', error);
-    // });
   }
 
   navigateToAdminPanel() {
