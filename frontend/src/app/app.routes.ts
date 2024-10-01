@@ -9,8 +9,8 @@ import {authGuard} from "./guard/auth.guard";
 import {UserOrdersComponent} from "./components/user-orders/user-orders.component";
 
 export const routes: Routes = [
-  {path: 'admin-panel', component: AdminPanelComponent, canActivate: [authGuard]}, // auth-guard
-  {path: 'user-orders', component: UserOrdersComponent, canActivate: [authGuard]}, // auth-guard
+  {path: 'admin-panel', component: AdminPanelComponent, canActivate: [authGuard]},
+  {path: 'user-orders', component: UserOrdersComponent, canActivate: [authGuard]},
   {path: 'search/:query', component: ProductListComponent },
   {path: 'category/:id/:name', component: ProductListComponent},
   {path: 'category', component: ProductListComponent},
@@ -21,5 +21,4 @@ export const routes: Routes = [
   {path: 'success', component: OrderSuccessComponent},
   {path: '', redirectTo: '/products', pathMatch: 'full'},
   {path: '**', redirectTo: '/products', pathMatch: 'full'},
-
 ];

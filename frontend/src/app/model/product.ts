@@ -8,6 +8,7 @@ export class Product {
               public imageUrl: string,
               public active: boolean,
               public unitsInStock: number,
+              public unitsSold: number,
               public dateCreated: Date,
               public lastUpdated: Date
   ) {

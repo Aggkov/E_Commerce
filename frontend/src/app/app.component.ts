@@ -4,7 +4,6 @@ import {ProductListComponent} from "./components/product-list/product-list.compo
 import {ProductCategoryMenuComponent} from "./components/product-category-menu/product-category-menu.component";
 import {SearchComponent} from "./components/search-products/search.component";
 import {NgIf} from "@angular/common";
-// import {HeaderComponent} from "./components/header/header.component";
 
 @Component({
   selector: 'app-root',

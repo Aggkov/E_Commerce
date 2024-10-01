@@ -3,12 +3,14 @@ import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor";
 import {KeycloakService} from "../../../services/keycloak/keycloak.service";
 import {NgIf} from "@angular/common";
+import {AdminProductTableComponent} from "../admin-product-table/admin-product-table.component";
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
   imports: [
-    NgIf
+    NgIf,
+    AdminProductTableComponent
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',

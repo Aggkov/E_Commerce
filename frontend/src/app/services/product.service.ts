@@ -16,7 +16,7 @@ export class ProductService {
 
   getAllProducts(page:number,
                  pageSize: number) : Observable<GetResponseProducts> {
-    const searchUrl = this.baseUrl;
+    const searchUrl = `${this.baseUrl}?page=${page}&size=${pageSize}`;
     return this.httpClient.get<GetResponseProducts>(searchUrl);
   }
 
