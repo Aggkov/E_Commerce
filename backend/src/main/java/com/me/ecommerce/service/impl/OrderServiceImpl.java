@@ -31,6 +31,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -89,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
         ShippingAddress shippingAddress = getShippingAddress(orderDTO);
         BillingAddress billingAddress = getBillingAddress(orderDTO);
 
+        // TODO combine all in user entity
         user.getShippingAddresses().add(shippingAddress);
         user.getBillingAddresses().add(billingAddress);
         shippingAddress.getUsers().add(user);
@@ -105,8 +109,11 @@ public class OrderServiceImpl implements OrderService {
                 if (Objects.isNull(product)) {
                     throw new ResourceNotFoundException("Product not found: " + orderItemDTO.getProduct().getId(), HttpStatus.NOT_FOUND);
                 }
+                // TODO decrement if units > 0 else BAD_REQUEST EXCEPTION
                 int currentUnitsInStock = product.getUnitsInStock();
                 product.setUnitsInStock(--currentUnitsInStock);
+                int unitsSold = product.getUnitsSold();
+                product.setUnitsSold(++unitsSold);
                 OrderItem orderItem = orderItemMapper.orderItemDTOToOrderItem(orderItemDTO);
                 // parent add child
                 product.addOrderItem(orderItem);
@@ -114,6 +121,8 @@ public class OrderServiceImpl implements OrderService {
                 order.add(orderItem);
             }
         });
+        // TODO what if user exists in db?
+
         // parent add child
         user.add(order);
         // cascade persist

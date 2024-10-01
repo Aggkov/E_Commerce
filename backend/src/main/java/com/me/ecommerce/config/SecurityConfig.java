@@ -28,24 +28,27 @@ public class SecurityConfig {
 
                 // Configure authorization rules
                 .authorizeHttpRequests(req -> req
-                        // Permit all Swagger-related endpoints
-                        .requestMatchers(
-                                "/v2/api-docs",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**",
-                                "/swagger-resources",
-                                "/swagger-resources/**",
-                                "/configuration/ui",
-                                "/configuration/security",
-                                "/swagger-ui/**",
-                                "/webjars/**",
-                                "/swagger-ui.html",
-                                "/**"
-                        ).permitAll()
-                        // Require authentication for all other requests
-                        .anyRequest().authenticated()
+                                // Permit all Swagger-related endpoints
+                                .requestMatchers(
+                                        "/api-docs/**",
+//                                        "api/v2/api-docs/**",
+//                                        "api/v3/api-docs/**",
+//                                        "api/v3/api-docs/**",
+                                        "/swagger-resources",
+                                        "/swagger-resources/**",
+                                        "/configuration/ui",
+                                        "/configuration/security",
+                                        "/swagger-ui/**",
+                                        "/webjars/**",
+                                        "/swagger-ui.html",
+                                        "/**"  // Public API access
+                                        //  "/**"
+                                ).permitAll()
+                                // Restrict "/admin/**" to users with "admin" role
+//                                .requestMatchers("/admin/**").hasRole("admin")
+                                // Require authentication for all other requests
+                                .anyRequest().authenticated()
                 )
-
                 // Configure OAuth2 Resource Server with JWT and Keycloak converter
                 .oauth2ResourceServer(auth ->
                         auth.jwt(token -> token.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter()))

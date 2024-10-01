@@ -10,17 +10,26 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.io.Serial;
+import java.security.Principal;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "\"user\"") // Escaping the table name using double quotes
-public class User {
+public class User implements UserDetails, Principal {
+    @Serial
+    private static final long serialVersionUID = -3731807957000775101L;
+
     @Id
     @GeneratedValue(generator = "UUID")
     @Column(name = "id", nullable = false)
@@ -58,5 +67,25 @@ public class User {
             orders.add(order);
             order.setUser(this);
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public String getName() {
+        return email;
     }
 }

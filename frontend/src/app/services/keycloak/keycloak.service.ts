@@ -25,11 +25,11 @@ export class KeycloakService {
       });
 
       // Log Keycloak configuration
-      console.log('Keycloak instance created with configuration:', {
-        url: this._keycloak.authServerUrl,
-        realm: this._keycloak.realm,
-        clientId: this._keycloak.clientId,
-      });
+      // console.log('Keycloak instance created with configuration:', {
+      //   url: this._keycloak.authServerUrl,
+      //   realm: this._keycloak.realm,
+      //   clientId: this._keycloak.clientId,
+      // });
     }
     return this._keycloak;
   }
@@ -41,7 +41,7 @@ export class KeycloakService {
   async init() {
     // Check if Keycloak has been initialized
     if (this.isInitialized) {
-      console.log('Keycloak is already initialized.');
+      // console.log('Keycloak is already initialized.');
       return this.keycloak?.authenticated;  // Return the current authentication state
     }
 
@@ -52,7 +52,7 @@ export class KeycloakService {
     });
 
     // Log authentication status
-    console.log('Keycloak initialization complete. Authenticated:', authenticated);
+    // console.log('Keycloak initialization complete. Authenticated:', authenticated);
 
     if (authenticated) {
       this._profile = await this.keycloak.loadUserProfile() as UserProfile;
@@ -71,7 +71,7 @@ export class KeycloakService {
 
     }
     catch (error) {
-      console.error('Keycloak initialization failed:', error);
+      // console.error('Keycloak initialization failed:', error);
       return false;
     }
   }
@@ -86,7 +86,7 @@ export class KeycloakService {
        */
       await this.init();  // Ensure initialization before login
     }
-    console.log('Keycloak status at service login', this.keycloak);
+    // console.log('Keycloak status at service login', this.keycloak);
     return this.keycloak?.login({
         redirectUri: 'http://localhost:4200/products',
       }
@@ -97,7 +97,7 @@ export class KeycloakService {
     if (!this.isInitialized) {
       await this.init();  // Ensure initialization before logout
     }
-    console.log('Keycloak status at service logout', this.keycloak);
+    // console.log('Keycloak status at service logout', this.keycloak);
     return this.keycloak?.logout({
         redirectUri: 'http://localhost:4200/products',
       }
@@ -106,7 +106,7 @@ export class KeycloakService {
 
   hasRole(role: string): boolean {
     const roles = this.keycloak?.tokenParsed?.resource_access?.['frontend']?.roles || [];
-    console.log('Roles from Keycloak:', roles); // Log roles
+    // console.log('Roles from Keycloak:', roles); // Log roles
     return roles.includes(role);
   }
 

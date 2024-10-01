@@ -37,17 +37,4 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        OrderItem orderItem = (OrderItem) o;
-//        return Objects.equals(id, orderItem.id) && Objects.equals(quantity, orderItem.quantity) && Objects.equals(order, orderItem.order) && Objects.equals(product, orderItem.product);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id, quantity, order, product);
-//    }
 }

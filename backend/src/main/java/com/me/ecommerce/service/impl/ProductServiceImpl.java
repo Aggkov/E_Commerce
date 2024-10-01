@@ -3,8 +3,10 @@ package com.me.ecommerce.service.impl;
 import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
+import com.me.ecommerce.entity.ProductCategory;
 import com.me.ecommerce.exception.ResourceNotFoundException;
 import com.me.ecommerce.mapper.ProductMapper;
+import com.me.ecommerce.repository.ProductCategoryRepository;
 import com.me.ecommerce.repository.criteria.CriteriaProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.ProductService;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,12 +33,14 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CriteriaProductRepository criteriaProductRepository;
+    private final ProductCategoryRepository productCategoryRepository;
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CriteriaProductRepository criteriaProductRepository, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CriteriaProductRepository criteriaProductRepository, ProductCategoryRepository productCategoryRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.criteriaProductRepository = criteriaProductRepository;
+        this.productCategoryRepository = productCategoryRepository;
         this.productMapper = productMapper;
     }
 
@@ -148,7 +153,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(ProductDTO productDTO) {
+        ProductCategory category = productCategoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
+                () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
+        );
         Product product = productMapper.productDTOToProduct(productDTO);
+        product.setCategory(category);
+        category.getProducts().add(product);
         return productRepository.save(product);
     }
 
