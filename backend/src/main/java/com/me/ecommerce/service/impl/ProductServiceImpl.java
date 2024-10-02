@@ -9,21 +9,22 @@ import com.me.ecommerce.mapper.ProductMapper;
 import com.me.ecommerce.repository.ProductCategoryRepository;
 import com.me.ecommerce.repository.criteria.CriteriaProductRepository;
 import com.me.ecommerce.repository.ProductRepository;
+import com.me.ecommerce.service.ExportService;
 import com.me.ecommerce.service.ProductService;
-import java.util.Arrays;
+import com.me.ecommerce.utils.Helper;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpHeaders;
 
 
 import static com.me.ecommerce.utils.AppConstants.CREATED_AT;
@@ -45,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductDTO> getAllProducts(int page, int size) {
+    public PagedResponse<ProductDTO> getAllProductsPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsPage = productRepository.findAll(pageable);
@@ -137,6 +138,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ResponseEntity<byte[]> export(String type) throws Exception {
+        ExportService<ProductDTO> exportService = Helper.getExportService(type);
+        List<Product> products = productRepository.findAll();
+
+        List<ProductDTO> productDTOS = products.stream()
+                .map(productMapper::productToProductDTO)
+                .toList();
+
+        byte[] exportedData = exportService.export(productDTOS);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        Helper.setHeaders(httpHeaders, type);
+        // Return the file as a downloadable response
+        return ResponseEntity.ok().headers(httpHeaders).body(exportedData);
+    }
+
+    @Override
     public List<ProductDTO> searchProductByKeywords(String keywords) {
         List<Product> products = criteriaProductRepository.searchByKeywords(keywords);
         return products.stream()
@@ -153,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(ProductDTO productDTO) {
-        ProductCategory category = productCategoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
+        ProductCategory category = productCategoryRepository.findById(UUID.fromString(productDTO.getCategoryId())).orElseThrow(
                 () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
         );
         Product product = productMapper.productDTOToProduct(productDTO);

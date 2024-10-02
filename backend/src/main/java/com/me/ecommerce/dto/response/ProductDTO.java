@@ -3,6 +3,7 @@ package com.me.ecommerce.dto.response;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,9 @@ public class ProductDTO implements Serializable {
     private int unitsSold;
     private String imageUrl;
     private String description;
-    private UUID categoryId;
+    private String categoryId;
+    private String categoryName;
+//    private ProductCategoryDTO category;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

@@ -66,7 +66,7 @@ public class ProductServiceUnitTest {
 
     @ParameterizedTest
     @MethodSource("pageableProvider")
-    void testGetAllProducts(Pageable pageable) {
+    void testGetAllProductsPaginated(Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), mockProducts.size());
         Page<Product> mockPage = new PageImpl<>(
@@ -83,7 +83,7 @@ public class ProductServiceUnitTest {
                     Product product = invocation.getArgument(0);
                     return ProductTestHelper.mapProductToProductDTO(product);
                 });
-        PagedResponse<ProductDTO> response = productService.getAllProducts(
+        PagedResponse<ProductDTO> response = productService.getAllProductsPaginated(
                 pageable.getPageNumber(),
                 pageable.getPageSize());
 

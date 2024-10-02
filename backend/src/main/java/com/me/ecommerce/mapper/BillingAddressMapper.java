@@ -21,5 +21,5 @@ public interface BillingAddressMapper {
     BillingAddress billingAddressDTOToAddress(BillingAddressDTO billingAddressDTO);
 
     @Mapping(target = "state", source = "state")
-    BillingAddress billingAddressDTOToAddress(BillingAddress billingAddress);
+    BillingAddressDTO billingAddressToBillingAddressDTO(BillingAddress billingAddress);
 }
