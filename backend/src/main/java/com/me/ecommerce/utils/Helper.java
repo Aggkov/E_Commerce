@@ -36,14 +36,16 @@ public class Helper<T> {
             case "csv":
                 headers.setContentType(MediaType.parseMediaType("text/csv"));
                 headers.set("Content-Disposition", "attachment; filename=export.csv");
+//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//                headers.setContentDispositionFormData("attachment", "export.csv");
                 break;
             case "json":
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.set("Content-Disposition", "attachment; filename=export.json");
                 break;
             case "yaml":
-                headers.setContentType(MediaType.parseMediaType("application/x-yaml"));
-                headers.set("Content-Disposition", "attachment; filename=export.yaml");
+                headers.setContentType(MediaType.parseMediaType("application/x-yml"));
+                headers.set("Content-Disposition", "attachment; filename=export.yml");
                 break;
         }
     }

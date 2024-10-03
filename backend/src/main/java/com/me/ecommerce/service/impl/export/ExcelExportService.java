@@ -1,6 +1,8 @@
 package com.me.ecommerce.service.impl.export;
 
+import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.service.ExportService;
+import com.me.ecommerce.utils.Reflection;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,11 +15,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelExportService<T> implements ExportService<T> {
 
-    private static final Set<String> EXCLUDED_FIELDS = Set.of("imageUrl", "serialVersionUID");
+    private final Reflection<T> reflectionHelper = new Reflection<>();
 
     @Override
     public byte[] export(List<T> data) throws Exception {
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (Workbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Data");
             // Create the header row (Row 0)
             if (!data.isEmpty()) {
@@ -29,7 +32,7 @@ public class ExcelExportService<T> implements ExportService<T> {
                 T item = data.get(i);
 
                 // Assuming `T` has a method `getFields()` that returns the object's fields as a list of strings
-                List<String> fields = getFieldsFromItem(item);
+                List<String> fields = reflectionHelper.getFieldsFromItem(item);
                 for (int j = 0; j < fields.size(); j++) {
                     row.createCell(j).setCellValue(fields.get(j));
                 }
@@ -55,40 +58,5 @@ public class ExcelExportService<T> implements ExportService<T> {
             }
             headerRow.createCell(colIndex++).setCellValue(field.getName());
         }
-    }
-
-    private List<String> getFieldsFromItem(T item) {
-        // implement reflection or use a library to do this.
-        List<String> fieldValues = new ArrayList<>();
-
-        Class<?> clazz = item.getClass();
-        for (Field field : clazz.getDeclaredFields()) {
-            if (EXCLUDED_FIELDS.contains(field.getName())) {
-                continue;
-            }
-            // Make private fields accessible
-            field.setAccessible(true);
-            try {
-                // Get the field value for the current object
-                Object value = field.get(item);
-
-                // If the field is a nested object, handle it separately (e.g., ProductCategoryDTO)
-//                if (value != null && field.getType().getSimpleName().equals("ProductCategoryDTO")) {
-//                    // Extract the category name specifically
-//                    Field categoryNameField = value.getClass().getDeclaredField("categoryName");
-//                    categoryNameField.setAccessible(true);
-//                    Object categoryNameValue = categoryNameField.get(value);
-//                    fieldValues.add(categoryNameValue != null ? categoryNameValue.toString() : "null");
-//                } else {
-
-                    // Convert the field value to string and add to list (handling null values)
-                    fieldValues.add(value != null ? value.toString() : "null");
-//                }
-            } catch (IllegalAccessException e) {
-                // Handle potential errors when accessing the field
-                fieldValues.add("Error: Unable to access field");
-            }
-        }
-        return fieldValues;
     }
 }

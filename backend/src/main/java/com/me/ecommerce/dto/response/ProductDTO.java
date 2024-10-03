@@ -1,5 +1,6 @@
 package com.me.ecommerce.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
