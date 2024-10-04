@@ -95,36 +95,10 @@ public class ProductController {
         return ResponseEntity.ok(productService.saveProduct(productDTO));
     }
 
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportData(@RequestParam String type) throws Exception {
         return productService.export(type);
-
-
-
-//        byte[] exportedData = exportService.export(mockData);
-//
-//        // Set the content type and headers based on the file type
-//        HttpHeaders headers = new HttpHeaders();
-//        switch (type.toLowerCase()) {
-//            case "excel":
-//                headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-//                headers.set("Content-Disposition", "attachment; filename=export.xlsx");
-//                break;
-//            case "csv":
-//                headers.setContentType(MediaType.parseMediaType("text/csv"));
-//                headers.set("Content-Disposition", "attachment; filename=export.csv");
-//                break;
-//            case "json":
-//                headers.setContentType(MediaType.APPLICATION_JSON);
-//                headers.set("Content-Disposition", "attachment; filename=export.json");
-//                break;
-//            case "yaml":
-//                headers.setContentType(MediaType.parseMediaType("application/x-yaml"));
-//                headers.set("Content-Disposition", "attachment; filename=export.yaml");
-//                break;
-//        }
-//
-//        return ResponseEntity.ok().headers(headers).body(exportedData);
     }
 
 //    @DeleteMapping("/{id}")

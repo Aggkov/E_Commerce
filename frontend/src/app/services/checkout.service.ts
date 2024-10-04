@@ -23,5 +23,5 @@ export class CheckoutService {
 export interface OrderResponse {
   orderTrackingNumber: string;
   orderItems: OrderItem [];
-  customer: User;
+  user: User;
 }

@@ -20,7 +20,8 @@ public class BeansConfig {
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT,
-                HttpHeaders.AUTHORIZATION
+                HttpHeaders.AUTHORIZATION,
+                HttpHeaders.CONTENT_DISPOSITION
         ));
         config.setAllowedMethods(Arrays.asList(
                 "GET",

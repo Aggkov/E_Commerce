@@ -2,15 +2,17 @@ import {Component, OnInit} from '@angular/core';
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor";
 import {KeycloakService} from "../../../services/keycloak/keycloak.service";
-import {NgIf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {AdminProductTableComponent} from "../admin-product-table/admin-product-table.component";
+import {ExportService} from "../../../services/export.service";
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
   imports: [
     NgIf,
-    AdminProductTableComponent
+    AdminProductTableComponent,
+    NgForOf
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',
@@ -22,8 +24,15 @@ import {AdminProductTableComponent} from "../admin-product-table/admin-product-t
 export class AdminPanelComponent implements OnInit{
 
   isAdminUser: boolean = false;
+  options = [
+    { label: 'Excel', value: 'excel' },
+    { label: 'CSV', value: 'csv' },
+    { label: 'JSON', value: 'json' },
+    { label: 'YAML', value: 'yaml' }
+  ];
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(private keycloakService: KeycloakService,
+              private exportService: ExportService) {}
 
   async ngOnInit() {
     await this.keycloakService.init();  // Initialize Keycloak
@@ -32,5 +41,30 @@ export class AdminPanelComponent implements OnInit{
 
   isAdmin() {
     return this.isAdminUser;
+  }
+
+  onExportFormatSelected(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.exportFile(selectedValue);
+  }
+
+  private exportFile(format: string) {
+    switch (format) {
+      case 'excel':
+        this.exportService.export(format);
+        break;
+      case 'csv':
+        this.exportService.export(format);
+        break;
+      case 'json':
+        this.exportService.export(format);
+        break;
+      case 'yaml':
+        this.exportService.export(format);
+        break;
+      default:
+        console.log('Unknown format');
+        break;
+    }
   }
 }

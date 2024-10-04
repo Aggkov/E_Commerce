@@ -1,6 +1,13 @@
 <div class="main-content">
   <div class="section-content section-content-p30">
     <div *ngIf="isAdmin()" class="container-fluid">
+      <select (change)="onExportFormatSelected($event)">
+        <!-- Placeholder option with a default value -->
+        <option value="" disabled selected>Select export format</option>
+        <option *ngFor="let option of options" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
       <app-admin-product-table></app-admin-product-table>
     </div>
   </div>

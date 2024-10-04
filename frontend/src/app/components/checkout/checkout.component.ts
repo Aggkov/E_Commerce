@@ -159,7 +159,6 @@ export class CheckoutComponent implements OnInit {
   get creditCardExpDate() { return this.checkoutFormGroup.get('creditCard.expirationDate'); }
 
   onSubmit() {
-    console.log("Handling the submit button");
 
     // if (this.checkoutFormGroup.invalid) {
     //   this.checkoutFormGroup.markAllAsTouched();
@@ -199,7 +198,7 @@ export class CheckoutComponent implements OnInit {
       newCustomer,
       orderItems
     );
-    // console.log("order is: ",JSON.stringify(newOrder));
+    console.log("order is: ",JSON.stringify(newOrder));
 
     this.checkoutService.createOrder(newOrder).subscribe({
         next: response => {
@@ -257,10 +256,12 @@ export class CheckoutComponent implements OnInit {
         .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
       // bug fix for states
       // this.billingAddressStates = this.shippingAddressStates;
-      this.getStatesByCountryCode('billingAddress');
+      // this.getStatesByCountryCode('billingAddress');
 
       console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
       console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
+      console.log("billing array " + JSON.stringify(this.billingAddressStates));
+      console.log("shipping array " + JSON.stringify(this.shippingAddressStates));
     } else {
       this.showBillingInfo = true;
       this.checkoutFormGroup.controls['billingAddress'].reset();
@@ -268,6 +269,8 @@ export class CheckoutComponent implements OnInit {
       // this.billingAddressStates = [];
       console.log(this.checkoutFormGroup.controls['shippingAddress'].value);
       console.log(this.checkoutFormGroup.controls['billingAddress'].value);
+      console.log("billing array " + this.billingAddressStates)
+      console.log("shipping array " + this.shippingAddressStates)
     }
   }
 
@@ -279,9 +282,9 @@ export class CheckoutComponent implements OnInit {
     const countryCode = formGroup.value.country.code;
     const countryName = formGroup.value.country.name;
 
-    console.log(`${formGroupName} country: ${JSON.stringify(country)}`);
-    console.log(`${formGroupName} country code: ${countryCode}`);
-    console.log(`${formGroupName} country name: ${countryName}`);
+    // console.log(`${formGroupName} country: ${JSON.stringify(country)}`);
+    // console.log(`${formGroupName} country code: ${countryCode}`);
+    // console.log(`${formGroupName} country name: ${countryName}`);
 
     this.formService.getStatesByCountryCode(countryCode).subscribe({
       next: data => {

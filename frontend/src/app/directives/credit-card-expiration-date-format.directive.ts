@@ -81,7 +81,7 @@ export class CreditCardExpirationDateFormatDirective {
       {expirationDate: formattedValue},
       {emitEvent: false});
 
-    console.log(`Formatted value: ${formattedValue}`);
+    // console.log(`Formatted value: ${formattedValue}`);
   }
 
   // Method to set form control errors

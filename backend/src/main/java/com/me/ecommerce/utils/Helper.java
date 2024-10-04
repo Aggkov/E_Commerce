@@ -31,21 +31,23 @@ public class Helper<T> {
         switch (type.toLowerCase()) {
             case "excel":
                 headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-                headers.set("Content-Disposition", "attachment; filename=export.xlsx");
+                headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.xlsx");
+                headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
                 break;
             case "csv":
                 headers.setContentType(MediaType.parseMediaType("text/csv"));
-                headers.set("Content-Disposition", "attachment; filename=export.csv");
-//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-//                headers.setContentDispositionFormData("attachment", "export.csv");
+                headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.csv");
+                headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
                 break;
             case "json":
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.set("Content-Disposition", "attachment; filename=export.json");
+                headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.json");
+                headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
                 break;
             case "yaml":
                 headers.setContentType(MediaType.parseMediaType("application/x-yml"));
-                headers.set("Content-Disposition", "attachment; filename=export.yml");
+                headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.yml");
+                headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
                 break;
         }
     }

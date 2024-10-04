@@ -20,7 +20,7 @@ export class OrderSuccessComponent implements OnInit {
   customerEmail: string | undefined;
   orderTrackingNumber: string | undefined;
   orderItems: OrderItem[] = [];
-  // imageUrl: string | undefined;
+  imageUrl: string | undefined;
   shippingStreet: string | undefined;
   shippingCity: string | undefined;
   shippingZipCode: string | undefined;
@@ -42,16 +42,15 @@ export class OrderSuccessComponent implements OnInit {
     }
 
     if (this.orderResponse) {
-      this.customerEmail = this.orderResponse?.customer.email;
+      this.customerEmail = this.orderResponse?.user.email;
       this.orderTrackingNumber = this.orderResponse?.orderTrackingNumber;
-      // ngFor
       this.orderItems = this.orderResponse?.orderItems || [];
-      this.shippingStreet = this.orderResponse?.customer.shippingAddress.street;
-      this.shippingCity = this.orderResponse?.customer.shippingAddress.city;
-      this.shippingZipCode = this.orderResponse?.customer.shippingAddress.zipCode;
-      this.billingStreet = this.orderResponse?.customer.billingAddress.street;
-      this.billingCity = this.orderResponse?.customer.billingAddress.city;
-      this.billingZipCode = this.orderResponse?.customer.billingAddress.zipCode;
+      this.shippingStreet = this.orderResponse?.user.shippingAddress.street;
+      this.shippingCity = this.orderResponse?.user.shippingAddress.city;
+      this.shippingZipCode = this.orderResponse?.user.shippingAddress.zipCode;
+      this.billingStreet = this.orderResponse?.user.billingAddress.street;
+      this.billingCity = this.orderResponse?.user.billingAddress.city;
+      this.billingZipCode = this.orderResponse?.user.billingAddress.zipCode;
     }
   }
 }
