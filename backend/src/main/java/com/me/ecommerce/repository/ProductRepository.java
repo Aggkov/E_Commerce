@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.category.id = :id ORDER BY p.createdAt DESC")
     Page<Product> findByCategoryIdOrderByCreatedAt(@Param("id") UUID id, Pageable pageable);
 
-    Optional<Product> findByNameAndSku(String name, String sku);
+    Product findByNameAndSku(String name, String sku);
 
 
 //    @Query("SELECT p FROM Product p " +

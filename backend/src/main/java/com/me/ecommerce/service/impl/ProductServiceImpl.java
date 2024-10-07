@@ -184,8 +184,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
-        Optional<Product> product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
-        if(product.isPresent()) {
+        Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
+
+        if(product != null) {
             throw new BadRequestException(
                     "Product with " + productDTO.getName() + " and " + productDTO.getSku() +  " already exists",
                     HttpStatus.BAD_REQUEST);
@@ -207,7 +208,7 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("Upload directory not found for category: " + productDTO.getCategoryName());
         }
 
-        Product product = productMapper.productDTOToProduct(productDTO);
+        product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
         product.setImageUrl(uploadDir.replace("./backend/", "") + "/" + imageFile.getOriginalFilename());
