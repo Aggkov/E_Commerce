@@ -7,8 +7,10 @@ import {OrderSuccessComponent} from "./components/order-success/order-success.co
 import {AdminPanelComponent} from "./components/admin/admin-panel/admin-panel.component";
 import {authGuard} from "./guard/auth.guard";
 import {UserOrdersComponent} from "./components/user-orders/user-orders.component";
+import {AdminCreateProductComponent} from "./components/admin/admin-create-product/admin-create-product.component";
 
 export const routes: Routes = [
+  {path: 'admin/create/product', component: AdminCreateProductComponent, canActivate: [authGuard]},
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [authGuard]},
   {path: 'user-orders', component: UserOrdersComponent, canActivate: [authGuard]},
   {path: 'search/:query', component: ProductListComponent },

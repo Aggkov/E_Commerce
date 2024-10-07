@@ -11,6 +11,7 @@ import {ProductCategoryService} from "../../services/product-category.service";
 import {map} from "rxjs";
 import {ProductCategoryMenuComponent} from "../product-category-menu/product-category-menu.component";
 import {FilterComponent, FilterCriteria} from "../filter/filter.component";
+import {environment} from "../../../enviroments/enviroment";
 
 @Component({
   selector: 'app-product-list',
@@ -52,6 +53,10 @@ export class ProductListComponent implements OnInit {
   isFiltered: boolean = false; // Flag to track whether filtering is applied
 
   filterCriteria: FilterCriteria | null = null; // Use null when no filter is applied
+
+  // getImageUrl(product: any): string {
+  //   return `${environment.backendUrl}${product.imageUrl}`;
+  // }
 
   constructor(private productService: ProductService,
               private productCategoryService: ProductCategoryService,
@@ -230,5 +235,12 @@ export class ProductListComponent implements OnInit {
     if (this.showFilterMenu) {
       this.showCategoryMenu = false;
     }
+  }
+
+  getImage(product: Product): string | undefined {
+    if (product.imageUrl) {
+      return 'data:image/png;base64,' + product.imageUrl
+    }
+    return 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg';
   }
 }

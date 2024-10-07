@@ -58,7 +58,7 @@ public class Product extends Audit {
     @Column(name = "units_sold")
     private Integer unitsSold;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 

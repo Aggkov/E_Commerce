@@ -3,6 +3,8 @@ import {OrderResponse} from "../../services/checkout.service";
 import {Router} from "@angular/router";
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {OrderItem} from "../../model/order-item";
+import {environment} from "../../../enviroments/enviroment";
+import {Product} from "../../model/product";
 
 @Component({
   selector: 'app-order-success',
@@ -52,5 +54,12 @@ export class OrderSuccessComponent implements OnInit {
       this.billingCity = this.orderResponse?.user.billingAddress.city;
       this.billingZipCode = this.orderResponse?.user.billingAddress.zipCode;
     }
+  }
+
+  getImage(product: Product): string | undefined {
+    if (product.imageUrl) {
+      return 'data:image/png;base64,' + product.imageUrl
+    }
+    return 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg';
   }
 }

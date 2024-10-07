@@ -3,6 +3,8 @@ import {CartService} from "../../services/cart.service";
 import {CartItem} from "../../model/cart-item";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
+import {environment} from "../../../enviroments/enviroment";
+import {Product} from "../../model/product";
 
 @Component({
   selector: 'app-cart-details',
@@ -20,6 +22,10 @@ export class CartDetailsComponent implements OnInit {
   cartItems: CartItem[] = [];
   totalPrice: number = 0;
   totalQuantity: number = 0;
+
+  // getImageUrl(product: any): string {
+  //   return `${environment.backendUrl}${product.imageUrl}`;
+  // }
 
   constructor(private cartService: CartService) { }
 
@@ -56,5 +62,12 @@ export class CartDetailsComponent implements OnInit {
 
   remove(theCartItem: CartItem) {
     this.cartService.remove(theCartItem);
+  }
+
+  getImage(product: Product): string | undefined {
+    if (product.imageUrl) {
+      return 'data:image/png;base64,' + product.imageUrl
+    }
+    return 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg';
   }
 }

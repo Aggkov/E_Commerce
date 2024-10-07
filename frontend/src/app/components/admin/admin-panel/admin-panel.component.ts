@@ -5,6 +5,7 @@ import {KeycloakService} from "../../../services/keycloak/keycloak.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {AdminProductTableComponent} from "../admin-product-table/admin-product-table.component";
 import {ExportService} from "../../../services/export.service";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-admin-panel',
@@ -12,7 +13,8 @@ import {ExportService} from "../../../services/export.service";
   imports: [
     NgIf,
     AdminProductTableComponent,
-    NgForOf
+    NgForOf,
+    RouterLink
   ],
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css',

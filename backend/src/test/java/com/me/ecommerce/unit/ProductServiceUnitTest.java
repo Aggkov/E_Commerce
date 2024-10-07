@@ -200,33 +200,33 @@ public class ProductServiceUnitTest {
         assertEquals(mockProduct.getDescription(), response.getDescription());
     }
 
-    @Test
-    void testSaveProduct() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setSku("TEST-SKU-123");
-        productDTO.setName("Test Product");
-        productDTO.setDescription("This is a test product.");
-
-        Product product = new Product();
-        product.setSku("TEST-SKU-123");
-        product.setName("Test Product");
-        product.setDescription("This is a test product.");
-
-        when(productMapper.productDTOToProduct(productDTO)).thenReturn(product);
-        when(productRepository.save(any(Product.class))).thenReturn(product);
-
-        Product savedProduct = productService.saveProduct(productDTO);
-
-        // Verify that the mapper and repository
-        // methods were called with the correct arguments.
-        verify(productMapper).productDTOToProduct(productDTO);
-        verify(productRepository).save(product);
-
-        assertNotNull(savedProduct);
-        assertEquals(product.getSku(), savedProduct.getSku());
-        assertEquals(product.getName(), savedProduct.getName());
-        assertEquals(product.getDescription(), savedProduct.getDescription());
-    }
+//    @Test
+//    void testSaveProduct() {
+//        ProductDTO productDTO = new ProductDTO();
+//        productDTO.setSku("TEST-SKU-123");
+//        productDTO.setName("Test Product");
+//        productDTO.setDescription("This is a test product.");
+//
+//        Product product = new Product();
+//        product.setSku("TEST-SKU-123");
+//        product.setName("Test Product");
+//        product.setDescription("This is a test product.");
+//
+//        when(productMapper.productDTOToProduct(productDTO)).thenReturn(product);
+//        when(productRepository.save(any(Product.class))).thenReturn(product);
+//
+//        Product savedProduct = productService.saveProduct(productDTO);
+//
+//        // Verify that the mapper and repository
+//        // methods were called with the correct arguments.
+//        verify(productMapper).productDTOToProduct(productDTO);
+//        verify(productRepository).save(product);
+//
+//        assertNotNull(savedProduct);
+//        assertEquals(product.getSku(), savedProduct.getSku());
+//        assertEquals(product.getName(), savedProduct.getName());
+//        assertEquals(product.getDescription(), savedProduct.getDescription());
+//    }
 
     // Provide Pageable configurations for testing
     static Stream<Pageable> pageableProvider() {

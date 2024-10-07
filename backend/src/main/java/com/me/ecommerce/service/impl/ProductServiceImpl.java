@@ -4,6 +4,7 @@ import com.me.ecommerce.dto.response.PagedResponse;
 import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.entity.ProductCategory;
+import com.me.ecommerce.exception.BadRequestException;
 import com.me.ecommerce.exception.ResourceNotFoundException;
 import com.me.ecommerce.mapper.ProductMapper;
 import com.me.ecommerce.repository.ProductCategoryRepository;
@@ -12,11 +13,16 @@ import com.me.ecommerce.repository.ProductRepository;
 import com.me.ecommerce.service.ExportService;
 import com.me.ecommerce.service.ProductService;
 import com.me.ecommerce.utils.Helper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import static com.me.ecommerce.utils.AppConstants.CREATED_AT;
+import static java.io.File.separator;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -36,6 +44,11 @@ public class ProductServiceImpl implements ProductService {
     private final CriteriaProductRepository criteriaProductRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductMapper productMapper;
+    @Value("${application.file.uploads.photos-output-path}")
+    private String fileUploadPath;
+    // Inject the entire array of static locations
+//    @Value("${spring.web.resources.static-locations}")
+//    private String[] staticLocations;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CriteriaProductRepository criteriaProductRepository, ProductCategoryRepository productCategoryRepository, ProductMapper productMapper) {
@@ -169,13 +182,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product saveProduct(ProductDTO productDTO) {
-        ProductCategory category = productCategoryRepository.findById(UUID.fromString(productDTO.getCategoryId())).orElseThrow(
+    public Product saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
+        ProductCategory category = productCategoryRepository.findByCategoryName(productDTO.getCategoryName()).orElseThrow(
                 () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
         );
+
+        // Get the correct upload directory based on the category
+        String uploadDir = getUploadDir(productDTO.getCategoryName());
+
+        if (!uploadDir.isEmpty()) {
+            // Save the image to the correct directory
+            String fileName = imageFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.write(filePath, imageFile.getBytes());
+        } else {
+            throw new IllegalArgumentException("Upload directory not found for category: " + productDTO.getCategoryName());
+        }
+
         Product product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
+        product.setImageUrl(uploadDir.replace("./backend/", "") + "/" + imageFile.getOriginalFilename());
         return productRepository.save(product);
     }
 
@@ -197,6 +224,22 @@ public class ProductServiceImpl implements ProductService {
 
         // Save and return the updated product
         return productRepository.save(existingProduct);
+    }
+
+    // A utility method to determine the correct upload directory
+    private String getUploadDir(String categoryName) throws BadRequestException {
+        switch (categoryName.toLowerCase()) {
+            case "books":
+                return fileUploadPath + "/books";
+            case "coffee mugs":
+                return fileUploadPath + "/coffeemugs";
+            case "luggage tags":
+                return fileUploadPath + "/luggagetags";
+            case "mouse pads":
+                return fileUploadPath + "/mousepads";
+            default:
+                throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
+        }
     }
 }
 

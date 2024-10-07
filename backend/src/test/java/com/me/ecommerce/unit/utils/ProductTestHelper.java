@@ -117,7 +117,7 @@ public class ProductTestHelper {
         productDTO.setName(product.getName());
         productDTO.setUnitPrice(product.getUnitPrice());
         productDTO.setUnitsInStock(product.getUnitsInStock());
-        productDTO.setImageUrl(product.getImageUrl());
+//        productDTO.setImageUrl(product.getImageUrl());
         productDTO.setDescription(product.getDescription());
 
         return productDTO;

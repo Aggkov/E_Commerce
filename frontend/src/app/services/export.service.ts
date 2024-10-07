@@ -12,7 +12,7 @@ export class ExportService {
   }
 
   export(format: string) {
-    const searchUrl = `${this.baseUrl}/export?type=${format}`;
+    const searchUrl = `${this.baseUrl}/admin/export?type=${format}`;
     // Make an HTTP GET request to the backend to export the file
     this.httpClient.get<Blob>(searchUrl, { observe: 'response', responseType: 'blob' as 'json'}) // 'blob' response type for binary file
       .subscribe({

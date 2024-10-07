@@ -11,7 +11,7 @@
           </tr>
           <tr *ngFor="let cartItem of cartItems">
             <td>
-              <img src="{{ cartItem.product.imageUrl }}"
+              <img [src]="getImage(cartItem.product)"
                    class="img-responsive"
                    width="150px"/>
             </td>

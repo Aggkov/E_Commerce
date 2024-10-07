@@ -8,6 +8,11 @@
           {{ option.label }}
         </option>
       </select>
+      <div class="d-flex justify-content-end mb-3">
+        <a routerLink="/admin/create/product" class="btn btn-outline-primary">
+          <i class="fas fa-plus"></i>&nbsp;New Product
+        </a>
+      </div>
       <app-admin-product-table></app-admin-product-table>
     </div>
   </div>

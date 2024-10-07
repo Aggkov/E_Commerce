@@ -5,6 +5,7 @@ import {Product} from "../../model/product";
 import {CurrencyPipe, NgIf} from "@angular/common";
 import {CartService} from "../../services/cart.service";
 import {CartItem} from "../../model/cart-item";
+import {environment} from "../../../enviroments/enviroment";
 
 @Component({
   selector: 'app-product-details',
@@ -46,5 +47,14 @@ export class ProductDetailsComponent implements OnInit {
   addToCart() {
     const cartItem = new CartItem(this.product);
     this.cartService.addToCartOrIncrementQuantity(cartItem);
+  }
+
+  protected readonly environment = environment;
+
+  getImage(product: Product): string | undefined {
+    if (product.imageUrl) {
+      return 'data:image/png;base64,' + product.imageUrl
+    }
+    return 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg';
   }
 }

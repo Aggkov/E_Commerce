@@ -75,6 +75,10 @@ export class ProductService {
     };
     return this.httpClient.post<GetResponseProducts>(`${this.baseUrl}/filter`, payload);
   }
+
+  createProduct(formData: FormData) : Observable<Product> {
+    return this.httpClient.post<Product>(`${this.baseUrl}/admin`, formData);
+  }
 }
 
 // defines the structure of the response data expected from the backend API.

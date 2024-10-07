@@ -33,6 +33,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionResponse> resolveException(BadRequestException exception) {
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .status(exception.getStatus())
+                .code(exception.getStatusCode())
+                .timestamp(Instant.now()).build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> resolveException(MethodArgumentNotValidException ex) {
@@ -62,9 +73,5 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .code(HttpStatus.BAD_REQUEST.value())
                 .timestamp(Instant.now()).build(), HttpStatus.BAD_REQUEST);
-
-//
-//                messages, HttpStatus.BAD_REQUEST.getReasonPhrase(),
-//                HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
     }
 }

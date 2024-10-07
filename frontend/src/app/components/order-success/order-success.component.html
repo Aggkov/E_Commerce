@@ -20,7 +20,7 @@
           <div class="product-details">
             <span class="product-name">{{item.product.name}}</span>
             <!-- Quantity Label and Value on Separate Lines -->
-            <img [src]="item.product.imageUrl" alt="Product Image" class="me-3 product-image" fill>
+            <img [src]="getImage(item.product)" alt="Product Image" class="me-3 product-image" fill>
             <div class="product-quantity">
               <span>Quantity:</span>
               <span class="quantity-number">{{item.quantity}}</span>

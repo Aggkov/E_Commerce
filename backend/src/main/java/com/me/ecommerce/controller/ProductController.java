@@ -6,9 +6,11 @@ import com.me.ecommerce.dto.response.ProductDTO;
 import com.me.ecommerce.entity.Product;
 import com.me.ecommerce.service.ProductService;
 import com.me.ecommerce.utils.AppConstants;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "products", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,13 +94,15 @@ public class ProductController {
 
     // Only allow admin users to access this endpoint
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/admin")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
-        return ResponseEntity.ok(productService.saveProduct(productDTO));
+    @PostMapping(path = "/admin", consumes = { "multipart/form-data" })
+    public ResponseEntity<Product> createProduct(
+            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart("image") MultipartFile imageFile) throws IOException {
+        return new ResponseEntity<>(productService.saveProduct(productDTO, imageFile), HttpStatus.CREATED);
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/export")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("admin/export")
     public ResponseEntity<byte[]> exportData(@RequestParam String type) throws Exception {
         return productService.export(type);
     }

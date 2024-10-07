@@ -1,0 +1,140 @@
+<div class="page-container">
+  test
+</div>
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <form #productForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+        <!-- SKU Field -->
+        <div>
+          <label for="sku" class="form-label">SKU:</label>
+          <input
+            class="form-control"
+            type="text"
+            id="sku"
+            name="sku"
+            [(ngModel)]="product.sku"
+            #sku="ngModel"
+            required
+            minlength="3"
+          />
+          <div *ngIf="sku.invalid && sku.touched">
+            <small *ngIf="sku.errors?.['required']">SKU is required.</small>
+            <small *ngIf="sku.errors?.['minlength']">SKU must be at least 3 characters long.</small>
+          </div>
+        </div>
+
+        <!-- Name Field -->
+        <div>
+          <label class="form-label" for="name">Name:</label>
+          <input
+            class="form-control"
+            type="text"
+            id="name"
+            name="name"
+            [(ngModel)]="product.name"
+            #name="ngModel"
+            required
+          />
+          <div *ngIf="name.invalid && name.touched">
+            <small *ngIf="name.errors?.['required']">Name is required.</small>
+          </div>
+        </div>
+
+        <!-- Unit Price Field -->
+        <div>
+          <label class="form-label" for="unitPrice">Unit Price:</label>
+          <input
+            class="form-control"
+            type="number"
+            id="unitPrice"
+            name="unitPrice"
+            [(ngModel)]="product.unitPrice"
+            #unitPrice="ngModel"
+            required
+            min="0"
+          />
+          <div *ngIf="unitPrice.invalid && unitPrice.touched">
+            <small *ngIf="unitPrice.errors?.['required']">Unit Price is required.</small>
+            <small *ngIf="unitPrice.errors?.['min']">Unit Price cannot be negative.</small>
+          </div>
+        </div>
+
+        <!-- Units in Stock Field -->
+        <div>
+          <label class="form-label" for="unitsInStock">Units in Stock:</label>
+          <input
+            class="form-control"
+            type="number"
+            id="unitsInStock"
+            name="unitsInStock"
+            [(ngModel)]="product.unitsInStock"
+            #unitsInStock="ngModel"
+            required
+            min="1"
+          />
+          <div *ngIf="unitsInStock.invalid && unitsInStock.touched">
+            <small *ngIf="unitsInStock.errors?.['required']">Units in Stock is required.</small>
+            <small *ngIf="unitsInStock.errors?.['min']">Units in Stock must be at least 1.</small>
+          </div>
+        </div>
+        <div>
+          <label class="form-label" for="description">Description:</label>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            [(ngModel)]="product.description"
+            #description="ngModel"
+            required
+            minlength="10"
+          ></textarea>
+          <div *ngIf="description.invalid && description.touched">
+            <small *ngIf="description.errors?.['required']">Description is required.</small>
+            <small *ngIf="description.errors?.['minlength']">Description must be at least 10 characters long.</small>
+          </div>
+        </div>
+        <div>
+          <label for="categoryName">Category Name:</label>
+          <select
+            class="form-select"
+            id="categoryName"
+            name="categoryName"
+            [(ngModel)]="product.categoryName"
+            #categoryName="ngModel"
+            required>
+            <option value="" disabled>Select Category</option>
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+          </select>
+          <div *ngIf="categoryName.invalid && categoryName.touched">
+            <small *ngIf="categoryName.errors?.['required']">Category is required.</small>
+          </div>
+        </div>
+        <div>
+          <label for="image">Product Image:</label>
+          <input
+            class="form-control"
+            type="file"
+            id="image"
+            name="image"
+            (change)="onFileSelected($event)"
+            required
+          />
+          <div *ngIf="!product.imageUrl && productForm.submitted">
+            <small>Image is required.</small>
+          </div>
+          <small *ngIf="imageFile">Selected Image: {{ imageFile.name }}</small>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit"
+                class="btn btn-outline-primary"
+                [disabled]="productForm.invalid">
+          <i class="fas fa-save"></i>&nbsp;Save
+        </button>
+        <a routerLink="/admin-panel" type="submit" class="btn btn-link btn text-danger">
+          <i class="fas fa-times"></i>&nbsp;Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>

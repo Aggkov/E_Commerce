@@ -10,18 +10,26 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
-    // behind the scenes select ... where category_id = id will be called
-    @Query("SELECT p FROM Product p WHERE p.category.id = :id ORDER BY p.createdAt DESC")
+    /*
+    Instead of fetching the ProductCategory lazily and encountering this error,
+    you can modify the query to use a JOIN FETCH. This way,
+    the ProductCategory will be fetched together with the Product,
+    preventing the LazyInitializationException.
+     */
+    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.category.id = :id ORDER BY p.createdAt DESC")
     Page<Product> findByCategoryIdOrderByCreatedAt(@Param("id") UUID id, Pageable pageable);
 
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.unitPrice " +
-            "BETWEEN :minPrice AND :maxPrice " +
-            "AND (:nameFilters IS NULL OR p.name IN :nameFilters) " +
-//          "AND (COALESCE(:nameFilters, NULL) IS NULL OR p.name IN (:nameFilters))" +
-            "AND p.category.id = :categoryId " +
-            "ORDER BY p.createdAt DESC")
-    Page<Product> findProductsBetweenMinPriceAndMaxPrice(UUID categoryId, Double minPrice, Double maxPrice, List<String> nameFilters, Pageable pageable);
+
+
+
+//    @Query("SELECT p FROM Product p " +
+//            "WHERE p.unitPrice " +
+//            "BETWEEN :minPrice AND :maxPrice " +
+//            "AND (:nameFilters IS NULL OR p.name IN :nameFilters) " +
+////          "AND (COALESCE(:nameFilters, NULL) IS NULL OR p.name IN (:nameFilters))" +
+//            "AND p.category.id = :categoryId " +
+//            "ORDER BY p.createdAt DESC")
+//    Page<Product> findProductsBetweenMinPriceAndMaxPrice(UUID categoryId, Double minPrice, Double maxPrice, List<String> nameFilters, Pageable pageable);
 
     /*
         Spring data gives these by default

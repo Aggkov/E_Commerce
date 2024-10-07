@@ -20,7 +20,7 @@ public class ProductDTO implements Serializable {
     private BigDecimal unitPrice;
     private int unitsInStock;
     private int unitsSold;
-    private String imageUrl;
+    private byte[] imageUrl;
     private String description;
     private String categoryId;
     private String categoryName;
