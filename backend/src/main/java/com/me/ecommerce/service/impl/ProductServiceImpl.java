@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
+        Optional<Product> product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
+        if(product.isPresent()) {
+            throw new BadRequestException(
+                    "Product with " + productDTO.getName() + " and " + productDTO.getSku() +  " already exists",
+                    HttpStatus.BAD_REQUEST);
+        }
+
         ProductCategory category = productCategoryRepository.findByCategoryName(productDTO.getCategoryName()).orElseThrow(
                 () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
         );
