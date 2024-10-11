@@ -27,8 +27,8 @@ export class ProductService {
       + `page=${page}&size=${pageSize}`;
 
     return this.httpClient.get<GetResponseProducts>(searchUrl)
-    .pipe(tap(response =>
-      console.log('API response:', response)));
+    // .pipe(tap(response =>
+      // console.log('API response:', response)));
   }
 
   searchProductByKeywords(searchQuery: string,
