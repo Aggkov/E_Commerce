@@ -1,57 +1,6 @@
 {
   "id": "368eddaf-fbdb-49e7-92cc-38903ad1dc4c",
   "realm": "E-Commerce",
-  "users": [
-    {
-      "id": "0aa0ae2c-96e2-4f8c-a161-66b8c743d49a",
-      "username": "t_admin",
-      "email": "admin@email.com",
-      "firstName": "admin",
-      "lastName": "admin",
-      "enabled": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "t_admin"
-        }
-      ],
-      "roles": { 
-        "realm": [
-          "default-roles-e-commerce"
-        ],
-        "client": {
-          "frontend": [
-            "admin",
-            "user"
-          ]
-        }
-      }
-    },
-    {
-      "id": "20adc638-380f-4950-b830-ae1ac0d169b2",
-      "username": "t_user",
-      "email": "t_user@email.com",
-      "firstName": "user",
-      "lastName": "user",
-      "enabled": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "t_user"
-        }
-      ],
-      "roles": { 
-        "realm": [
-          "default-roles-e-commerce"
-        ],
-        "client": {
-          "frontend": [
-            "user"
-          ]
-        }
-      }
-    }
-  ],
   "displayName": "E-Commerce",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -100,6 +49,15 @@
   "roles": {
     "realm": [
       {
+        "id": "cc06612a-f983-4a76-bd65-42f2795ba1d6",
+        "name": "admin",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "368eddaf-fbdb-49e7-92cc-38903ad1dc4c",
+        "attributes": {}
+      },
+      {
         "id": "d686a58f-29be-4437-ae70-96131178fbdf",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
@@ -133,6 +91,15 @@
         "id": "3d284c37-8274-47be-8ea4-d917144ed336",
         "name": "offline_access",
         "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "368eddaf-fbdb-49e7-92cc-38903ad1dc4c",
+        "attributes": {}
+      },
+      {
+        "id": "8535c558-657c-48d5-92d1-b59bf3d811e2",
+        "name": "user",
+        "description": "",
         "composite": false,
         "clientRole": false,
         "containerId": "368eddaf-fbdb-49e7-92cc-38903ad1dc4c",
@@ -668,7 +635,9 @@
       "publicClient": true,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
@@ -707,7 +676,9 @@
       "publicClient": false,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
@@ -812,7 +783,9 @@
       "publicClient": false,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
-      "attributes": {},
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
@@ -927,8 +900,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "AUTH_TIME",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "auth_time",
             "jsonType.label": "long"
@@ -1257,7 +1231,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1358,6 +1333,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -1531,14 +1507,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-property-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-full-name-mapper",
+            "saml-user-property-mapper",
             "saml-user-attribute-mapper",
             "oidc-address-mapper",
             "saml-role-list-mapper",
-            "oidc-full-name-mapper"
+            "oidc-sha256-pairwise-sub-mapper"
           ]
         }
       },
@@ -1597,14 +1573,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-full-name-mapper",
+            "saml-role-list-mapper",
+            "oidc-address-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-address-mapper",
-            "saml-role-list-mapper",
-            "saml-user-property-mapper"
+            "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
@@ -2332,8 +2308,8 @@
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
+    "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
     "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
