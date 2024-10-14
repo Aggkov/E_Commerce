@@ -34,9 +34,8 @@ cd your-repo
 3. Go to localhost:9090 and log in with `admin` `admin` as credentials. Create a new realm by importing `realm-export.json` file.
    Set up your own user(s) in Keycloak and assign them roles `user` and `admin` from `frontend client` in keycloak management console.
 4. `cd backend`.
-5. Run `mvn -N wrapper:wrapper`.
-6. Run `mvn clean install`
-7. Run `mvn spring-boot:run`.
+5. Run `mvn clean install`
+6. Run `mvn spring-boot:run on each microservice`.
 
 **Frontend**
 1. Install [Node.js and npm](https://www.npmjs.com/get-npm)
