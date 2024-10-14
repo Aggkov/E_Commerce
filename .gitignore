@@ -7,6 +7,7 @@
 /frontend/tmp
 /frontend/out-tsc
 /frontend/angular
+/frontend/.angular
 
 # dependencies
 /frontend/node*
@@ -77,3 +78,5 @@ HELP.md
 # =========== SYSTEM FILES =========== #
 .DS_Store
 Thumbs.db
+/frontend/.angular/
+/frontend/.vscode/
