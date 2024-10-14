@@ -12,7 +12,7 @@ services:
       - "5432:5432"  # Maps port 5432 on your machine to port 5432 in the container
     volumes:
       - ./postgres-data:/var/lib/postgresql/data  # Persist data on your local filesystem
-      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db_UUID.sql  # Run your SQL script during container startup
+      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db.sql  # Run your SQL script during container startup
   keycloak:
     container_name: keycloak-e_commerce
     image: quay.io/keycloak/keycloak:25.0.5

@@ -56,28 +56,49 @@
           <label for="java">Java</label>
         </div>
         <div class="checkbox-wrapper">
-          <input type="checkbox" id="js" [(ngModel)]="nameFilters.javascript" [ngModelOptions]="{standalone: true}">
+          <input type="checkbox"
+                 id="js"
+                 [(ngModel)]="nameFilters.javascript"
+                 [ngModelOptions]="{standalone: true}">
           <label for="js">JavaScript</label>
         </div>
         <div class="checkbox-wrapper">
-          <input type="checkbox" id="python" [(ngModel)]="nameFilters.python" [ngModelOptions]="{standalone: true}">
+          <input
+            type="checkbox"
+            id="python"
+            [(ngModel)]="nameFilters.python"
+            [ngModelOptions]="{standalone: true}">
           <label for="python">Python</label>
         </div>
         <div class="checkbox-wrapper">
-          <input type="checkbox" id="vue" [(ngModel)]="nameFilters.vue" [ngModelOptions]="{standalone: true}">
+          <input type="checkbox"
+                 id="vue"
+                 [(ngModel)]="nameFilters.vue"
+                 [ngModelOptions]="{standalone: true}">
           <label for="vue">Vue</label>
         </div>
         <div class="checkbox-wrapper">
-          <input type="checkbox" id="csharp" [(ngModel)]="nameFilters.csharp" [ngModelOptions]="{standalone: true}">
+          <input type="checkbox"
+                 id="csharp"
+                 [(ngModel)]="nameFilters.csharp"
+                 [ngModelOptions]="{standalone: true}">
           <label for="csharp">C#</label>
         </div>
         <div class="checkbox-wrapper">
-          <input type="checkbox" id="sql" [(ngModel)]="nameFilters.sql" [ngModelOptions]="{standalone: true}">
+          <input type="checkbox"
+                 id="sql"
+                 [(ngModel)]="nameFilters.sql"
+                 [ngModelOptions]="{standalone: true}">
           <label for="sql">SQL</label>
         </div>
       </div>
       <div class="button-container">
-        <button type="submit" (click)="applyFilter()" class="btn btn-primary btn-small">Apply</button>
+        <button
+          type="submit"
+          (click)="applyFilter()"
+          class="btn btn-primary btn-small">
+          Apply
+        </button>
       </div>
     </div>
   </aside>
