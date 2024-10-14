@@ -1,6 +1,57 @@
 {
   "id": "368eddaf-fbdb-49e7-92cc-38903ad1dc4c",
   "realm": "E-Commerce",
+  "users": [
+    {
+      "id": "0aa0ae2c-96e2-4f8c-a161-66b8c743d49a",
+      "username": "t_admin",
+      "email": "admin@email.com",
+      "firstName": "admin",
+      "lastName": "admin",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "t_admin"
+        }
+      ],
+      "roles": { 
+        "realm": [
+          "default-roles-e-commerce"
+        ],
+        "client": {
+          "frontend": [
+            "admin",
+            "user"
+          ]
+        }
+      }
+    },
+    {
+      "id": "20adc638-380f-4950-b830-ae1ac0d169b2",
+      "username": "t_user",
+      "email": "t_user@email.com",
+      "firstName": "user",
+      "lastName": "user",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "t_user"
+        }
+      ],
+      "roles": { 
+        "realm": [
+          "default-roles-e-commerce"
+        ],
+        "client": {
+          "frontend": [
+            "user"
+          ]
+        }
+      }
+    }
+  ],
   "displayName": "E-Commerce",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -32,11 +83,11 @@
   "registrationAllowed": true,
   "registrationEmailAsUsername": false,
   "rememberMe": false,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": false,
-  "editUsernameAllowed": false,
+  "editUsernameAllowed": true,
   "bruteForceProtected": false,
   "permanentLockout": false,
   "maxTemporaryLockouts": 0,
@@ -699,17 +750,28 @@
       "consentRequired": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
+      "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "publicClient": true,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
-        "oidc.ciba.grant.enabled": "false",
-        "backchannel.logout.session.required": "true",
+        "client.secret.creation.time": "1728844150",
+        "client.introspection.response.allow.jwt.claim.enabled": "false",
         "post.logout.redirect.uris": "http://localhost:4200/*",
         "oauth2.device.authorization.grant.enabled": "false",
-        "backchannel.logout.revoke.offline.tokens": "false"
+        "use.jwks.url": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "oidc.ciba.grant.enabled": "false",
+        "client.use.lightweight.access.token.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "client_credentials.use_refresh_token": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "require.pushed.authorization.requests": "false",
+        "acr.loa.map": "{}",
+        "display.on.consent.screen": "false",
+        "token.response.type.bearer.lower-case": "false"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -720,7 +782,8 @@
         "profile",
         "roles",
         "basic",
-        "email"
+        "email",
+        "frontend-scope"
       ],
       "optionalClientScopes": [
         "address",
@@ -1162,6 +1225,18 @@
           }
         }
       ]
+    },
+    {
+      "id": "92144036-5384-4dde-b9b8-1e250a4cf633",
+      "name": "frontend-scope",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": ""
+      }
     },
     {
       "id": "3bd2a736-bc17-4fd1-ac99-bbed6959cf34",
