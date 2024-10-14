@@ -239,7 +239,7 @@ export class ProductListComponent implements OnInit {
 
   getImage(product: Product): string | undefined {
     if (product.imageUrl) {
-      return 'data:image/png;base64,' + product.imageUrl
+      return 'data:image/png;base64,' + product.imageUrl;
     }
     return 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg';
   }

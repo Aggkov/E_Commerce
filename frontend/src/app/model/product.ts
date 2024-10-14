@@ -6,7 +6,7 @@ export class Product {
               public description: string,
               public unitPrice: number,
               // public imageUrlTest: Array<string>,
-              public imageUrl: Array<string>,
+              public imageUrl: string,
               public active: boolean,
               public unitsInStock: number,
               public unitsSold: number,

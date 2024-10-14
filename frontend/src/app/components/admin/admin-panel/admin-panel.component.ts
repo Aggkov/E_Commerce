@@ -4,7 +4,7 @@ import {httpTokenInterceptor} from "../../../interceptors/http-token.interceptor
 import {KeycloakService} from "../../../services/keycloak/keycloak.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {AdminProductTableComponent} from "../admin-product-table/admin-product-table.component";
-import {ExportService} from "../../../services/export.service";
+import {ExportService} from "../../../services/export/export.service";
 import {RouterLink} from "@angular/router";
 
 @Component({

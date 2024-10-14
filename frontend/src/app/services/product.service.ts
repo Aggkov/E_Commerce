@@ -3,13 +3,14 @@ import {map, Observable, pipe, tap} from "rxjs";
 import {Product} from "../model/product";
 import {HttpClient} from "@angular/common/http";
 import {FilterCriteria} from "../components/filter/filter.component";
+import {environment} from "../../enviroments/enviroment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  private baseUrl = 'http://localhost:8080/api/v1/products';
+  private baseUrl = environment.coreServiceUrl + '/products';
 
   constructor(private httpClient: HttpClient) {
   }
