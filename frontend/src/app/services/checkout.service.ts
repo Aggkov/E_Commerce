@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {Order} from "../model/order";
 import {OrderItem} from "../model/order-item";
 import {User} from "../model/user";
+import {environment} from "../../enviroments/enviroment";
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import {User} from "../model/user";
 })
 export class CheckoutService {
 
-  private purchaseUrl = 'http://localhost:8080/api/v1/order';
+  private purchaseUrl = environment.coreServiceUrl + '/order';
 
   constructor(private httpClient: HttpClient) { }
 
