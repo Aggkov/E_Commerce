@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ProductService {
     PagedResponse<ProductDTO> getAllProductsPaginated(int page, int size);
     ProductDTO getProductById(UUID id);
-    Product saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException;
+    ProductDTO saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException;
     void deleteProduct(UUID id);
     Product updateProduct(UUID id, Product product);
     PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size);

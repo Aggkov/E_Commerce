@@ -95,7 +95,7 @@ public class ProductController {
     // Only allow admin users to access this endpoint
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin", consumes = { "multipart/form-data" })
-    public ResponseEntity<Product> createProduct(
+    public ResponseEntity<ProductDTO> createProduct(
             @RequestPart("product") ProductDTO productDTO,
             @RequestPart("image") MultipartFile imageFile) throws IOException {
         return new ResponseEntity<>(productService.saveProduct(productDTO, imageFile), HttpStatus.CREATED);

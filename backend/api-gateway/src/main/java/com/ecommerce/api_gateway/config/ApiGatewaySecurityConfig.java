@@ -42,13 +42,14 @@ public class ApiGatewaySecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges ->
                         exchanges
-                                .pathMatchers("/**").permitAll() // Public access to all endpoints
+//                                .pathMatchers("/**").permitAll() // Public access to all endpoints
                                 // You can customize access control for specific endpoints, e.g.:
-                                 .pathMatchers("/api/v1/core/products/admin/**").hasRole("ADMIN")
+                                 .pathMatchers("/api/v1/core/products/admin/**").authenticated()
+
 //                                 .pathMatchers("/swagger-ui/**").hasRole("ADMIN")
 //                                 .pathMatchers("/swagger-ui.html").hasRole("ADMIN")
 //                                 .pathMatchers("/api-docs").hasRole("ADMIN")
-                                .anyExchange().authenticated() // All other requests require authentication
+                                .anyExchange().permitAll() // All other requests require authentication
                 )
 //                .oauth2Login(withDefaults())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));

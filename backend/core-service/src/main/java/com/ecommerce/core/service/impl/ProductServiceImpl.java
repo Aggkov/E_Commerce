@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductMapper productMapper;
 
-    @Value("${application.file.uploads.photos-output-path}")
+    @Value("${file.upload-dir}")
     private String fileUploadPath;
 
     @Override
@@ -173,7 +173,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
+    public ProductDTO saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
         Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
 
         if(product != null) {
@@ -193,6 +193,7 @@ public class ProductServiceImpl implements ProductService {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
+//            Path filePath = Paths.get(uploadDir.replace(fileUploadPath + '/', ""), fileName);
             Files.write(filePath, imageFile.getBytes());
         } else {
             throw new IllegalArgumentException("Upload directory not found for category: " + productDTO.getCategoryName());
@@ -201,8 +202,13 @@ public class ProductServiceImpl implements ProductService {
         product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
-        product.setImageUrl(uploadDir.replace("./backend/core-service/", "") + "/" + imageFile.getOriginalFilename());
-        return productRepository.save(product);
+        product.setImageUrl(uploadDir.replace(fileUploadPath + '/', "") + "/" + imageFile.getOriginalFilename());
+        productRepository.save(product);
+        ProductDTO productDTo = ProductDTO.builder()
+                .sku(product.getSku())
+                .categoryName(product.getCategory().getCategoryName())
+                .name(product.getName()).build();
+        return productDTo;
     }
 
     @Override
@@ -229,13 +235,13 @@ public class ProductServiceImpl implements ProductService {
     private String getUploadDir(String categoryName) throws BadRequestException {
         switch (categoryName.toLowerCase()) {
             case "books":
-                return fileUploadPath + "/books";
+                return fileUploadPath + "/uploads/images/books";
             case "coffee mugs":
-                return fileUploadPath + "/coffeemugs";
+                return fileUploadPath + "/uploads/images/coffeemugs";
             case "luggage tags":
-                return fileUploadPath + "/luggagetags";
+                return fileUploadPath + "/uploads/images/luggagetags";
             case "mouse pads":
-                return fileUploadPath + "/mousepads";
+                return fileUploadPath + "/uploads/images/mousepads";
             default:
                 throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
         }
