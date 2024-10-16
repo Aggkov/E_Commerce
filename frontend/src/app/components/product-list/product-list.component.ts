@@ -48,7 +48,7 @@ export class ProductListComponent implements OnInit {
   pageSizes: number[] = [2, 5, 10, 20, 50];
 
   productCategoryIds: string[] = [];
-  showCategoryMenu: boolean = false;
+  showCategoryMenu: boolean = true;
   showFilterMenu: boolean = false;
   isFiltered: boolean = false; // Flag to track whether filtering is applied
 
