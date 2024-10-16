@@ -73,8 +73,6 @@ public class ApiGatewaySecurityConfig {
                 HttpHeaders.CONTENT_DISPOSITION,
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN
         ));
-        System.out.println("hello world");
-        System.out.println("hello world");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig); // Apply CORS config to all endpoints
         return source;
