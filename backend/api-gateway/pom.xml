@@ -12,6 +12,7 @@
 <!--	<version>0.0.1-SNAPSHOT</version>-->
 	<name>api-gateway</name>
 	<description>api gateway</description>
+	<packaging>jar</packaging>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
@@ -46,7 +47,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -35,7 +35,7 @@ cd your-repo
    Set up your own user(s) in Keycloak and assign them roles `user` and `admin` from `frontend client` in keycloak management console.
 4. `cd backend`.
 5. Run `mvn clean install`
-6. Run `mvn spring-boot:run on each microservice`.
+6. Run the app.
 
 **Frontend**
 1. Install [Node.js and npm](https://www.npmjs.com/get-npm)
