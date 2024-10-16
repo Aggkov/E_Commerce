@@ -193,7 +193,9 @@ public class ProductServiceImpl implements ProductService {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
-//            Path filePath = Paths.get(uploadDir.replace(fileUploadPath + '/', ""), fileName);
+            if (!Files.exists(filePath)) {
+                throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
+            }
             Files.write(filePath, imageFile.getBytes());
         } else {
             throw new IllegalArgumentException("Upload directory not found for category: " + productDTO.getCategoryName());
@@ -202,7 +204,8 @@ public class ProductServiceImpl implements ProductService {
         product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
-        product.setImageUrl(uploadDir.replace(fileUploadPath + '/', "") + "/" + imageFile.getOriginalFilename());
+        System.out.println("upload path app.properties " + fileUploadPath);
+        product.setImageUrl(uploadDir.replace(fileUploadPath, "") + "/" + imageFile.getOriginalFilename());
         productRepository.save(product);
         ProductDTO productDTo = ProductDTO.builder()
                 .sku(product.getSku())

@@ -4,34 +4,29 @@ import com.ecommerce.core.dto.response.ProductDTO;
 import com.ecommerce.core.dto.response.export.ExportProductDTO;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
 @Mapper (componentModel = "spring")
 public interface ProductMapper {
 
-    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
+//    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 //    @Value("${file.upload-dir}")
-    String uploadDir = System.getProperty("user.dir");
+//    String getUploadDir();
 
-    // Simple mapping method
 //    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "imageUrl", source = "product.imageUrl")
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
-    ProductDTO productToProductDTO(Product product);
+    ProductDTO productToProductDTO(Product product
+//            , @Context String uploadDir // pass external parameter from service layer, in service inject properties value
+    );
 
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
@@ -49,8 +44,16 @@ public interface ProductMapper {
             return null;
         }
         try {
-//            System.out.println("Current working directory: " + System.getProperty("user.dir"));
-            Path filePath = Paths.get(uploadDir, imageUrl);
+            String currentWorkingDir = System.getProperty("user.dir");
+            Path filePath;
+            // If the working directory ends with "core-service", move up to the root directory
+            if (currentWorkingDir.endsWith("core-service")) {
+                // Move two levels up to the project root
+                Path rootDir = Paths.get(currentWorkingDir).getParent().getParent();
+                filePath = Paths.get(rootDir.toString(), imageUrl);
+            } else {
+                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
+            }
             if (!Files.exists(filePath)) {
                 throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
             }
@@ -71,7 +74,7 @@ public interface ProductMapper {
 //        try {
 //            // Print the current working directory
 ////            System.out.println("Current directory: " + System.getProperty("user.dir"));
-//            Path filePath = new File(uploadDir + "/" + product.getImageUrl()).toPath();
+//            Path filePath = new File(AppConstants.uploadDir + "/" + product.getImageUrl()).toPath();
 //            return Base64.getEncoder().encodeToString(Files.readAllBytes(filePath));
 //        } catch (IOException e) {
 //            // Handle error or log it if needed
