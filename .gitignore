@@ -80,3 +80,4 @@ HELP.md
 Thumbs.db
 /frontend/.angular/
 /frontend/.vscode/
+/db_setup.sql/
