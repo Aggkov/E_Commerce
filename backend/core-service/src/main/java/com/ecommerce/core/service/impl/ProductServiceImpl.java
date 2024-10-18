@@ -203,8 +203,13 @@ public class ProductServiceImpl implements ProductService {
         product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
-        System.out.println("upload path app.properties " + fileUploadPath);
-        product.setImageUrl(uploadDir.replace(fileUploadPath + "/", "") + "/" + imageFile.getOriginalFilename());
+
+        // convert to database URI
+        int index = uploadDir.indexOf("uploads");
+        String dbUploadDir = uploadDir.substring(index);
+
+        product.setImageUrl(dbUploadDir + "/"
+                + imageFile.getOriginalFilename());
         productRepository.save(product);
         ProductDTO productDTo = ProductDTO.builder()
                 .sku(product.getSku())

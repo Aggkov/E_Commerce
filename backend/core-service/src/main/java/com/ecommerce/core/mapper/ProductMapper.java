@@ -16,9 +16,6 @@ import org.springframework.http.HttpStatus;
 @Mapper (componentModel = "spring")
 public interface ProductMapper {
 
-//    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
-//    @Value("${file.upload-dir}")
-//    String getUploadDir();
 
 //    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "imageUrl", source = "product.imageUrl")
