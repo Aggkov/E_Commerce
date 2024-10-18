@@ -46,6 +46,53 @@
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 30,
+  "users": [
+   {
+	   "id": "b8e1eb3f-7bb6-42c9-b87d-3815a051695e",
+       "username":"admin",
+       "firstName":"admin",
+       "lastName":"admin",
+       "email":"admin@email.com",
+       "enabled":true,
+       "credentials":[
+          {
+             "type":"password",
+             "value":"admin"
+          }
+       ],
+       "clientRoles":{
+          "account":[
+             "manage-account"
+          ],
+		  "frontend":[
+			"admin",
+			"user"
+		   ]
+       }
+    },
+	{
+		"id": "f9d2973e-48dd-4fe2-957b-7554133308c3",
+       "username":"user",
+       "firstName":"user",
+       "lastName":"user",
+       "email":"user@email.com",
+       "enabled":true,
+       "credentials":[
+          {
+             "type":"password",
+             "value":"user"
+          }
+       ],
+       "clientRoles":{
+          "account":[
+             "manage-account"
+          ],
+		  "frontend":[
+			"user"
+		   ]
+       }
+    }
+  ],
   "roles": {
     "realm": [
       {

@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
         } while (orderRepository.findOrderTrackingNumber(orderTrackingNumber) != null);
         order.setOrderTrackingNumber(orderTrackingNumber);
 
+//        User user = userRepository.findById(orderDTO.getUser().ge)
         User user = userMapper.userDTOToUser(orderDTO.getUser());
 
         // 4. Get or create shipping and billing addresses

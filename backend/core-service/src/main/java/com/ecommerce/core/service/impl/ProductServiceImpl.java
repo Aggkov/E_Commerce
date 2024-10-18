@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -116,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
         // Adjust price range if selectedPriceRange is set
         double minPrice = Double.parseDouble(min_price);
         double maxPrice = Double.parseDouble(max_price);
-        if (priceRange != null && !priceRange.isEmpty()) {
+        if (Objects.nonNull(priceRange) && !priceRange.isEmpty()) {
             String[] range = priceRange.split("-");
             if (range.length == 2) {
                 minPrice = Math.max(minPrice, Double.parseDouble(range[0]));

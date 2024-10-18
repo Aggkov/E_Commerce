@@ -18,9 +18,8 @@
 
     <modules>
         <module>core-service</module>
-<!--        <module>discovery-server</module>-->
-<!--        <module>api-gateway</module>-->
-<!--        <module>security-common</module>-->
+        <module>discovery-server</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
