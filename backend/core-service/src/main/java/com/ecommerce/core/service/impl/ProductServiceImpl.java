@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ import static com.ecommerce.core.utils.AppConstants.CREATED_AT;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -175,9 +177,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
+        // if getName is null 500 handle frontend
         Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
 
-        if(product != null) {
+        if(Objects.nonNull(product)) {
             throw new BadRequestException(
                     "Product with " + productDTO.getName() + " and " + productDTO.getSku() +  " already exists",
                     HttpStatus.BAD_REQUEST);
@@ -186,27 +189,22 @@ public class ProductServiceImpl implements ProductService {
         ProductCategory category = productCategoryRepository.findByCategoryName(productDTO.getCategoryName()).orElseThrow(
                 () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
         );
-
         // Get the correct upload directory based on the category
         String uploadDir = getUploadDir(productDTO.getCategoryName());
-
-        if (!uploadDir.isEmpty()) {
+        if (!uploadDir.isEmpty() && Files.exists(Paths.get(uploadDir)) && !imageFile.isEmpty()) {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
-            if (!Files.exists(filePath)) {
-                throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
-            }
             Files.write(filePath, imageFile.getBytes());
         } else {
-            throw new IllegalArgumentException("Upload directory not found for category: " + productDTO.getCategoryName());
+            throw new BadRequestException("Upload directory not found",
+                    HttpStatus.BAD_REQUEST);
         }
-
         product = productMapper.productDTOToProduct(productDTO);
         product.setCategory(category);
         category.getProducts().add(product);
         System.out.println("upload path app.properties " + fileUploadPath);
-        product.setImageUrl(uploadDir.replace(fileUploadPath, "") + "/" + imageFile.getOriginalFilename());
+        product.setImageUrl(uploadDir.replace(fileUploadPath + "/", "") + "/" + imageFile.getOriginalFilename());
         productRepository.save(product);
         ProductDTO productDTo = ProductDTO.builder()
                 .sku(product.getSku())
@@ -237,15 +235,19 @@ public class ProductServiceImpl implements ProductService {
 
     // A utility method to determine the correct upload directory
     private String getUploadDir(String categoryName) throws BadRequestException {
+        String currentWorkingDir = System.getProperty("user.dir");
+        if (currentWorkingDir.endsWith("core-service")) {
+            currentWorkingDir = (Paths.get(currentWorkingDir).getParent().getParent()).toString();
+        }
         switch (categoryName.toLowerCase()) {
             case "books":
-                return fileUploadPath + "/uploads/images/books";
+                return currentWorkingDir + "/uploads/images/books";
             case "coffee mugs":
-                return fileUploadPath + "/uploads/images/coffeemugs";
+                return currentWorkingDir + "/uploads/images/coffeemugs";
             case "luggage tags":
-                return fileUploadPath + "/uploads/images/luggagetags";
+                return currentWorkingDir + "/uploads/images/luggagetags";
             case "mouse pads":
-                return fileUploadPath + "/uploads/images/mousepads";
+                return currentWorkingDir + "/uploads/images/mousepads";
             default:
                 throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
         }
