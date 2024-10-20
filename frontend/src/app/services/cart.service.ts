@@ -17,17 +17,15 @@ export class CartService {
   totalQuantity: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor() {
-    // console.log(`CartService started`)
-
-    // const storedCartItems = sessionStorage.getItem('cartItems');
-    // this.cartItems = storedCartItems !== null ? JSON.parse(storedCartItems) : [];
+    const storedCartItems = sessionStorage.getItem('cartItems');
+    this.cartItems = storedCartItems !== null ? JSON.parse(storedCartItems) : [];
 
     /*
-    You can call the computeCartTotals() method in the constructor
+    call the computeCartTotals() method in the constructor
     after loading the cart items to ensure that the totals
     reflect the current state of the cart upon page load.
      */
-    // this.computeCartTotals();
+    this.computeCartTotals();
   }
 
   addToCartOrIncrementQuantity(cartItem: CartItem) {
@@ -69,8 +67,7 @@ export class CartService {
     this.totalPrice.next(totalPriceValue);
     this.totalQuantity.next(totalQuantityValue);
 
-    // sessionStorage.setItem('cartItems', JSON.stringify(this.cartItems));
-
+    sessionStorage.setItem('cartItems', JSON.stringify(this.cartItems));
     // log cart data just for debugging purposes
     // this.logCartData(totalPriceValue, totalQuantityValue);
   }
