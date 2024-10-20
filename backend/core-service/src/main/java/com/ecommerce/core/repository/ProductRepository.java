@@ -10,12 +10,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     /*
-    Instead of fetching the ProductCategory lazily and encountering this error,
-    you can modify the query to use a JOIN FETCH. This way,
+    Instead of fetching the ProductCategory lazily,
+    modify the query to use a JOIN FETCH. This way,
     the ProductCategory will be fetched together with the Product,
     preventing the LazyInitializationException.
      */
-    @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.category.id = :id ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p " +
+            "JOIN FETCH p.category " +
+            "WHERE p.category.id = :id " +
+            "ORDER BY p.createdAt DESC")
     Page<Product> findByCategoryIdOrderByCreatedAt(@Param("id") UUID id, Pageable pageable);
 
     Product findByNameAndSku(String name, String sku);

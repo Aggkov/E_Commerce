@@ -35,14 +35,20 @@ public class User implements UserDetails, Principal {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;  // Map the email field with unique constraint
+
+    @Column(name = "is_registered", nullable = false)
+    private boolean isRegistered = false;  // Default to false
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = true;  // Default to true
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Order> orders = new LinkedHashSet<>();
@@ -81,7 +87,7 @@ public class User implements UserDetails, Principal {
 
     @Override
     public String getUsername() {
-        return "";
+        return email;
     }
 
     @Override
@@ -96,12 +102,12 @@ public class User implements UserDetails, Principal {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override

@@ -12,7 +12,10 @@ services:
       - "5432:5432"  # Maps port 5432 on your machine to port 5432 in the container
     volumes:
       - ./postgres-data:/var/lib/postgresql/data  # Persist data on your local filesystem
-      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db.sql  # Run your SQL script during container startup
+#      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db.sql  # Run your SQL script during container startup
+#    networks:
+#      - flyway_postgres_network
+
   keycloak:
     container_name: keycloak-e_commerce
     image: quay.io/keycloak/keycloak:25.0.5
@@ -23,3 +26,18 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
     command:
       - "start-dev"
+
+#  flyway:
+#    image: flyway/flyway:latest
+#    command: [ "-cleanDisabled=false", "-url=jdbc:postgresql://postgres_db:5432/e-commerce", "-user=ecommerce_user", "-password=ecommerce_user", "-locations=filesystem:/flyway/sql", "clean", "migrate" ]
+#    #    command: [ "-url=jdbc:postgresql://localhost:5432/e-commerce", "-user=ecommerce_user", "-password=ecommerce_user", "clean" ]
+#    volumes:
+#      - ./db/migration:/flyway/sql
+#    networks:
+#      - flyway_postgres_network
+#    depends_on:
+#      - postgres
+
+#networks:
+#  flyway_postgres_network: # Define a custom network
+#    driver: bridge

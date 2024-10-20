@@ -49,7 +49,7 @@ public class ApiGatewaySecurityConfig {
 //                                 .pathMatchers("/swagger-ui/**").hasRole("ADMIN")
 //                                 .pathMatchers("/swagger-ui.html").hasRole("ADMIN")
 //                                 .pathMatchers("/api-docs").hasRole("ADMIN")
-                                .anyExchange().permitAll() // All other requests require authentication
+                                .anyExchange().permitAll() // All other requests permit them
                 )
 //                .oauth2Login(withDefaults())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));

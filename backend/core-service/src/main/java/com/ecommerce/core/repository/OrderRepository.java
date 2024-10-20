@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    @Query("SELECT o.orderTrackingNumber FROM Order o WHERE o.orderTrackingNumber = :orderTrackingNumber")
+    @Query("SELECT o.orderTrackingNumber " +
+            "FROM Order o " +
+            "WHERE o.orderTrackingNumber = :orderTrackingNumber")
     String findOrderTrackingNumber(@Param("orderTrackingNumber") String orderTrackingNumber);
 }

@@ -12,10 +12,13 @@ import com.ecommerce.core.exception.ResourceNotFoundException;
 import com.ecommerce.core.mapper.OrderItemMapper;
 import com.ecommerce.core.mapper.OrderMapper;
 import com.ecommerce.core.mapper.UserMapper;
+import com.ecommerce.core.repository.BillingAddressRepository;
+import com.ecommerce.core.repository.ShippingAddressRepository;
 import com.ecommerce.core.repository.UserRepository;
 import com.ecommerce.core.repository.OrderRepository;
 import com.ecommerce.core.repository.ProductRepository;
 import com.ecommerce.core.service.OrderService;
+import com.ecommerce.core.service.UserService;
 import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +39,10 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
+    private final UserService userService;
     private final UserMapper userMapper;
+    private final ShippingAddressRepository shippingAddressRepository;
+    private final BillingAddressRepository billingAddressRepository;
 
     @Override
     @Transactional
@@ -51,8 +57,13 @@ public class OrderServiceImpl implements OrderService {
         } while (orderRepository.findOrderTrackingNumber(orderTrackingNumber) != null);
         order.setOrderTrackingNumber(orderTrackingNumber);
 
-//        User user = userRepository.findById(orderDTO.getUser().ge)
-        User user = userMapper.userDTOToUser(orderDTO.getUser());
+        // if authentication, then user is registered
+            // if he is in db grab him
+            // else add him
+        // if not authentication, user is not registered
+            // if he is in db grab him
+            // else add him
+        User user = userService.getCurrentUser(orderDTO.getUser());
 
         // 4. Get or create shipping and billing addresses
         ShippingAddress shippingAddress = addressService.getShippingAddress(orderDTO);
@@ -63,11 +74,17 @@ public class OrderServiceImpl implements OrderService {
         user.getBillingAddresses().add(billingAddress);
         shippingAddress.getUsers().add(user);
         billingAddress.getUsers().add(user);
+        shippingAddressRepository.save(shippingAddress);
+        billingAddressRepository.save(billingAddress);
 
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
-        Set<UUID> productIds = orderDTO.getOrderItemList().stream().map(orderItemDTO -> orderItemDTO.getProduct().getId()).collect(Collectors.toSet());
+        Set<UUID> productIds = orderDTO.getOrderItemList().stream()
+                .map(orderItemDTO -> orderItemDTO.getProduct().getId())
+                .collect(Collectors.toSet());
 
-        Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream().collect(Collectors.toMap(Product::getId, product -> product));
+        Map<UUID, Product> productMap = productRepository.findAllById(productIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getId, product -> product));
         // prepare orderItem
         orderDTO.getOrderItemList().forEach(orderItemDTO -> {
             if (productMap.containsKey(orderItemDTO.getProduct().getId())) {
@@ -92,8 +109,8 @@ public class OrderServiceImpl implements OrderService {
         // parent add child
         user.add(order);
         // cascade persist
-        userRepository.save(user);
-
+//        userRepository.save(user);
+        orderRepository.save(order);
         return new OrderDTOResponse(orderTrackingNumber, orderDTO);
     }
 
