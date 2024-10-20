@@ -32,7 +32,8 @@ cd your-repo
 1. Install [PostgreSQL](https://www.postgresql.org/download/) (Only if not using Docker)
 2. Run `docker-compose up -d` to start the docker container and load up keycloak and database.
 3. Go to localhost:9090 and log in with `admin` `admin` as credentials. Create a new realm by importing `realm-export.json` file.
-   Set up your own user(s) in Keycloak and assign them roles `user` and `admin` from `frontend client` in keycloak management console.
+   Activate email for `user` and `admin` from `frontend client` in keycloak management console. You can also create more users
+   and assign them roles `user` and `admin` from `frontend client`.
 4. `cd backend`.
 5. Run `mvn clean install`
 6. Run the app.
