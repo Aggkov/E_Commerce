@@ -215,7 +215,7 @@ public class ProductServiceUnitTest {
 //        when(productMapper.productDTOToProduct(productDTO)).thenReturn(product);
 //        when(productRepository.save(any(Product.class))).thenReturn(product);
 //
-//        Product savedProduct = productService.saveProduct(productDTO);
+//        Product savedProduct = productService.createProduct(productDTO);
 //
 //        // Verify that the mapper and repository
 //        // methods were called with the correct arguments.

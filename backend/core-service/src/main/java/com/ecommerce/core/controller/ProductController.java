@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,7 +97,7 @@ public class ProductController {
     public ResponseEntity<ProductDTO> createProduct(
             @RequestPart("product") ProductDTO productDTO,
             @RequestPart("image") MultipartFile imageFile) throws IOException {
-        return new ResponseEntity<>(productService.saveProduct(productDTO, imageFile), HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.createProduct(productDTO, imageFile), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

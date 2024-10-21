@@ -78,7 +78,10 @@ export class AdminProductTableComponent implements OnInit {
       });
   }
 
+  // ngb pagination needs [()] for pageNumber and pageSize to send and receive values (html - ts)
+  // mat pagination has [] only but (page): pageEvent sends new data to ts via event to populate new values inside function
   onPageChange(event: PageEvent) {
+    // if pageSize changes and user is not at first page, turn back to page 0 to show products from start
     if(event.pageSize !== this.pageSize && this.pageNumber !== 0) {
       this.pageNumber = 0;
       this.pageSize = event.pageSize;

@@ -176,7 +176,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
+    public ProductDTO createProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
         // if getName is null 500 handle frontend
         Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
 
