@@ -29,6 +29,8 @@ export class OrderSuccessComponent implements OnInit {
   billingStreet: string | undefined;
   billingCity: string | undefined;
   billingZipCode: string | undefined;
+  totalQuantity: number = 0;
+  totalPrice: number = 0;
 
   constructor(private router: Router) {}
 
@@ -53,6 +55,13 @@ export class OrderSuccessComponent implements OnInit {
       this.billingStreet = this.orderResponse?.user.billingAddress.street;
       this.billingCity = this.orderResponse?.user.billingAddress.city;
       this.billingZipCode = this.orderResponse?.user.billingAddress.zipCode;
+
+      if(this.orderItems.length > 0) {
+        for(let item of this.orderItems) {
+          this.totalPrice += item.product.unitPrice;
+        }
+        this.totalQuantity = this.orderItems.length;
+      }
     }
   }
 
