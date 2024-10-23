@@ -1,6 +1,7 @@
 package com.ecommerce.core.repository;
 
 import com.ecommerce.core.entity.BillingAddress;
+import com.ecommerce.core.entity.ShippingAddress;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,13 @@ public interface BillingAddressRepository extends JpaRepository<BillingAddress, 
             @Param("zipCode") String zipCode,
             @Param("city") String city,
             @Param("stateId") UUID stateId);
+
+    // map to DTO here?
+    @Query("SELECT ba " +
+            "FROM BillingAddress ba " +
+            "JOIN ba.users user " +
+            "JOIN FETCH ba.state " +
+            "WHERE user.email = :email"
+    )
+    Optional<BillingAddress> getBillingAddress(@Param("email") String email);
 }

@@ -1,7 +1,12 @@
 package com.ecommerce.core.service.impl;
 
+import com.ecommerce.core.dto.request.BillingAddressDTO;
 import com.ecommerce.core.dto.request.OrderDTO;
-import com.ecommerce.core.dto.response.OrderDTOResponse;
+import com.ecommerce.core.dto.request.ShippingAddressDTO;
+import com.ecommerce.core.dto.response.OrderCreatedDTO;
+import com.ecommerce.core.dto.response.OrderSuccessDTO;
+import com.ecommerce.core.dto.response.PagedResponse;
+import com.ecommerce.core.dto.response.ProductDTO;
 import com.ecommerce.core.entity.BillingAddress;
 import com.ecommerce.core.entity.Order;
 import com.ecommerce.core.entity.OrderItem;
@@ -9,8 +14,10 @@ import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.entity.ShippingAddress;
 import com.ecommerce.core.entity.User;
 import com.ecommerce.core.exception.ResourceNotFoundException;
+import com.ecommerce.core.mapper.BillingAddressMapper;
 import com.ecommerce.core.mapper.OrderItemMapper;
 import com.ecommerce.core.mapper.OrderMapper;
+import com.ecommerce.core.mapper.ShippingAddressMapper;
 import com.ecommerce.core.mapper.UserMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
 import com.ecommerce.core.repository.ShippingAddressRepository;
@@ -20,14 +27,28 @@ import com.ecommerce.core.repository.ProductRepository;
 import com.ecommerce.core.service.OrderService;
 import com.ecommerce.core.service.UserService;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+
+import static com.ecommerce.core.utils.AppConstants.CREATED_AT;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +64,12 @@ public class OrderServiceImpl implements OrderService {
     private final UserMapper userMapper;
     private final ShippingAddressRepository shippingAddressRepository;
     private final BillingAddressRepository billingAddressRepository;
+    private final ShippingAddressMapper shippingAddressMapper;
+    private final BillingAddressMapper billingAddressMapper;
 
     @Override
     @Transactional
-    public OrderDTOResponse createNewOrder(OrderDTO orderDTO) {
+    public OrderSuccessDTO createNewOrder(OrderDTO orderDTO) {
         // 1. Map OrderDTO to Order entity
         Order order = orderMapper.orderDTOtoOrder(orderDTO);
 
@@ -58,11 +81,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderTrackingNumber(orderTrackingNumber);
 
         // if authentication, then user is registered
-            // if he is in db grab him
-            // else add him
+        // if he is in db grab him
+        // else add him
         // if not authentication, user is not registered
-            // if he is in db grab him
-            // else add him
+        // if he is in db grab him
+        // else add him
         User user = userService.getCurrentUser(orderDTO.getUser());
 
         // 4. Get or create shipping and billing addresses
@@ -78,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
         billingAddressRepository.save(billingAddress);
 
         // 5. Batch fetch products and map them to their IDs, find products requested by client dto
-        Set<UUID> productIds = orderDTO.getOrderItemList().stream()
+        Set<UUID> productIds = orderDTO.getOrderItems().stream()
                 .map(orderItemDTO -> orderItemDTO.getProduct().getId())
                 .collect(Collectors.toSet());
 
@@ -86,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .collect(Collectors.toMap(Product::getId, product -> product));
         // prepare orderItem
-        orderDTO.getOrderItemList().forEach(orderItemDTO -> {
+        orderDTO.getOrderItems().forEach(orderItemDTO -> {
             if (productMap.containsKey(orderItemDTO.getProduct().getId())) {
                 Product product = productMap.get(orderItemDTO.getProduct().getId());
                 if (Objects.isNull(product)) {
@@ -111,7 +134,46 @@ public class OrderServiceImpl implements OrderService {
         // cascade persist
 //        userRepository.save(user);
         orderRepository.save(order);
-        return new OrderDTOResponse(orderTrackingNumber, orderDTO);
+
+        OrderSuccessDTO orderSuccessDTO = orderMapper.orderDTOToOrderSuccessDTO(orderDTO);
+        orderSuccessDTO.setOrderTrackingNumber(orderTrackingNumber);
+        return orderSuccessDTO;
+    }
+
+    @Override
+    public PagedResponse<OrderCreatedDTO> getOrdersByUser(int page, int size, Authentication authentication) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
+        // Extract user email from JWT token if available
+        String email = (String) Optional.ofNullable(authentication)
+                .filter(auth -> auth.getPrincipal() instanceof Jwt)
+                .map(auth -> ((Jwt) auth.getPrincipal()).getClaim("email"))
+                .orElseThrow(() -> new UsernameNotFoundException("Authentication is missing or invalid"));
+
+        // Fetch user and verify their existence in one step
+        User registeredUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // find orders made by current user
+        Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);//        // for each of these orders find their addresses and set it to current order
+
+//        ShippingAddress shippingAddress = shippingAddressRepository.getShippingAddress(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("Shipping Address for this user not found", HttpStatus.NOT_FOUND));
+//        BillingAddress billingAddress = billingAddressRepository.getBillingAddress(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("Billing Address for this user not found", HttpStatus.NOT_FOUND));
+//        // map addresses later to DTO
+//        ShippingAddressDTO shippingAddressDTO = shippingAddressMapper.shippingAddressToShippingAddressDTO(shippingAddress);
+//        BillingAddressDTO billingAddressDTO = billingAddressMapper.billingAddressToBillingAddressDTO(billingAddress);
+
+        List<OrderCreatedDTO> orderCreatedDTOs = orderPage.getContent().stream()
+                    .map(order -> orderMapper.orderToOrderCreatedDTO(order))
+                    .toList();
+
+        return new PagedResponse<>(
+                orderCreatedDTOs,
+                orderPage.getNumber(),
+                orderPage.getSize(), orderPage.getTotalElements(),
+                orderPage.getTotalPages()
+        );
     }
 
     private String generateOrderTrackingNumber() {

@@ -20,4 +20,12 @@ public interface ShippingAddressRepository extends JpaRepository<ShippingAddress
             @Param("zipCode") String zipCode,
             @Param("city") String city,
             @Param("stateId") UUID stateId);
+
+    @Query("SELECT sa " +
+            "FROM ShippingAddress sa " +
+            "JOIN sa.users user " +
+            "JOIN FETCH sa.state " +
+            "WHERE user.email = :email"
+    )
+    Optional<ShippingAddress> getShippingAddress(@Param("email") String email);
 }

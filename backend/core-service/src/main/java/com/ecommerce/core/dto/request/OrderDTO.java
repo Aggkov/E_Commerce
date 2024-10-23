@@ -18,9 +18,8 @@ public class OrderDTO implements Serializable {
     @Valid
     private OrderInfoDTO orderInfo;
 
+    private List<OrderItemDTO> orderItems;
+
     @Valid
     private UserDTO user;
-
-
-    private List<OrderItemDTO> orderItemList = new ArrayList<>();
 }
