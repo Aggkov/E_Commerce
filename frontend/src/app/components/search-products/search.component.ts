@@ -2,7 +2,7 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {debounceTime, distinctUntilChanged, Observable, of, switchMap, tap} from "rxjs";
-import {Product} from "../../model/product";
+import {Product} from "../../interfaces/product";
 import {ProductService} from "../../services/product.service";
 import {Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {CartStatusComponent} from "../cart-status/cart-status.component";

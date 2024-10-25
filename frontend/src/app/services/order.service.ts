@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Order} from "../model/order/order";
-import {OrderItem} from "../model/order/order-item";
-import {User} from "../model/order/user";
+import {Order} from "../interfaces/order/order";
+import {OrderItem} from "../interfaces/order/order-item";
+import {User} from "../interfaces/order/user";
 import {environment} from "../../enviroments/enviroment";
-import {OrderInfo} from "../model/order/order-info";
+import {OrderInfo} from "../interfaces/order/order-info";
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CheckoutService {
+export class OrderService {
 
   private purchaseUrl = environment.coreServiceUrl + '/order';
 

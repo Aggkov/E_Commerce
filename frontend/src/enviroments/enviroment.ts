@@ -1,4 +1,4 @@
-import {Product} from "../app/model/product";
+import {Product} from "../app/interfaces/product";
 
 export const environment = {
   production: false,

@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Product} from "../../../model/product";
+import {Product} from "../../../interfaces/product";
 import {ProductService} from "../../../services/product.service";
 import {
   MatCell,

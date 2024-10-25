@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProductCategory} from "../../model/product-category";
+import {ProductCategory} from "../../interfaces/product-category";
 import {ProductService} from "../../services/product.service";
 import {NgForOf} from "@angular/common";
 import {RouterLink, RouterLinkActive} from "@angular/router";

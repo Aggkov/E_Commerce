@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {map, Observable, of, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {Country} from "../model/country";
-import {State} from "../model/state";
+import {Country} from "../interfaces/country";
+import {State} from "../interfaces/state";
 import {environment} from "../../enviroments/enviroment";
 
 @Injectable({

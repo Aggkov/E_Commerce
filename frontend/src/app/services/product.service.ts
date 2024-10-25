@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {map, Observable, pipe, tap} from "rxjs";
-import {Product} from "../model/product";
+import {Product} from "../interfaces/product";
 import {HttpClient} from "@angular/common/http";
 import {FilterCriteria} from "../components/filter/filter.component";
 import {environment} from "../../enviroments/enviroment";
@@ -68,7 +68,8 @@ export class ProductService {
       minPrice: filterCriteria?.priceFrom,
       maxPrice: filterCriteria?.priceTo,
       priceRange: filterCriteria?.priceRange,
-      nameFilters: Object.keys(filterCriteria?.nameFilters || {}).filter(
+      nameFilters: Object.keys(filterCriteria?.nameFilters || {})
+        .filter(
         (key) => filterCriteria?.nameFilters[key]
       ), // Convert nameFilters object to an array of selected filters
       page: page,

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {CartService} from "../../services/cart.service";
-import {CartItem} from "../../model/cart-item";
+import {CartItem} from "../../interfaces/cart-item";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {environment} from "../../../enviroments/enviroment";
-import {Product} from "../../model/product";
+import {Product} from "../../interfaces/product";
 
 @Component({
   selector: 'app-cart-details',

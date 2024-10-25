@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Product} from "../../model/product";
+import {Product} from "../../interfaces/product";
 import {ProductService} from "../../services/product.service";
 import {CurrencyPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive} from "@angular/router";
 import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
-import {CartItem} from "../../model/cart-item";
+import {CartItem} from "../../interfaces/cart-item";
 import {CartService} from "../../services/cart.service";
 import {ProductCategoryService} from "../../services/product-category.service";
 import {map} from "rxjs";
@@ -215,7 +215,10 @@ export class ProductListComponent implements OnInit {
 
   addToCart(product: Product) {
     // console.log(`adding to cart ${product.name} ${product.unitPrice}`);
-    const cartItem = new CartItem(product);
+    const cartItem = {
+      quantity: 1,
+      product: product
+    };
     this.cartService.addToCartOrIncrementQuantity(cartItem)
   }
 

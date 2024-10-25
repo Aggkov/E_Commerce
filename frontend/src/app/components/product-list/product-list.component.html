@@ -25,11 +25,11 @@
             <a routerLink="/products/{{product!.name! | encodeURIComponentPipe }}">
               <img [src]="getImage(product)" class="img-responsive">
               <h1>{{ product.name }}</h1>
+            </a>
             <div class="price">{{ product.unitPrice | currency:'USD' }}</div>
             <button (click)="addToCart(product)" class="btn btn-primary btn-small">
               Add to cart
             </button>
-            </a>
           </div>
         </div>
       </div>

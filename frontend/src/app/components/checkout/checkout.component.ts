@@ -2,19 +2,19 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {FormService} from "../../services/form.service";
-import {Country} from "../../model/country";
-import {State} from "../../model/state";
+import {Country} from "../../interfaces/country";
+import {State} from "../../interfaces/state";
 import {CartService} from "../../services/cart.service";
 import {WhitespaceValidator} from "../../validators/whitespace-validator";
-import {CartItem} from "../../model/cart-item";
+import {CartItem} from "../../interfaces/cart-item";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
-import {CheckoutService, OrderSuccess} from "../../services/checkout.service";
+import {OrderService, OrderSuccess} from "../../services/order.service";
 import {Router} from "@angular/router";
-import {Order} from "../../model/order/order";
-import {User} from "../../model/order/user";
-import {OrderInfo} from "../../model/order/order-info";
-import {Address} from "../../model/order/address";
-import {OrderItem} from "../../model/order/order-item";
+import {Order} from "../../interfaces/order/order";
+import {User} from "../../interfaces/order/user";
+import {OrderInfo} from "../../interfaces/order/order-info";
+import {Address} from "../../interfaces/order/address";
+import {OrderItem} from "../../interfaces/order/order-item";
 import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-card-expiration-date-format.directive";
 
 @Component({
@@ -48,7 +48,7 @@ export class CheckoutComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private formService: FormService,
               private cartService: CartService,
-              private checkoutService: CheckoutService,
+              private orderService: OrderService,
               private router: Router) {
   }
 
@@ -169,38 +169,55 @@ export class CheckoutComponent implements OnInit {
     let billingState: State = this.checkoutFormGroup.controls['billingAddress'].value.state;
 
 
-    let shippingAddress = new Address(
-      this.shippingAddressCity?.value,
-      this.shippingAddressStreet?.value,
-      this.shippingAddressZipCode?.value,
-      shippingState);
+    let shippingAddress = {
+      city: this.shippingAddressCity?.value,
+      street: this.shippingAddressStreet?.value,
+      zipCode: this.shippingAddressZipCode?.value,
+      state: shippingState
+    };
 
-    let billingAddress = new Address(
-      this.billingAddressCity?.value,
-      this.billingAddressStreet?.value,
-      this.billingAddressZipCode?.value,
-      billingState);
+    let billingAddress = {
+      city: this.billingAddressCity?.value,
+      street: this.billingAddressStreet?.value,
+      zipCode: this.billingAddressZipCode?.value,
+      state: billingState
+    };
 
-    let newCustomer = new User(
-      this.firstName?.value,
-      this.lastName?.value,
-      this.email?.value,
-      shippingAddress,
-      billingAddress
-    );
+    let newUser = {
+      firstName: this.firstName?.value,
+      lastName: this.lastName?.value,
+      email: this.email?.value,
+      shippingAddress: shippingAddress,
+      billingAddress: billingAddress
+    };
 
     let orderItems: OrderItem[] = this.cartItems.map(
-      item => new OrderItem(item)
+      // explicit with return
+      cartItem => {
+        return {
+          product: {
+            id: cartItem.product.id
+          },
+          quantity: cartItem.quantity
+        };
+      }
+      // implicit without return of object ({object})
+      // cartItem => ({
+      //   product: {
+      //     id: cartItem.product.id
+      //   },
+      //   quantity: cartItem.quantity
+      // })
     );
 
-    let newOrder: Order = new Order(
-      new OrderInfo(this.totalPrice, this.totalQuantity,"PENDING"),
-      newCustomer,
-      orderItems
-    );
+    let newOrder: Order = {
+      orderInfo: { totalPrice: this.totalPrice, totalQuantity: this.totalQuantity, status: "PENDING" },
+      user: newUser,
+      orderItems: orderItems
+    };
     // console.log("order is: ",JSON.stringify(newOrder));
 
-    this.checkoutService.createOrder(newOrder).subscribe({
+    this.orderService.createOrder(newOrder).subscribe({
         next: response => {
           this.orderTrackingNumber = response.orderTrackingNumber;
           alert(`Your order has been received.\nOrder tracking number:

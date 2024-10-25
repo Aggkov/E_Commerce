@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../../services/product.service";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {Product} from "../../model/product";
+import {Product} from "../../interfaces/product";
 import {CurrencyPipe, NgIf} from "@angular/common";
 import {CartService} from "../../services/cart.service";
-import {CartItem} from "../../model/cart-item";
+import {CartItem} from "../../interfaces/cart-item";
 import {environment} from "../../../enviroments/enviroment";
 
 @Component({
@@ -45,7 +45,10 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   addToCart() {
-    const cartItem = new CartItem(this.product);
+    const cartItem = {
+      product: this.product,
+      quantity: 1
+    };
     this.cartService.addToCartOrIncrementQuantity(cartItem);
   }
 

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {OrderSuccess} from "../../services/checkout.service";
+import {OrderSuccess} from "../../services/order.service";
 import {Router} from "@angular/router";
 import {AsyncPipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {OrderItem} from "../../model/order/order-item";
+import {OrderItem} from "../../interfaces/order/order-item";
 import {environment} from "../../../enviroments/enviroment";
-import {Product} from "../../model/product";
+import {Product} from "../../interfaces/product";
 import {Observable, of} from "rxjs";
 
 @Component({
