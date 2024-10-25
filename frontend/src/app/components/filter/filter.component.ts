@@ -44,18 +44,28 @@ export class FilterComponent implements OnInit {
 
   ngOnInit(): void {
     // Listen for changes to the selected price range and update inputs accordingly
-    this.filterFormGroup.get('selectedPriceRange')?.valueChanges.subscribe((value) => {
-      this.updatePriceRange(value);
-    });
+    // this.filterFormGroup.get('selectedPriceRange')?.valueChanges.subscribe((value) => {
+    //   this.updatePriceRange(value);
+    // });
   }
 
-  // Method to update price inputs when a radio button is selected
-  updatePriceRange(value: string) {
-    if (value) {
+  // Method to handle radio button click, update price range inputs, and allow deselection
+  onRadioClick(event: MouseEvent, value: string) {
+    const selectedPriceRangeControl = this.filterFormGroup.get('selectedPriceRange');
+
+    // Check if the selected range is already chosen
+    if (selectedPriceRangeControl?.value === value) {
+      selectedPriceRangeControl.setValue(''); // Deselect if clicked again
+      event.preventDefault(); // Prevent default selection
+    } else {
+      if(value)
+        selectedPriceRangeControl?.setValue(value); // Update the form control value
+
+      // Parse the min and max values and update the input fields
       const [min, max] = value.split('-').map(Number);
       this.filterFormGroup.patchValue({
-        priceFrom: !isNaN(min) ? min.toString() : '', // Set min value if exists
-        priceTo: !isNaN(max) ? max.toString() : '', // Set max value if exists, else leave blank
+        priceFrom: !isNaN(min) ? min.toString() : '', // Set min if exists
+        priceTo: !isNaN(max) ? max.toString() : '',   // Set max if exists, else blank
       });
     }
   }

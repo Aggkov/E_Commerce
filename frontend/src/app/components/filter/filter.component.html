@@ -27,24 +27,28 @@
           <input type="radio"
                  id="range1"
                  formControlName="selectedPriceRange"
-                 value="10-15">
+                 value="10-15"
+                 (click)="onRadioClick($event, '10-15')">
           <label for="range1">$10 - $15</label>
         </div>
         <div class="radio-wrapper">
           <input type="radio"
                  id="range2"
                  formControlName="selectedPriceRange"
-                 value="15-20">
+                 value="15-20"
+                 (click)="onRadioClick($event, '15-20')">
           <label for="range2">$15 - $20</label>
         </div>
         <div class="radio-wrapper">
           <input type="radio"
                  id="range3"
                  formControlName="selectedPriceRange"
-                 value="20">
+                 value="20"
+                 (click)="onRadioClick($event, '20')">
           <label for="range3">$20 and above</label>
         </div>
       </div>
+
       <!-- Name filter checkboxes (only visible if category "books" is selected) -->
       <div class="name-filter" *ngIf="selectedCategory === 'Books'">
         <label for="nameFilter">Filter by Name:</label>

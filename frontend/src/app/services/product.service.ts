@@ -69,9 +69,9 @@ export class ProductService {
       maxPrice: filterCriteria?.priceTo,
       priceRange: filterCriteria?.priceRange,
       nameFilters: Object.keys(filterCriteria?.nameFilters || {})
-        .filter(
-        (key) => filterCriteria?.nameFilters[key]
-      ), // Convert nameFilters object to an array of selected filters
+        .map(key => key === 'csharp' ? 'c#' : key) // Convert 'csharp' to 'c#'
+        .filter((key) => filterCriteria?.nameFilters[key] // Only include selected filters
+      ),
       page: page,
       size: pageSize,
     };
