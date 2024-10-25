@@ -156,7 +156,7 @@ public class CriteriaProductRepositoryImpl implements CriteriaProductRepository 
 
     @Override
 // @Transactional(readOnly = true) // Optional: Marks the method as read-only, optimizing transaction handling
-    public Page<Product> getFilteredProducts(UUID categoryId, Double minPrice, Double maxPrice, List<String> nameFiltersList, Pageable pageable) {
+    public Page<Product> getFilteredProducts(UUID categoryId, Double minPrice, Double maxPrice, List<String> nameFilters, Pageable pageable) {
             // Step 1: Initialize CriteriaBuilder and CriteriaQuery
             // The CriteriaBuilder is used to construct the query programmatically.
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -171,15 +171,24 @@ public class CriteriaProductRepositoryImpl implements CriteriaProductRepository 
 
             // Step 3: Add basic conditions to the predicates list
             // Filter products within the specified price range.
-            predicates.add(cb.between(root.get("unitPrice"), minPrice, maxPrice));
+            // if they are equal it means user selected
+            if(minPrice.equals(maxPrice)) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("unitPrice"), minPrice));
+            }
+            else {
+                predicates.add(cb.between(root.get("unitPrice"), minPrice, maxPrice));
+            }
             // Filter products by category ID.
             predicates.add(cb.equal(root.get("category").get("id"), categoryId));
 
             // Step 4: Add name filter conditions if the nameFiltersList is not empty
-            if (Objects.nonNull(nameFiltersList) && !nameFiltersList.isEmpty()) {
+            if (Objects.nonNull(nameFilters) && !nameFilters.isEmpty()) {
                 // Create a list of LIKE conditions for each filter in the nameFiltersList.
                 List<Predicate> namePredicates = new ArrayList<>();
-                for (String filter : nameFiltersList) {
+                for (String filter : nameFilters) {
+                    if("csharp".equalsIgnoreCase(filter)) {
+                        filter = "C#";
+                    }
                     // Create a LIKE condition for each filter, checking if the product name contains the filter value.
                     namePredicates.add(cb.like(cb.lower(root.get("name")), "%" + filter.toLowerCase() + "%"));
                 }

@@ -77,11 +77,11 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page , int size) {
+    public PagedResponse<ProductDTO> getProductsByCategoryIdPaginated(UUID id, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByCategoryPage = productRepository.findByCategoryIdOrderByCreatedAt(id, pageable);
-        if(productsByCategoryPage.getContent().isEmpty()) {
+        if (productsByCategoryPage.getContent().isEmpty()) {
             throw new ResourceNotFoundException("Products not found for this category", HttpStatus.NOT_FOUND);
         }
 
@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page ,int size) {
+    public PagedResponse<ProductDTO> searchProductByKeywordsPaginated(String keywords, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsByKeywordsPage = criteriaProductRepository.searchByKeywordsPaginated(keywords, pageable);
@@ -117,32 +117,55 @@ public class ProductServiceImpl implements ProductService {
         // exceptions : category id is invalid, prices or (pages) bad request?
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
-        // Adjust price range if selectedPriceRange is set
-        double minPrice = Double.parseDouble(min_price);
-        double maxPrice = Double.parseDouble(max_price);
-        if (Objects.nonNull(priceRange) && !priceRange.isEmpty()) {
-            String[] range = priceRange.split("-");
-            if (range.length == 2) {
-                minPrice = Math.max(minPrice, Double.parseDouble(range[0]));
-                maxPrice = Math.min(maxPrice, Double.parseDouble(range[1]));
-            } else if (priceRange.equals("20")) {
-                minPrice = Math.max(minPrice, 20);
+        try {
+            // Adjust price range if selectedPriceRange is set
+            double minPrice = Double.parseDouble(min_price);
+            double maxPrice = Double.parseDouble(max_price);
+            if (Objects.nonNull(priceRange) && !priceRange.isEmpty()) {
+                String[] range = priceRange.split("-");
+                if (range.length == 2) {
+                    minPrice = Math.max(minPrice, Double.parseDouble(range[0]));
+                    maxPrice = Math.min(maxPrice, Double.parseDouble(range[1]));
+                } else if ("20".equals(priceRange)) {
+                    minPrice = Math.max(minPrice, 20);
+                    maxPrice = minPrice;
+                }
+                if (maxPrice < minPrice) {
+                    double temp = minPrice;
+                    minPrice = maxPrice;
+                    maxPrice = temp;
+                }
             }
+
+            Page<Product> productPage = criteriaProductRepository.getFilteredProducts(
+                    categoryId,
+                    minPrice,
+                    maxPrice,
+                    nameFilters,
+                    pageable);
+
+            List<ProductDTO> productDTOS = productPage.getContent().stream()
+                    .map(productMapper::productToProductDTO)
+                    .toList();
+
+            return new PagedResponse<>(productDTOS, productPage.getNumber(), productPage.getSize(),
+                    productPage.getTotalElements(), productPage.getTotalPages());
+
+        } catch (NullPointerException | NumberFormatException exception) {
+            Page<Product> productPage = criteriaProductRepository.getFilteredProducts(
+                    categoryId,
+                    10.0,
+                    15.0,
+                    nameFilters,
+                    pageable);
+
+            List<ProductDTO> productDTOS = productPage.getContent().stream()
+                    .map(productMapper::productToProductDTO)
+                    .toList();
+
+            return new PagedResponse<>(productDTOS, productPage.getNumber(), productPage.getSize(),
+                    productPage.getTotalElements(), productPage.getTotalPages());
         }
-
-        Page<Product> productPage = criteriaProductRepository.getFilteredProducts(
-                categoryId,
-                minPrice,
-                maxPrice,
-                nameFilters,
-                pageable);
-
-        List<ProductDTO> productDTOS = productPage.getContent().stream()
-                .map(productMapper::productToProductDTO)
-                .toList();
-
-        return new PagedResponse<>(productDTOS, productPage.getNumber(), productPage.getSize(),
-                productPage.getTotalElements(), productPage.getTotalPages());
     }
 
     @Override
@@ -180,9 +203,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
         Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
 
-        if(Objects.nonNull(product)) {
+        if (Objects.nonNull(product)) {
             throw new BadRequestException(
-                    "Product with " + productDTO.getName() + " and " + productDTO.getSku() +  " already exists",
+                    "Product with " + productDTO.getName() + " and " + productDTO.getSku() + " already exists",
                     HttpStatus.BAD_REQUEST);
         }
 
