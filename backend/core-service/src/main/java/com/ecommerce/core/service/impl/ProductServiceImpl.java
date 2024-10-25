@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -169,15 +170,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(UUID id) {
-        return productRepository.findById(id)
+    public ProductDTO getProductByName(String name) {
+        return productRepository.findByName(name)
                 .map(productMapper::productToProductDTO)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product with name " + name + " was not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public ProductDTO createProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException {
-        // if getName is null 500 handle frontend
         Product product = productRepository.findByNameAndSku(productDTO.getName(), productDTO.getSku());
 
         if(Objects.nonNull(product)) {

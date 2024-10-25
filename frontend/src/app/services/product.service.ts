@@ -29,7 +29,7 @@ export class ProductService {
 
     return this.httpClient.get<GetResponseProducts>(searchUrl)
     // .pipe(tap(response =>
-      // console.log('API response:', response)));
+    //   console.log('API response:', response)));
   }
 
   searchProductByKeywords(searchQuery: string,
@@ -49,9 +49,9 @@ export class ProductService {
     return this.httpClient.get<GetResponseProducts>(searchUrl)
   }
 
-  getProductById(productId: string): Observable<Product> {
+  getProductByName(productName: string): Observable<Product> {
     // need to build URL based on product id
-    const productUrl = `${this.baseUrl}/${productId}`;
+    const productUrl = `${this.baseUrl}/${productName}`;
 
     return this.httpClient.get<Product>(productUrl);
   }

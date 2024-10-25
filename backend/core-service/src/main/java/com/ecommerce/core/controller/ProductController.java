@@ -45,9 +45,9 @@ public class ProductController {
         return productService.getAllProductsPaginated(page, size);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    @GetMapping("/{name}")
+    public ResponseEntity<ProductDTO> getProductByName(@PathVariable String name) {
+        return ResponseEntity.ok(productService.getProductByName(name));
     }
 
     @GetMapping("/category/{id}")

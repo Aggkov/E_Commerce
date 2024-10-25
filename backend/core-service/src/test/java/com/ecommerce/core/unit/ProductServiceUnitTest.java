@@ -178,9 +178,9 @@ public class ProductServiceUnitTest {
     @Test
     void testGetProductById() {
         Product mockProduct = mockProducts.get(0);
-        UUID productId = mockProduct.getId();
+        String productName = mockProduct.getName();
 
-        when(productRepository.findById(productId)).thenReturn(
+        when(productRepository.findByName(productName)).thenReturn(
                 Optional.of(mockProduct)
         );
 
@@ -190,7 +190,7 @@ public class ProductServiceUnitTest {
                     return ProductTestHelper.mapProductToProductDTO(product);
                 });
 
-        ProductDTO response = productService.getProductById(productId);
+        ProductDTO response = productService.getProductByName(productName);
 
         // test product found in mock with dto returned by service
         assertNotNull(response);

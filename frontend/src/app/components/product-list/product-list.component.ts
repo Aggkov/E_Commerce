@@ -12,6 +12,7 @@ import {map} from "rxjs";
 import {ProductCategoryMenuComponent} from "../product-category-menu/product-category-menu.component";
 import {FilterComponent, FilterCriteria} from "../filter/filter.component";
 import {environment} from "../../../enviroments/enviroment";
+import {EncodeURIComponentPipePipe} from "../../pipes/encode-uricomponent-pipe.pipe";
 
 @Component({
   selector: 'app-product-list',
@@ -26,7 +27,8 @@ import {environment} from "../../../enviroments/enviroment";
     NgbPagination,
     FormsModule,
     ProductCategoryMenuComponent,
-    FilterComponent
+    FilterComponent,
+    EncodeURIComponentPipePipe,
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
