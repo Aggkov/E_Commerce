@@ -99,6 +99,6 @@ export class SearchComponent implements OnInit {
   }
 
   navigateToUserOrders() {
-    this.router.navigate(['/user-orders']);
+    this.router.navigate(['/order-list']);
   }
 }

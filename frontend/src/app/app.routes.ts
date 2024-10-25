@@ -6,13 +6,13 @@ import {CheckoutComponent} from "./components/checkout/checkout.component";
 import {OrderSuccessComponent} from "./components/order-success/order-success.component";
 import {AdminPanelComponent} from "./components/admin/admin-panel/admin-panel.component";
 import {authGuard} from "./guard/auth.guard";
-import {UserOrdersComponent} from "./components/user-orders/user-orders.component";
 import {AdminCreateProductComponent} from "./components/admin/admin-create-product/admin-create-product.component";
+import {OrderListComponent} from "./components/order-list/order-list.component";
 
 export const routes: Routes = [
   {path: 'admin/create/product', component: AdminCreateProductComponent, canActivate: [authGuard]},
   {path: 'admin-panel', component: AdminPanelComponent, canActivate: [authGuard]},
-  {path: 'user-orders', component: UserOrdersComponent, canActivate: [authGuard]},
+  {path: 'order-list', component: OrderListComponent, canActivate: [authGuard]},
   {path: 'search/:query', component: ProductListComponent },
   {path: 'category/:id/:name', component: ProductListComponent},
   {path: 'category', component: ProductListComponent},
