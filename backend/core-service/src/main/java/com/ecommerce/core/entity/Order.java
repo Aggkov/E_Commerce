@@ -53,8 +53,18 @@ public class Order extends Audit {
     you might want the associated OrderItems
     to be saved automatically.
      */
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "order",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_address_id")
+    private ShippingAddress shippingAddress;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_address_id")
+    private BillingAddress billingAddress;
 
     public void add(OrderItem item) {
         if (item != null) {
@@ -63,6 +73,26 @@ public class Order extends Audit {
             }
             orderItems.add(item);
             item.setOrder(this);
+        }
+    }
+
+    public void add(ShippingAddress shippingAddress) {
+        if (shippingAddress != null) {
+            if (shippingAddress.getOrders() == null) {
+                shippingAddress.setOrders(new LinkedHashSet<>());
+            }
+            this.setShippingAddress(shippingAddress);
+            shippingAddress.getOrders().add(this);
+        }
+    }
+
+    public void add(BillingAddress billingAddress) {
+        if (billingAddress != null) {
+            if (billingAddress.getOrders() == null) {
+                billingAddress.setOrders(new LinkedHashSet<>());
+            }
+            this.setBillingAddress(billingAddress);
+            billingAddress.getOrders().add(this);
         }
     }
 }

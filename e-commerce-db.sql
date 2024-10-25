@@ -119,7 +119,11 @@ CREATE TABLE orders (
   status VARCHAR(128),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  CONSTRAINT orders FOREIGN KEY (user_id) REFERENCES "user" (id)
+  shipping_address_id UUID,
+  billing_address_id UUID,
+  CONSTRAINT orders FOREIGN KEY (user_id) REFERENCES "user" (id),
+  CONSTRAINT FK_shipping_address_id_orders FOREIGN KEY (shipping_address_id) REFERENCES shipping_address (id),
+  CONSTRAINT FK_billing_address_id_orders FOREIGN KEY (billing_address_id) REFERENCES billing_address (id)
 );
 ALTER TABLE orders OWNER TO ecommerce_user;
 

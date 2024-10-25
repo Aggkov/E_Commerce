@@ -24,10 +24,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
                     "JOIN o.user user " +
                     "JOIN o.orderItems oi " +
                     "JOIN oi.product product " +
-//                    "JOIN user.shippingAddresses user_shipping " +
-//                    "JOIN user_shipping.state st_shipping " +
-//                    "JOIN user.billingAddresses user_billing " +
-//                    "JOIN user_billing.state st_billing " +
+                    "JOIN o.shippingAddress order_shipping " +
+                    "JOIN order_shipping.state st_shipping " +
+                    "JOIN o.billingAddress order_billing " +
+                    "JOIN order_billing.state st_billing " +
                     "WHERE user.email = :email")
     Page<Order> getOrdersByUserEmail(@Param("email") String email, Pageable pageable);
 }

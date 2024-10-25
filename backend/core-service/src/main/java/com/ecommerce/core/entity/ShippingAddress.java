@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,5 +41,8 @@ public class ShippingAddress {
 
     @ManyToMany(mappedBy = "shippingAddresses")
     private Set<User> users = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "shippingAddress")
+    private Set<Order> orders = new LinkedHashSet<>();
 
 }

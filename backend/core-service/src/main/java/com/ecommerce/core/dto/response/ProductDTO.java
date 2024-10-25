@@ -29,7 +29,6 @@ public class ProductDTO implements Serializable {
     private String description;
     private String categoryId;
     private String categoryName;
-//    private ProductCategoryDTO category;
     private Instant createdAt;
     private Instant updatedAt;
 }

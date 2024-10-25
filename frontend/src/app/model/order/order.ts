@@ -5,11 +5,11 @@ import {OrderItem} from "./order-item";
 export class Order {
   orderInfo: OrderInfo;
   user: User;
-  orderItemList: OrderItem[];
+  orderItems: OrderItem[];
 
-  constructor(orderInfo: OrderInfo, user: User, orderItemList: OrderItem[]) {
+  constructor(orderInfo: OrderInfo, user: User, orderItems: OrderItem[]) {
     this.orderInfo = orderInfo;
     this.user = user;
-    this.orderItemList = orderItemList;
+    this.orderItems = orderItems;
   }
 }

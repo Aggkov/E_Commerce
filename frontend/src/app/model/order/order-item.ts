@@ -1,5 +1,5 @@
-import {Product} from "./product";
-import {CartItem} from "./cart-item";
+import {Product} from "../product";
+import {CartItem} from "../cart-item";
 
 export class OrderItem {
   quantity: number;
@@ -11,6 +11,7 @@ export class OrderItem {
   // }
   constructor(cartItem: CartItem) {
     this.quantity = cartItem.quantity;
-    this.product = cartItem.product;
+    this.product = new Product();
+    this.product.id = cartItem.product.id;
   }
 }

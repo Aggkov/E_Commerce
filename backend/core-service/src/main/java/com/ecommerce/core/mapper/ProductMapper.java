@@ -69,15 +69,24 @@ public interface ProductMapper {
 //            return null;
 //        }
 //        try {
-//            // Print the current working directory
-////            System.out.println("Current directory: " + System.getProperty("user.dir"));
-//            Path filePath = new File(AppConstants.uploadDir + "/" + product.getImageUrl()).toPath();
-//            return Base64.getEncoder().encodeToString(Files.readAllBytes(filePath));
-//        } catch (IOException e) {
-//            // Handle error or log it if needed
-//            System.out.println("File not found in the path: " + product.getImageUrl());
+//            String currentWorkingDir = System.getProperty("user.dir");
+//            Path filePath;
+//            // If the working directory ends with "core-service", move up to the root directory
+//            if (currentWorkingDir.endsWith("core-service")) {
+//                // Move two levels up to the project root
+//                Path rootDir = Paths.get(currentWorkingDir).getParent().getParent();
+//                filePath = Paths.get(rootDir.toString(), imageUrl);
+//            } else {
+//                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
+//            }
+//            if (!Files.exists(filePath)) {
+//                throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
+//            }
+//            return Files.readAllBytes(filePath);
+//        }
+//        catch (IOException e) {
+//            System.out.println("IO error occured: " + imageUrl);
 //            return null;
 //        }
-//    }
 }
 

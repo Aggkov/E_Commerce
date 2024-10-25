@@ -1,6 +1,7 @@
 package com.ecommerce.core.repository;
 
 import com.ecommerce.core.entity.Product;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             "WHERE p.category.id = :id " +
             "ORDER BY p.createdAt DESC")
     Page<Product> findByCategoryIdOrderByCreatedAt(@Param("id") UUID id, Pageable pageable);
-
+    Optional<Product> findByName(String name);
     Product findByNameAndSku(String name, String sku);
+
 
 
 //    @Query("SELECT p FROM Product p " +

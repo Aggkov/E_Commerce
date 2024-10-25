@@ -28,8 +28,9 @@
           </div>
         </div>
         <div>
-          <h6>TotalQuantity: {{totalQuantity}}</h6>
-          <h6>TotalPrice: {{totalPrice}}</h6>
+          <h6>TotalQuantity: {{ totalQuantity$ | async }}</h6>
+          <h6>TotalPrice: {{ totalPrice$ | async }}</h6>
+<!--          <h6>Status: {{ status$ | async }}</h6>-->
         </div>
         <hr>
       </div>

@@ -3,6 +3,7 @@ package com.ecommerce.core.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -50,20 +51,20 @@ public class User implements UserDetails, Principal {
     @Column(name = "enabled", nullable = false)
     private boolean enabled = true;  // Default to true
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private Set<Order> orders = new LinkedHashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_billing_address",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "billing_address_id"))
-    private Set<BillingAddress> billingAddresses = new LinkedHashSet<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_shipping_address",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "shipping_address_id"))
     private Set<ShippingAddress> shippingAddresses = new LinkedHashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_billing_address",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "billing_address_id"))
+    private Set<BillingAddress> billingAddresses = new LinkedHashSet<>();
 
     public void add(Order order) {
         if (order != null) {

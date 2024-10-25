@@ -62,7 +62,7 @@ public class Product extends Audit {
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     public void addOrderItem(OrderItem orderItem) {
@@ -75,23 +75,23 @@ public class Product extends Audit {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Product product = (Product) o;
-        return active == product.active &&
-                unitsInStock == product.unitsInStock &&
-                Objects.equals(id, product.id) &&
-                Objects.equals(sku, product.sku) &&
-                Objects.equals(name, product.name) &&
-                Objects.equals(description, product.description) &&
-                Objects.equals(unitPrice, product.unitPrice) &&
-                Objects.equals(imageUrl, product.imageUrl) &&
-                Objects.equals(unitsSold, product.unitsSold) &&
-                Objects.equals(category, product.category);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        if (!super.equals(o)) return false;
+//        Product product = (Product) o;
+//        return active == product.active &&
+//                unitsInStock == product.unitsInStock &&
+//                Objects.equals(id, product.id) &&
+//                Objects.equals(sku, product.sku) &&
+//                Objects.equals(name, product.name) &&
+//                Objects.equals(description, product.description) &&
+//                Objects.equals(unitPrice, product.unitPrice) &&
+//                Objects.equals(imageUrl, product.imageUrl) &&
+//                Objects.equals(unitsSold, product.unitsSold) &&
+//                Objects.equals(category, product.category);
+//    }
 
     @Override
     public int hashCode() {

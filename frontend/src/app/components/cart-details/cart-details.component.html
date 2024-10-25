@@ -45,7 +45,7 @@
                 <button (click)="remove(cartItem)" class="btn btn-primary btn-sm mt-2">Remove</button>
               </div>
               <p class="mt-2">Subtotal: {{
-                  cartItem.quantity * cartItem.product.unitPrice
+                  cartItem!.quantity! * cartItem.product!.unitPrice!
                     | currency: 'USD'
                 }}
               </p>

@@ -1,6 +1,7 @@
 package com.ecommerce.core.dto.response;
 
 import com.ecommerce.core.dto.request.OrderDTO;
+import com.ecommerce.core.dto.request.OrderInfoDTO;
 import com.ecommerce.core.dto.request.OrderItemDTO;
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,11 +16,9 @@ public class OrderSuccessDTO implements Serializable {
     private static final long serialVersionUID = 1959889964645223660L;
 
     private String orderTrackingNumber;
-
+    private OrderInfoDTO orderInfo;
     private List<OrderItemDTO> orderItems;
-
     private UserDTO user;
-    private String status;
 
 //    public OrderSuccessDTO(String orderTrackingNumber,
 //                           OrderDTO orderDTO) {

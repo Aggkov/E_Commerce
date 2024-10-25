@@ -8,13 +8,13 @@ import {CartService} from "../../services/cart.service";
 import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../model/cart-item";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
-import {CheckoutService, OrderResponse} from "../../services/checkout.service";
+import {CheckoutService, OrderSuccess} from "../../services/checkout.service";
 import {Router} from "@angular/router";
-import {Order} from "../../model/order";
-import {User} from "../../model/user";
-import {OrderInfo} from "../../model/order-info";
-import {Address} from "../../model/address";
-import {OrderItem} from "../../model/order-item";
+import {Order} from "../../model/order/order";
+import {User} from "../../model/order/user";
+import {OrderInfo} from "../../model/order/order-info";
+import {Address} from "../../model/order/address";
+import {OrderItem} from "../../model/order/order-item";
 import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-card-expiration-date-format.directive";
 
 @Component({
@@ -198,7 +198,7 @@ export class CheckoutComponent implements OnInit {
       newCustomer,
       orderItems
     );
-    console.log("order is: ",JSON.stringify(newOrder));
+    // console.log("order is: ",JSON.stringify(newOrder));
 
     this.checkoutService.createOrder(newOrder).subscribe({
         next: response => {
@@ -218,10 +218,10 @@ export class CheckoutComponent implements OnInit {
         }
     });
     // ?. === safely access object's properties
-    console.log("Entire formgroup object:", this.checkoutFormGroup?.value);
+    // console.log("Entire formgroup object:", this.checkoutFormGroup?.value);
     // console.log(`Entire formgroup object: ${JSON.stringify(this.checkoutFormGroup?.value)}`);
 
-    console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
+    // console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
     // console.log("The email address is " + this.checkoutFormGroup?.get('customer')?.value.email);
     // console.log(this.checkoutFormGroup?.get('customer')?.value);
 
@@ -234,15 +234,16 @@ export class CheckoutComponent implements OnInit {
     // console.log("The shipping address state is " + this.checkoutFormGroup?.get('shippingAddress')?.value.state.name);
   }
 
-  resetCart(orderResponse: OrderResponse) {
+  resetCart(orderSuccess: OrderSuccess) {
     // reset cart data
     this.cartService.cartItems = [];
     this.cartService.totalPrice.next(0);
     this.cartService.totalQuantity.next(0);
+    sessionStorage.removeItem('cartItems');
     // reset the form
     this.checkoutFormGroup.reset();
     // navigate back to the products page
-    this.router.navigateByUrl("/success", { state: { orderResponse: orderResponse } });
+    this.router.navigateByUrl("/success", { state: { orderSuccess: orderSuccess } });
   }
 
   /*
@@ -258,10 +259,10 @@ export class CheckoutComponent implements OnInit {
       // this.billingAddressStates = this.shippingAddressStates;
       // this.getStatesByCountryCode('billingAddress');
 
-      console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
-      console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
-      console.log("billing array " + JSON.stringify(this.billingAddressStates));
-      console.log("shipping array " + JSON.stringify(this.shippingAddressStates));
+      // console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
+      // console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
+      // console.log("billing array " + JSON.stringify(this.billingAddressStates));
+      // console.log("shipping array " + JSON.stringify(this.shippingAddressStates));
     } else {
       this.showBillingInfo = true;
       this.checkoutFormGroup.controls['billingAddress'].reset();
