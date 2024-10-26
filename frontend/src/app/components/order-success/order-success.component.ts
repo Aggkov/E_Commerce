@@ -24,7 +24,6 @@ export class OrderSuccessComponent implements OnInit {
   customerEmail: string | undefined;
   orderTrackingNumber: string | undefined;
   orderItems: OrderItem[] = [];
-  imageUrl: string | undefined;
   shippingStreet: string | undefined;
   shippingCity: string | undefined;
   shippingZipCode: string | undefined;

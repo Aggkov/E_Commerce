@@ -62,6 +62,7 @@ public interface OrderMapper {
     @Mapping(target = "name", source = "name")
     @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "unitPrice", source = "unitPrice")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "sku", ignore = true)
     @Mapping(target = "unitsInStock", ignore = true)
     @Mapping(target = "unitsSold", ignore = true)

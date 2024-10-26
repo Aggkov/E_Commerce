@@ -1,1 +1,12 @@
-<p>order-list works!</p>
+<div class="main-content">
+  <p>order-list works!</p>
+
+
+  <mat-paginator [length]="totalElements"
+                 [pageSizeOptions]="pageSizes"
+                 [pageIndex]="pageNumber"
+                 [pageSize]="pageSize"
+                 (page)="onPageChange($event)"
+                 [showFirstLastButtons]="true">
+  </mat-paginator>
+</div>

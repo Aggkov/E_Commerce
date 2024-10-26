@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, tap} from "rxjs";
 import {Order} from "../interfaces/order/order";
 import {OrderItem} from "../interfaces/order/order-item";
 import {User} from "../interfaces/order/user";
 import {environment} from "../../enviroments/enviroment";
 import {OrderInfo} from "../interfaces/order/order-info";
+import {Address} from "../interfaces/order/address";
+import {Product} from "../interfaces/product";
 
 
 @Injectable({
@@ -13,12 +15,21 @@ import {OrderInfo} from "../interfaces/order/order-info";
 })
 export class OrderService {
 
-  private purchaseUrl = environment.coreServiceUrl + '/order';
+  private orderUrl = environment.coreServiceUrl + '/order';
 
   constructor(private httpClient: HttpClient) { }
 
   createOrder(order: Order): Observable<OrderSuccess> {
-    return this.httpClient.post<OrderSuccess>(this.purchaseUrl, order);
+    return this.httpClient.post<OrderSuccess>(this.orderUrl, order);
+  }
+
+  getOrdersByUser(page: number, pageSize: number):Observable<GetResponseOrders> {
+    return this.httpClient.get<GetResponseOrders>(
+      `${this.orderUrl}?page=${page}&size=${pageSize}`
+    ).pipe(
+      tap(response =>
+        console.log('orders response: ', response))
+    );
   }
 }
 
@@ -28,3 +39,13 @@ export interface OrderSuccess {
   orderItems: OrderItem [];
   user: User;
 }
+
+export interface GetResponseOrders {
+  content: Order[];
+  size: number,
+  page: number,
+  totalElements: number,
+  totalPages: number
+}
+
+
