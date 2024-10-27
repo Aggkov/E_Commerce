@@ -7,13 +7,13 @@ import com.ecommerce.core.dto.response.PagedResponse;
 import com.ecommerce.core.service.OrderService;
 import com.ecommerce.core.utils.AppConstants;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,5 +53,13 @@ public class OrderController {
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
             Authentication authentication) {
         return orderService.getOrdersByUser(page ,size, authentication);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+    @GetMapping("/{orderTrackingNumber}")
+    OrderCreatedDTO getOrderByOrderTrackingNumber(
+            @PathVariable String orderTrackingNumber,
+            Authentication authentication) {
+        return orderService.getOrderByTrackingNumber(orderTrackingNumber, authentication);
     }
 }

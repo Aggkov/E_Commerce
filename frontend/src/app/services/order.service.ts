@@ -31,6 +31,13 @@ export class OrderService {
         console.log('orders response: ', response))
     );
   }
+
+  getOrderByOrderTrackingNumber(orderTrackingNumber: string): Observable<Order> {
+    return this.httpClient.get<Order>(`${this.orderUrl}/${orderTrackingNumber}`)
+      .pipe(
+        tap(response => console.log('order: ', response))
+      );
+  }
 }
 
 export interface OrderSuccess {

@@ -36,12 +36,13 @@ export class ProductDetailsComponent implements OnInit {
   handleProductDetails() {
     // get the "id" param string. convert string to a number using the "+" symbol
     const productName: string = this.route.snapshot.paramMap.get('name')!;
-    // console.log(productName);
-    this.productService.getProductByName(productName).subscribe(
-      data => {
-        this.product = data;
-      }
-    )
+    if(productName) {
+      this.productService.getProductByName(productName).subscribe(
+        data => {
+          this.product = data;
+        }
+      )
+    }
   }
 
   addToCart() {
@@ -54,7 +55,7 @@ export class ProductDetailsComponent implements OnInit {
 
   protected readonly environment = environment;
 
-  getImage(product: Product): string | undefined {
+  getImage(product: Product): string {
     if (product.imageUrl) {
       return 'data:image/png;base64,' + product.imageUrl
     }

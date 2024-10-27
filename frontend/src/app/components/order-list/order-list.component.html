@@ -1,12 +1,53 @@
-<div class="main-content">
-  <p>order-list works!</p>
+<!--<div class="main-content">-->
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">Orders</h2>
+      <div *ngFor="let order of orders" class="card mb-3">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <!-- Order Tracking Number -->
+            <div class="col-md-3">
+              <h5>Order {{ order.orderTrackingNumber }}</h5>
+            </div>
 
+            <!-- Shipping Address -->
+            <div class="col-md-4">
+              <h6>Shipping Address</h6>
+              <p>
+                {{ order.shippingAddress?.street }},
+                {{ order.shippingAddress?.city }},
+                {{ order.shippingAddress?.zipCode }}
+              </p>
+            </div>
 
-  <mat-paginator [length]="totalElements"
-                 [pageSizeOptions]="pageSizes"
-                 [pageIndex]="pageNumber"
-                 [pageSize]="pageSize"
-                 (page)="onPageChange($event)"
-                 [showFirstLastButtons]="true">
-  </mat-paginator>
+            <!-- Billing Address -->
+            <div class="col-md-4">
+              <h6>Billing Address</h6>
+              <p>
+                {{ order.billingAddress?.street }},
+                {{ order.billingAddress?.city }},
+                {{ order.billingAddress?.zipCode }}
+              </p>
+            </div>
+
+            <!-- Show Details Button -->
+            <div class="col-md-1 text-end">
+              <button class="btn btn-primary" (click)="viewOrderDetails(order!.orderTrackingNumber!)">
+                Show Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-paginator [length]="totalElements"
+                     [pageSizeOptions]="pageSizes"
+                     [pageIndex]="pageNumber"
+                     [pageSize]="pageSize"
+                     (page)="onPageChange($event)"
+                     [showFirstLastButtons]="true">
+      </mat-paginator>
+    </div>
+  </div>
 </div>
+<!--</div>-->

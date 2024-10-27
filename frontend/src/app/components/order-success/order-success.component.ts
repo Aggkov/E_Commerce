@@ -40,15 +40,13 @@ export class OrderSuccessComponent implements OnInit {
     // const navigation = this.router.getCurrentNavigation();
     // Access state using history.state instead of getCurrentNavigation
     this.orderSuccess = history.state.orderSuccess;
-    if (this.orderSuccess) {
-      // this.orderResponse = navigation.extras.state['orderResponse'];
-      this.orderSuccess = history.state.orderSuccess;
+    // if (this.orderSuccess) {
+    //   this.orderSuccess = history.state.orderSuccess;
       // console.log('Full OrderSuccess from History State:', history.state);
       // console.log('OrderInfo:', this.orderSuccess?.orderInfo);
-
-    } else {
-      console.log('History state is undefined');
-    }
+    // } else {
+    //   console.log('History state is undefined');
+    // }
 
     if (this.orderSuccess) {
       this.customerEmail = this.orderSuccess?.user.email;

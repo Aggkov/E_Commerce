@@ -2,12 +2,15 @@ import {Component, OnInit} from '@angular/core';
 import {Order} from "../../interfaces/order/order";
 import {OrderService} from "../../services/order.service";
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
+import {Router} from "@angular/router";
+import {NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
   imports: [
-    MatPaginator
+    MatPaginator,
+    NgForOf
   ],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.css'
@@ -20,7 +23,8 @@ export class OrderListComponent implements OnInit {
   totalElements: number = 0;
   pageSizes: number[] = [2, 5, 10, 20, 50];
 
-  constructor(private orderService: OrderService) {
+  constructor(private orderService: OrderService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -30,14 +34,18 @@ export class OrderListComponent implements OnInit {
   private listOrders() {
     this.orderService.getOrdersByUser(this.pageNumber, this.pageSize)
       .subscribe({
-      next: data => {
-        this.orders = data.content;
-        this.pageNumber = data.page;
-        this.pageSize = data.size;
-        this.totalElements = data.totalElements;
+      next: response => {
+        this.orders = response.content;
+        this.pageNumber = response.page;
+        this.pageSize = response.size;
+        this.totalElements = response.totalElements;
       },
         error: err => console.log(err)
     });
+  }
+
+  viewOrderDetails(orderTrackingNumber: string) {
+    this.router.navigate(['/order-details', orderTrackingNumber]);
   }
 
   onPageChange(event: PageEvent) {

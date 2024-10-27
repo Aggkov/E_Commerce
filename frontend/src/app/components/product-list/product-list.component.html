@@ -21,7 +21,7 @@
       <div class="row">
         <!-- loop over the collection of products -->
         <div *ngFor="let product of products" class="col-md-3">
-          <div *ngIf="product!.unitsInStock! > 0" class="product-box">
+          <div *ngIf="product.unitsInStock && product.unitsInStock > 0" class="product-box">
             <a routerLink="/products/{{product!.name! | encodeURIComponentPipe }}">
               <img [src]="getImage(product)" class="img-responsive">
               <h1>{{ product.name }}</h1>

@@ -1,6 +1,7 @@
 package com.ecommerce.core.repository;
 
 import com.ecommerce.core.entity.Order;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
                     "JOIN order_billing.state st_billing " +
                     "WHERE user.email = :email")
     Page<Order> getOrdersByUserEmail(@Param("email") String email, Pageable pageable);
+
+    Optional<Order> findByOrderTrackingNumber(String orderTrackingNumber);
 }

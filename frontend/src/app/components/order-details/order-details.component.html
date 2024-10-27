@@ -1,3 +1,55 @@
-<div class="main-content">
-  <p>order-details works!</p>
-</div>
+<!--<div class="main-content">-->
+  <!--  -->
+
+  <div *ngIf="order$ | async as order" class="container mt-4">
+    <!-- Order Date -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4>Order Details</h4>
+        <p>
+          <strong>Order Date:</strong>
+          {{ order.createdAt | date:'shortDate' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Order Items List -->
+    <div *ngIf="order.orderItems && order.orderItems.length > 0" class="row">
+      <div *ngFor="let item of order.orderItems" class="col-md-12">
+        <div class="card mb-3">
+          <div class="row g-0">
+            <!-- Product Image -->
+            <div class="col-md-2">
+              <img
+                [src]="getImage(item.product)"
+                class="img-fluid rounded-start"
+                alt="{{ item.product.name }}"
+              />
+            </div>
+            <!-- Product Details -->
+            <div class="col-md-10">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.product.name }}</h5>
+                <p class="card-text">
+                  Quantity: {{ item.quantity }} x ${{ item.product.unitPrice | number:'1.2-2' }}
+                </p>
+                <p class="card-text">
+                  <small *ngIf="item.quantity && item.product.unitPrice" class="text-muted">
+                    Subtotal: ${{ (item.quantity * item.product.unitPrice) | number:'1.2-2' }}
+                  </small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Total Price -->
+    <div class="row mt-4">
+      <div class="col-md-12 text-start">
+        <h5>
+          Total Price: ${{ order.orderInfo.totalPrice | number:'1.2-2' }}</h5>
+      </div>
+    </div>
+  </div>
+<!--</div>-->

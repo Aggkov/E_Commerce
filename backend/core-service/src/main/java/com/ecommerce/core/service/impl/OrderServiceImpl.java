@@ -161,6 +161,13 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 
+    @Override
+    public OrderCreatedDTO getOrderByTrackingNumber(String orderTrackingNumber, Authentication authentication) {
+        return orderRepository.findByOrderTrackingNumber(orderTrackingNumber)
+                .map(orderMapper::orderToOrderCreatedDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Order with orderTrackingNumber " + orderTrackingNumber + " was not found", HttpStatus.NOT_FOUND));
+    }
+
     private String generateOrderTrackingNumber() {
         return UUID.randomUUID().toString();
     }

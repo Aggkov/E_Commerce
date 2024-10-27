@@ -6,7 +6,7 @@ import {Address} from "./address";
 export interface Order {
   orderTrackingNumber?: string;
   orderInfo: OrderInfo;
-  user: User;
+  user?: User;
   orderItems: OrderItem[];
   createdAt?: Date;
   shippingAddress?: Address;
