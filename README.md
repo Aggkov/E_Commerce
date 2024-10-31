@@ -39,7 +39,7 @@ cd your-repo
    Main users are `user` `admin`. You can create more users and assign them roles `user` and `admin` from `frontend client`.
 4. `cd backend`.
 5. Run `mvn clean install`
-6. Open a terminal with admin privileges and Import Certificate into `cacerts` `JAVA_HOME/lib/security/cacerts`.
+6. Open a terminal with admin privileges and Import Certificates into `cacerts` `JAVA_HOME/lib/security/cacerts`.
    a) From project root run `keytool -importcert -trustcacerts -alias keycloak-cert -file ./keycloak-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`.
    b) `cd backend` and run for all microservices
    `keytool -importcert -trustcacerts -alias discovery-cert -file ./discovery-server/src/main/resources/discovery-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
