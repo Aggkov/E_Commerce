@@ -32,9 +32,6 @@ public interface OrderMapper {
     @Mapping(target = "user", ignore = true)
     Order orderDTOtoOrder(OrderDTO orderDTO);
 
-//    @Mapping(target = "product", ignore = true)
-//    OrderItem orderItemDTOtoOrderItem(OrderItemDTO orderItemDTO);
-
 //    @Mapping(target = "orderTrackingNumber", source = "order.orderTrackingNumber")
     @Mapping(target = "orderInfo.totalPrice", source = "order.totalPrice")
     @Mapping(target = "orderInfo.totalQuantity", source = "order.totalQuantity")

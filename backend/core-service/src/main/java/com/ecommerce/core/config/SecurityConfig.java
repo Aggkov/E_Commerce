@@ -50,13 +50,12 @@ public class SecurityConfig {
                 // Configure authorization rules
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/v1/core/products/admin/**").hasRole("ADMIN")  // Only admin role can access
-//                                .requestMatchers("/swagger-ui/**").hasRole("ADMIN")  // Only admin role can access
-//                                .requestMatchers("/swagger-ui.html").hasRole("ADMIN")  // Only admin role can access
+                                .requestMatchers("/api/v1/core/products/admin/**").hasRole("ADMIN")
+//                                .requestMatchers("/swagger-ui/**").hasRole("ADMIN")
+//                                .requestMatchers("/swagger-ui.html").hasRole("ADMIN")
 //                                .requestMatchers("/api-docs/**").hasRole("ADMIN")
                                 .anyRequest().permitAll()
                 )
-                // Configure OAuth2 Resource Server with JWT and Keycloak converter
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(token -> token.jwtAuthenticationConverter(
                         new KeycloakJwtAuthenticationConverter())));
 

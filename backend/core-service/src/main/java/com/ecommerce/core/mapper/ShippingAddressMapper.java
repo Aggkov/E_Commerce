@@ -9,10 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", uses = StateMapper.class)
 public interface ShippingAddressMapper {
 
-//    @Mapping(target = "id", source = "shippingAddressDTO.id")
-//    @Mapping(target = "city", source = "shippingAddressDTO.city")
-//    @Mapping(target = "street", source = "shippingAddressDTO.street")
-//    @Mapping(target = "zipCode", source = "shippingAddressDTO.zipCode")
     @Mapping(target = "state", source = "state")
     ShippingAddress shippingAddressDTOToAddress(ShippingAddressDTO shippingAddress);
 

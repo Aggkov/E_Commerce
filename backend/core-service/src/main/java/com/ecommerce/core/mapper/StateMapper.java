@@ -10,8 +10,6 @@ public interface StateMapper {
 
     StateMapper INSTANCE = Mappers.getMapper(StateMapper.class);
 
-    // Simple mapping method
     StateDTO stateToStateDTO(State state);
-    // Reverse mapping method
     State stateDTOToState(StateDTO stateDTO);
 }

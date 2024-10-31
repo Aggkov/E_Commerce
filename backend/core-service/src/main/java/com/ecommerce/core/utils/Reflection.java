@@ -9,8 +9,8 @@ public class Reflection<T> {
 
     private final Set<String> EXCLUDED_FIELDS = Set.of("serialVersionUID");
 
+    // or use library
     public List<String> getFieldsFromItem(T item) {
-        // implement reflection or use a library to do this.
         List<String> fieldValues = new ArrayList<>();
 
         Class<?> clazz = item.getClass();
@@ -26,7 +26,6 @@ public class Reflection<T> {
                 // Convert the field value to string and add to list (handling null values)
                 fieldValues.add(value != null ? value.toString() : "null");
             } catch (IllegalAccessException e) {
-                // Handle potential errors when accessing the field
                 fieldValues.add("Error: Unable to access field");
             }
         }
@@ -36,6 +35,8 @@ public class Reflection<T> {
     public Set<String> getExcludedFields() {
         return EXCLUDED_FIELDS;
     }
+
+
 
     // EXTRACT NESTED OBJECTS FIELDS NON-RECURSIVE
 //    private List<String> getFieldsFromItem(T item) {

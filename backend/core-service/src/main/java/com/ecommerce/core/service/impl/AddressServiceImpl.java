@@ -23,7 +23,6 @@ public class AddressServiceImpl {
     private final BillingAddressRepository billingAddressRepository;
     private final ShippingAddressMapper shippingAddressMapper;
     private final BillingAddressMapper billingAddressMapper;
-//    private final StateMapper stateMapper;
     private final StateRepository stateRepository;
 
     public ShippingAddress getShippingAddress(OrderDTO orderDTO) {

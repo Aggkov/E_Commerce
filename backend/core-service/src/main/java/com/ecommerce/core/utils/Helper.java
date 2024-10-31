@@ -14,20 +14,15 @@ public class Helper<T> {
         // Select the correct export service based on the type parameter
         return switch (type.toLowerCase()) {
             case "excel" -> new ExcelExportService<>();
-//                break;
             case "csv" -> new CsvExportService<>();
-//                break;
             case "json" -> new JsonExportService<>();
-//                break;
             case "yaml" -> new YamlExportService<>();
-//                break;
             default -> throw new IllegalArgumentException("Invalid export type");
         };
     }
 
     public static void setHeaders(HttpHeaders headers, String type) {
         // Set the content type and headers based on the file type
-//        HttpHeaders headers = new HttpHeaders();
         switch (type.toLowerCase()) {
             case "excel":
                 headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));

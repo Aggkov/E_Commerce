@@ -10,9 +10,7 @@ public interface ProductCategoryMapper {
 
     ProductCategoryMapper INSTANCE = Mappers.getMapper(ProductCategoryMapper.class);
 
-    // Simple mapping method
     ProductCategoryDTO productCategoryToProductCategoryDTO(ProductCategory productCategory);
 
-    // Reverse mapping method
     ProductCategory ProductCategoryDTOToproductCategory(ProductCategoryDTO productCategoryDTO);
 }
