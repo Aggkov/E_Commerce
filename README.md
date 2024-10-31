@@ -6,11 +6,12 @@
 - Docker
 - Cart & order management
 - Checkout
+- Export
 - Filtering
 - Pagination
 - Keycloak
 - Flyway
-- 
+
 ## Technology Stacks
 **Backend**
 - Java 17
