@@ -10,8 +10,8 @@ import {environment} from "../../enviroments/enviroment";
 })
 export class FormService {
 
-  private countriesUrl = environment.coreServiceUrl + '/countries';
-  private statesUrl = environment.coreServiceUrl + '/states';
+  private countriesUrl = environment.gatewayUrl + environment.coreContextPath + '/countries';
+  private statesUrl = environment.gatewayUrl + environment.coreContextPath + '/states';
 
   constructor(private httpClient: HttpClient) { }
 

@@ -19,7 +19,7 @@ export class KeycloakService {
   get keycloak() {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-          url: 'http://localhost:9090',
+          url: 'https://localhost:9090',
           realm: 'E-Commerce',
           clientId: 'frontend',
       });
@@ -88,7 +88,7 @@ export class KeycloakService {
     }
     // console.log('Keycloak status at service login', this.keycloak);
     return this.keycloak?.login({
-        redirectUri: 'http://localhost:4200/products',
+        redirectUri: 'https://localhost:4200/products',
       }
     );
   }
@@ -99,7 +99,7 @@ export class KeycloakService {
     }
     // console.log('Keycloak status at service logout', this.keycloak);
     return this.keycloak?.logout({
-        redirectUri: 'http://localhost:4200/products',
+        redirectUri: 'https://localhost:4200/products',
       }
     );
   }

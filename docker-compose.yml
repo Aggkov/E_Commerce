@@ -31,10 +31,15 @@ services:
     container_name: keycloak-e_commerce
     image: quay.io/keycloak/keycloak:25.0.5
     ports:
-      - "9090:8080"
+      - "9090:8443" # Map Docker's internal HTTPS port 8443 to localhost 9090
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keycloak-keystore.p12 #specifies the path to the keystore inside the container
+      KC_HTTPS_KEY_STORE_PASSWORD: secret
+      KC_HOSTNAME: localhost
+    volumes:
+      - ./keycloak-keystore.p12:/opt/keycloak/conf/keycloak-keystore.p12 #mount keycloak-keystore.p12 inside container
     command:
       - "start-dev"
 

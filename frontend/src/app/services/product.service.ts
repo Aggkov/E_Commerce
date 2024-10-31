@@ -10,7 +10,7 @@ import {environment} from "../../enviroments/enviroment";
 })
 export class ProductService {
 
-  private baseUrl = environment.coreServiceUrl + '/products';
+  private baseUrl = environment.gatewayUrl + environment.coreContextPath + '/products';
 
   constructor(private httpClient: HttpClient) {
   }
