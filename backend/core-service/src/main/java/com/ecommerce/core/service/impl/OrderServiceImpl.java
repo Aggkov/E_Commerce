@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderSuccessDTO createNewOrder(OrderDTO orderDTO) {
-        String paypalOrderId = orderDTO.getPaypalOrderId(); // Assuming it's part of OrderDTO
+        String paypalOrderId = orderDTO.getPaypalOrderId();
         ResponseEntity<Boolean> response = paymentClient.verifyPayment(paypalOrderId);
         if (!response.getStatusCode().is2xxSuccessful() || Boolean.FALSE.equals(response.getBody())) {
             throw new PaymentVerificationException("Payment verification failed");
