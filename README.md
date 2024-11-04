@@ -4,6 +4,7 @@
 - REST API
 - HTTPS
 - Docker
+- Payment with PayPal
 - Cart & order management
 - Checkout
 - Export
@@ -43,10 +44,20 @@ cd your-repo
    a) From project root run 
       `keytool -importcert -trustcacerts -alias keycloak-cert -file ./keycloak-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
    b) `cd backend` and run for all microservices
+      `discovery`
       `keytool -importcert -trustcacerts -alias discovery-cert -file ./discovery-server/src/main/resources/discovery-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
+         
+      `api-gateway`
       `keytool -importcert -trustcacerts -alias gateway-cert -file ./api-gateway/src/main/resources/gateway-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
+    
+      `core`
       `keytool -importcert -trustcacerts -alias core-cert -file ./api-gateway/src/main/resources/core-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-7. Run `Discovery server` and then the rest of microservices.
+      
+      `payment`
+      `keytool -importcert -trustcacerts -alias payment-cert -file ./payment/src/main/resources/payment-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
+
+7. Create PayPal sandbox accounts and modify `client_id` and `client_secret` in application properties.
+8. Run the app.
 
 **Frontend**
 1. Install [Node.js and npm](https://www.npmjs.com/get-npm)
