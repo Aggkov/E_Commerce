@@ -20,6 +20,7 @@
         <module>core-service</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
+        <module>payment</module>
     </modules>
 
     <properties>
@@ -96,5 +97,4 @@
             <url>https://repo.spring.io/release</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

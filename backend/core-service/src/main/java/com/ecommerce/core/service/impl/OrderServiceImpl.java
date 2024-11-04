@@ -1,5 +1,6 @@
 package com.ecommerce.core.service.impl;
 
+import com.ecommerce.core.client.PaymentClient;
 import com.ecommerce.core.dto.request.BillingAddressDTO;
 import com.ecommerce.core.dto.request.OrderDTO;
 import com.ecommerce.core.dto.request.OrderItemDTO;
@@ -15,6 +16,7 @@ import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.entity.ShippingAddress;
 import com.ecommerce.core.entity.User;
 import com.ecommerce.core.exception.BadRequestException;
+import com.ecommerce.core.exception.PaymentVerificationException;
 import com.ecommerce.core.exception.ResourceNotFoundException;
 import com.ecommerce.core.mapper.BillingAddressMapper;
 import com.ecommerce.core.mapper.OrderItemMapper;
@@ -45,6 +47,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -64,12 +67,18 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
     private final ShippingAddressRepository shippingAddressRepository;
     private final BillingAddressRepository billingAddressRepository;
+    private final PaymentClient paymentClient;
 
     @Override
     @Transactional
     public OrderSuccessDTO createNewOrder(OrderDTO orderDTO) {
-        Order order = orderMapper.orderDTOtoOrder(orderDTO);
+        String paypalOrderId = orderDTO.getPaypalOrderId(); // Assuming it's part of OrderDTO
+        ResponseEntity<Boolean> response = paymentClient.verifyPayment(paypalOrderId);
+        if (!response.getStatusCode().is2xxSuccessful() || Boolean.FALSE.equals(response.getBody())) {
+            throw new PaymentVerificationException("Payment verification failed");
+        }
 
+        Order order = orderMapper.orderDTOtoOrder(orderDTO);
         String orderTrackingNumber;
         do {
             orderTrackingNumber = generateOrderTrackingNumber();

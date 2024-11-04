@@ -1,4 +1,3 @@
-import {Product} from "../app/interfaces/product";
 
 export const environment = {
   production: false,

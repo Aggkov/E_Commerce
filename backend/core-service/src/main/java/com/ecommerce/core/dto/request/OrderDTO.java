@@ -22,4 +22,6 @@ public class OrderDTO implements Serializable {
 
     @Valid
     private UserDTO user;
+
+    private String paypalOrderId; // PayPal Order ID from frontend
 }

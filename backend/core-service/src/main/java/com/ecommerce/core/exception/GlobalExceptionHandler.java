@@ -28,6 +28,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(PaymentVerificationException.class)
+    public ResponseEntity<ExceptionResponse> resolveException(PaymentVerificationException exception) {
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .timestamp(Instant.now()).build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionResponse> resolveException(BadRequestException exception) {
         ExceptionResponse response = ExceptionResponse.builder()

@@ -11,4 +11,5 @@ export interface Order {
   createdAt?: Date;
   shippingAddress?: Address;
   billingAddress?: Address;
+  paypalOrderId?: string;
 }

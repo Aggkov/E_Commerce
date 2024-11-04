@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, input, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {FormService} from "../../services/form.service";
@@ -9,13 +9,13 @@ import {WhitespaceValidator} from "../../validators/whitespace-validator";
 import {CartItem} from "../../interfaces/cart-item";
 import {CreditCardFormatDirective} from "../../directives/credit-card-format.directive";
 import {OrderService, OrderSuccess} from "../../services/order.service";
-import {Router} from "@angular/router";
+import {Event, Router} from "@angular/router";
 import {Order} from "../../interfaces/order/order";
-import {User} from "../../interfaces/order/user";
-import {OrderInfo} from "../../interfaces/order/order-info";
-import {Address} from "../../interfaces/order/address";
 import {OrderItem} from "../../interfaces/order/order-item";
 import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-card-expiration-date-format.directive";
+import {window} from "rxjs";
+import {ICreateOrderRequest, IPayPalConfig, NgxPayPalModule} from "ngx-paypal";
+
 
 @Component({
   selector: 'app-checkout',
@@ -26,12 +26,13 @@ import {CreditCardExpirationDateFormatDirective} from "../../directives/credit-c
     NgForOf,
     NgIf,
     CreditCardFormatDirective,
-    CreditCardExpirationDateFormatDirective
+    CreditCardExpirationDateFormatDirective,
+    NgxPayPalModule
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css'
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, AfterViewInit {
 
   checkoutFormGroup!: FormGroup;
   totalPrice: number = 0;
@@ -42,8 +43,7 @@ export class CheckoutComponent implements OnInit {
   billingAddressStates: State[] = [];
   cartItems : CartItem[] = [];
   orderTrackingNumber : string = "";
-  // creditCardYears: number[] = [];
-  // creditCardMonths: number[] = [];
+  public payPalConfig?: IPayPalConfig;
 
   constructor(private formBuilder: FormBuilder,
               private formService: FormService,
@@ -87,31 +87,31 @@ export class CheckoutComponent implements OnInit {
         zipCode: new FormControl('', [Validators.required, Validators.minLength(5),
           Validators.maxLength(5),
           WhitespaceValidator.onlyWhitespace])
-      }),
-      creditCard: this.formBuilder.group({
-        cardType: new FormControl('',
-          [Validators.required]),
-        nameOnCard:  new FormControl('',
-          [Validators.required,
-            Validators.minLength(2),
-          WhitespaceValidator.onlyWhitespace]),
-        cardNumber: new FormControl('',
-          [Validators.required,
-            // Validators.pattern('^[0-9]+$'),
-            Validators.minLength(13),
-            Validators.maxLength(19)]
-            // LuhnCheckValidator.luhnCheck]
-        ),
-        securityCode: new FormControl('',
-          [Validators.required,
-            Validators.pattern('[0-9]{3}')
-          ]),
-        expirationDate: new FormControl('',
-          [Validators.required])
-        // (keydown)="onKeyDown($event)"
-        // expirationMonth: [''],
-        // expirationYear: ['']
       })
+      // creditCard: this.formBuilder.group({
+      //   cardType: new FormControl('',
+      //     [Validators.required]),
+      //   nameOnCard:  new FormControl('',
+      //     [Validators.required,
+      //       Validators.minLength(2),
+      //     WhitespaceValidator.onlyWhitespace]),
+      //   cardNumber: new FormControl('',
+      //     [Validators.required,
+      //       // Validators.pattern('^[0-9]+$'),
+      //       Validators.minLength(13),
+      //       Validators.maxLength(19)]
+      //       // LuhnCheckValidator.luhnCheck]
+      //   ),
+      //   securityCode: new FormControl('',
+      //     [Validators.required,
+      //       Validators.pattern('[0-9]{3}')
+      //     ]),
+      //   expirationDate: new FormControl('',
+      //     [Validators.required])
+      //   // (keydown)="onKeyDown($event)"
+      //   // expirationMonth: [''],
+      //   // expirationYear: ['']
+      // })
     });
 
     this.reviewCartTotals();
@@ -124,7 +124,57 @@ export class CheckoutComponent implements OnInit {
         error: error => console.log(error)
       }
     );
+
+    this.initPaypalConfig();
   }
+
+  ngAfterViewInit(): void {
+    // this.loadPayPalScript()
+    //   .then(() => this.renderPayPalButtons())
+    //   .catch(err => console.error('PayPal SDK failed to load:', err));
+  }
+
+  // private loadPayPalScript(): Promise<void> {
+  //   return new Promise((resolve, reject) => {
+  //     if ((window as any).paypal) {
+  //       resolve(); // SDK already loaded
+  //       return;
+  //     }
+  //
+  //     const script = document.createElement('script');
+  //     script.src = 'https://www.sandbox.paypal.com/sdk/js?client-id=AZOIrGdz55roalSkzWF9qbUFBaxrO2uVq3VVWTDhGh9cGf2YIEyB7NbzO9GZp8CHWDi8Iojoe146m1Ja&components=buttons&currency=USD';
+  //     script.onload = () => resolve();
+  //     script.onerror = () => reject(new Error('PayPal SDK failed to load.'));
+  //     document.body.appendChild(script);
+  //   });
+  // }
+
+  // private renderPayPalButtons() {
+  //   if ((window as any).paypal) {
+  //     console.log('Rendering PayPal buttons');
+  //     (window as any).paypal.Buttons({
+  //       createOrder: (data: any, actions: any) => {
+  //         return actions.order.create({
+  //           purchase_units: [{
+  //             amount: {
+  //                value: this.totalPrice.toString()
+  //             }
+  //           }]
+  //         });
+  //       },
+  //       onApprove: async (data: any, actions: any) => {
+  //         const order = await actions.order.capture();
+  //         console.log('Order approved and captured:', order);
+  //         this.onSubmit();
+  //       },
+  //       onError: (err: any) => {
+  //         console.error('PayPal error:', err);
+  //       }
+  //     }).render('#paypal-button-container');
+  //   } else {
+  //     console.error('PayPal SDK is not available');
+  //   }
+  // }
 
   reviewCartTotals() {
     this.cartService.totalPrice.subscribe({
@@ -158,7 +208,7 @@ export class CheckoutComponent implements OnInit {
   get creditCardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode'); }
   get creditCardExpDate() { return this.checkoutFormGroup.get('creditCard.expirationDate'); }
 
-  onSubmit() {
+  onSubmit(orderId?: string) {
 
     // if (this.checkoutFormGroup.invalid) {
     //   this.checkoutFormGroup.markAllAsTouched();
@@ -213,7 +263,8 @@ export class CheckoutComponent implements OnInit {
     let newOrder: Order = {
       orderInfo: { totalPrice: this.totalPrice, totalQuantity: this.totalQuantity, status: "PENDING" },
       user: newUser,
-      orderItems: orderItems
+      orderItems: orderItems,
+      paypalOrderId: orderId
     };
     // console.log("order is: ",JSON.stringify(newOrder));
 
@@ -223,32 +274,45 @@ export class CheckoutComponent implements OnInit {
           alert(`Your order has been received.\nOrder tracking number:
           ${response.orderTrackingNumber}`);
 
-          // reset cart
           this.resetCart(response);
         },
         error: err => {
           if (err.status === 400) {
-            // Handle validation errors
             console.log('Validation errors:', err.error);
-            // Display errors to the user or update form controls with error messages
           }
         }
     });
-    // ?. === safely access object's properties
-    // console.log("Entire formgroup object:", this.checkoutFormGroup?.value);
-    // console.log(`Entire formgroup object: ${JSON.stringify(this.checkoutFormGroup?.value)}`);
+  }
 
-    // console.log("firstName formcontrol object:", this.checkoutFormGroup.controls['customer'].value.firstName);
-    // console.log("The email address is " + this.checkoutFormGroup?.get('customer')?.value.email);
-    // console.log(this.checkoutFormGroup?.get('customer')?.value);
-
-    // console.log(`with backticks The email address is ${this.checkoutFormGroup?.get('customer')?.value.email}`);
-    // console.log(`with backticks The email address is ${this.checkoutFormGroup.controls['customer'].value.email}`);
-
-    // console.log("The shipping address country is " + this.checkoutFormGroup?.get('shippingAddress')?.value.country.name);
-    // console.log("The shipping address country is " + this.checkoutFormGroup.controls['shippingAddress'].value.country.name);
-    // console.log("The shipping address country is " + this.checkoutFormGroup.get('shippingAddress.country')?.value.name);
-    // console.log("The shipping address state is " + this.checkoutFormGroup?.get('shippingAddress')?.value.state.name);
+  private initPaypalConfig(): void {
+    this.payPalConfig = {
+      currency: 'USD',
+      clientId: 'AZOIrGdz55roalSkzWF9qbUFBaxrO2uVq3VVWTDhGh9cGf2YIEyB7NbzO9GZp8CHWDi8Iojoe146m1Ja',
+      createOrderOnClient: (data) => <ICreateOrderRequest> {
+        intent: 'CAPTURE',
+        purchase_units: [{
+          amount: {
+            currency_code: 'USD',
+            value: this.totalPrice.toString(),
+            breakdown: {
+              item_total: {
+                currency_code: 'USD',
+                value: this.totalPrice.toString()
+              }
+            }
+          }
+        }]
+      },
+      onApprove: (data, actions) => {
+        return actions.order.capture().then((details: any) => {
+          console.log('Order captured:', details);
+          this.onSubmit(details.id);
+        });
+      },
+      onError: err => {
+        console.error('PayPal error:', err);
+      }
+    };
   }
 
   resetCart(orderSuccess: OrderSuccess) {
@@ -317,14 +381,14 @@ export class CheckoutComponent implements OnInit {
     })
   }
 
-  onCardNameInput(event: Event) {
-    const input = event.target as HTMLInputElement;
-    // allow only characters, remove digits
-    let userInput = input.value.replace(/\d/g, '');
-    input.value = userInput;
-    this.creditCardNameOnCard?.patchValue(
-      userInput,
-      {emitEvent: false});
-  }
+  // onCardNameInput(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   // allow only characters, remove digits
+  //   let userInput = input.value.replace(/\d/g, '');
+  //   input.value = userInput;
+  //   this.creditCardNameOnCard?.patchValue(
+  //     userInput,
+  //     {emitEvent: false});
+  // }
 }
 
