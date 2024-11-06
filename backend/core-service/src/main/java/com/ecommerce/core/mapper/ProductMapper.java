@@ -43,11 +43,11 @@ public interface ProductMapper {
         try {
             String currentWorkingDir = System.getProperty("user.dir");
             Path filePath;
-            // If the working directory ends with "core-service", move up to the root directory
-            if (currentWorkingDir.endsWith("core-service")) {
-                // Move two levels up to the project root
-                Path rootDir = Paths.get(currentWorkingDir).getParent().getParent();
-                filePath = Paths.get(rootDir.toString(), imageUrl);
+            // If the working directory does not end with "core-service", means we are in root so go to core
+            if (!currentWorkingDir.endsWith("core-service")) {
+                // Move two levels down
+                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
+                filePath = Paths.get(coreDir.toString(), imageUrl);
             } else {
                 filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
             }

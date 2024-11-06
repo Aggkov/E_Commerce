@@ -264,8 +264,11 @@ public class ProductServiceImpl implements ProductService {
     // A utility method to determine the correct upload directory
     private String getUploadDir(String categoryName) throws BadRequestException {
         String currentWorkingDir = System.getProperty("user.dir");
-        if (currentWorkingDir.endsWith("core-service")) {
-            currentWorkingDir = (Paths.get(currentWorkingDir).getParent().getParent()).toString();
+        if (!currentWorkingDir.endsWith("core-service")) {
+            // go down
+            currentWorkingDir = Paths.get(currentWorkingDir, "backend", "core-service").toString();
+            // go up
+//            currentWorkingDir = (Paths.get(currentWorkingDir).getParent().getParent()).toString();
         }
         switch (categoryName.toLowerCase()) {
             case "books":
