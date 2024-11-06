@@ -6,7 +6,6 @@ import com.ecommerce.core.entity.ShippingAddress;
 import com.ecommerce.core.exception.ResourceNotFoundException;
 import com.ecommerce.core.mapper.BillingAddressMapper;
 import com.ecommerce.core.mapper.ShippingAddressMapper;
-import com.ecommerce.core.mapper.StateMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
 import com.ecommerce.core.repository.ShippingAddressRepository;
 import com.ecommerce.core.repository.StateRepository;
@@ -26,13 +25,13 @@ public class AddressServiceImpl {
     private final StateRepository stateRepository;
 
     public ShippingAddress getShippingAddress(OrderDTO orderDTO) {
-        // Step 1: Check if the shipping address already exists in db
+        // Check if the shipping address already exists in db
         Optional<ShippingAddress> existingShippingAddress = shippingAddressRepository.findShippingAddressByStreetAndZipCodeAndCityAndState(
                 orderDTO.getUser().getShippingAddress().getStreet(),
                 orderDTO.getUser().getShippingAddress().getZipCode(),
                 orderDTO.getUser().getShippingAddress().getCity(),
                 orderDTO.getUser().getShippingAddress().getState().getId());
-        // Step 2: Create or use existing shipping address
+        // Create or use existing shipping address
         ShippingAddress shippingAddress = existingShippingAddress.orElseGet(() -> {
             ShippingAddress newShippingAddress = shippingAddressMapper.shippingAddressDTOToAddress(orderDTO.getUser().getShippingAddress());
             newShippingAddress.setState(stateRepository.findById(

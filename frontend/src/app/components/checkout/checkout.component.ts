@@ -321,7 +321,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     this.cartService.totalPrice.next(0);
     this.cartService.totalQuantity.next(0);
     sessionStorage.removeItem('cartItems');
-    // reset the form
+
     this.checkoutFormGroup.reset();
     // navigate back to the products page
     this.router.navigateByUrl("/success", { state: { orderSuccess: orderSuccess } });
@@ -337,13 +337,15 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       this.checkoutFormGroup.controls['billingAddress']
         .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
       // bug fix for states
-      // this.billingAddressStates = this.shippingAddressStates;
+      this.billingAddressStates = this.shippingAddressStates;
       // this.getStatesByCountryCode('billingAddress');
 
-      // console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
-      // console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
-      // console.log("billing array " + JSON.stringify(this.billingAddressStates));
-      // console.log("shipping array " + JSON.stringify(this.shippingAddressStates));
+      console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
+      console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
+      console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
+      console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
+      // console.log("billing array " + this.billingAddressStates)
+      // console.log("shipping array " + this.shippingAddressStates)
     } else {
       this.showBillingInfo = true;
       this.checkoutFormGroup.controls['billingAddress'].reset();
@@ -351,8 +353,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       // this.billingAddressStates = [];
       console.log(this.checkoutFormGroup.controls['shippingAddress'].value);
       console.log(this.checkoutFormGroup.controls['billingAddress'].value);
-      console.log("billing array " + this.billingAddressStates)
-      console.log("shipping array " + this.shippingAddressStates)
+      console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
+      console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
     }
   }
 
@@ -363,7 +365,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     const country = formGroup.value.country;
     const countryCode = formGroup.value.country.code;
     const countryName = formGroup.value.country.name;
-
     // console.log(`${formGroupName} country: ${JSON.stringify(country)}`);
     // console.log(`${formGroupName} country code: ${countryCode}`);
     // console.log(`${formGroupName} country name: ${countryName}`);
@@ -377,8 +378,11 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         }
         // select first item by default
         formGroup?.get('state')?.setValue(data[0]);
-      }
-    })
+        console.log(`on select country country is: ${JSON.stringify(formGroup.value.country)}`);
+        console.log(`on select state state is: ${JSON.stringify(formGroup.value.state)}`);
+      },
+      error: err => console.log(err)
+    });
   }
 
   // onCardNameInput(event: Event) {

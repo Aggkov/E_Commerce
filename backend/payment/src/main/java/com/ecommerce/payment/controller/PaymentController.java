@@ -1,7 +1,7 @@
 package com.ecommerce.payment.controller;
 
-import com.ecommerce.payment.dto.OrderIdPayPalIdDTO;
 import com.ecommerce.payment.service.PayPalService;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PaymentController {
 
+    private final PayPalService payPalService;
+
     @Autowired
-    private PayPalService payPalService;
+    public PaymentController(PayPalService payPalService) {
+        this.payPalService = payPalService;
+    }
 
     @GetMapping("/verify/{paypalOrderId}")
     public ResponseEntity<Boolean> verifyPayment(@PathVariable String paypalOrderId) {
@@ -27,13 +31,9 @@ public class PaymentController {
         }
     }
 
-    // TODO create savePayment
-    // in service parse response from
-    // .uri(URI.create("https://api.sandbox.paypal.com/v2/checkout/orders/" + paypalOrderId))
-    // create new payment and save it to new container payment_db
     @PostMapping("/save")
-    ResponseEntity<String> savePayment(@RequestBody OrderIdPayPalIdDTO orderIdPayPalIdDTO) {
-        payPalService.savePayment(orderIdPayPalIdDTO);
+    ResponseEntity<String> savePayment(@RequestBody Map<String, String> orderTrackingAndPayPalId) {
+        payPalService.savePayment(orderTrackingAndPayPalId);
         return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.ecommerce.core.client;
 
 import com.ecommerce.core.dto.request.OrderIdPayPalIdDTO;
+import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ public interface PaymentClient {
     ResponseEntity<Boolean> verifyPayment(@PathVariable String paypalOrderId);
 
     @PostMapping("/save")
-    ResponseEntity<String> savePayment(@RequestBody OrderIdPayPalIdDTO orderIdPayPalIdDTO);
+    ResponseEntity<String> savePayment(@RequestBody Map<String, String> orderTrackingAndPayPalId);
 
 }
 

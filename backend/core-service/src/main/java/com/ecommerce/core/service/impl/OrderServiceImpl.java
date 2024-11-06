@@ -1,15 +1,10 @@
 package com.ecommerce.core.service.impl;
 
 import com.ecommerce.core.client.PaymentClient;
-import com.ecommerce.core.dto.request.BillingAddressDTO;
 import com.ecommerce.core.dto.request.OrderDTO;
-import com.ecommerce.core.dto.request.OrderIdPayPalIdDTO;
-import com.ecommerce.core.dto.request.OrderItemDTO;
-import com.ecommerce.core.dto.request.ShippingAddressDTO;
 import com.ecommerce.core.dto.response.OrderCreatedDTO;
 import com.ecommerce.core.dto.response.OrderSuccessDTO;
 import com.ecommerce.core.dto.response.PagedResponse;
-import com.ecommerce.core.dto.response.ProductDTO;
 import com.ecommerce.core.entity.BillingAddress;
 import com.ecommerce.core.entity.Order;
 import com.ecommerce.core.entity.OrderItem;
@@ -19,20 +14,15 @@ import com.ecommerce.core.entity.User;
 import com.ecommerce.core.exception.BadRequestException;
 import com.ecommerce.core.exception.PaymentVerificationException;
 import com.ecommerce.core.exception.ResourceNotFoundException;
-import com.ecommerce.core.mapper.BillingAddressMapper;
-import com.ecommerce.core.mapper.OrderItemMapper;
 import com.ecommerce.core.mapper.OrderMapper;
-import com.ecommerce.core.mapper.ShippingAddressMapper;
-import com.ecommerce.core.mapper.UserMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
 import com.ecommerce.core.repository.ShippingAddressRepository;
-import com.ecommerce.core.repository.UserRepository;
 import com.ecommerce.core.repository.OrderRepository;
 import com.ecommerce.core.repository.ProductRepository;
 import com.ecommerce.core.service.OrderService;
 import com.ecommerce.core.service.UserService;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +33,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -109,7 +98,6 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .collect(Collectors.toMap(Product::getId, product -> product));
         // prepare orderItem
-//        for(OrderItemDTO orderItemDTO: orderDTO.getOrderItems()) {
         orderDTO.getOrderItems().forEach(orderItemDTO -> {
             if (productMap.containsKey(orderItemDTO.getProduct().getId())) {
                 Product product = productMap.get(orderItemDTO.getProduct().getId());
@@ -134,9 +122,11 @@ public class OrderServiceImpl implements OrderService {
 
         user.add(order);
         orderRepository.save(order);
-        // TODO call payment client save payment controller with order.getId() && paypalOrderId params
-        OrderIdPayPalIdDTO orderIdPayPalIdDTO = new OrderIdPayPalIdDTO(order.getOrderTrackingNumber(), paypalOrderId);
-        paymentClient.savePayment(orderIdPayPalIdDTO);
+
+        Map<String,String> orderTrackingAndPayPalId = new HashMap<>();
+        orderTrackingAndPayPalId.put("orderTracking", order.getOrderTrackingNumber());
+        orderTrackingAndPayPalId.put("paypalOrderId", paypalOrderId);
+        paymentClient.savePayment(orderTrackingAndPayPalId);
 
         OrderSuccessDTO orderSuccessDTO = orderMapper.orderToOrderSuccessDTO(order);
         return orderSuccessDTO;
@@ -157,10 +147,10 @@ public class OrderServiceImpl implements OrderService {
 //                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // find orders made by current user
-        Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);//        // for each of these orders find their addresses and set it to current order
+        Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);
 
         List<OrderCreatedDTO> orderCreatedDTOs = orderPage.getContent().stream()
-                    .map(order -> orderMapper.orderToOrderCreatedDTO(order))
+                    .map(orderMapper::orderToOrderCreatedDTO)
                     .toList();
 
         return new PagedResponse<>(

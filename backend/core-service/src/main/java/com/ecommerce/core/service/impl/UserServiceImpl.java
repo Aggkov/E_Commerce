@@ -1,12 +1,10 @@
 package com.ecommerce.core.service.impl;
 
-import com.ecommerce.core.dto.request.OrderDTO;
 import com.ecommerce.core.dto.response.UserDTO;
 import com.ecommerce.core.mapper.UserMapper;
 import com.ecommerce.core.repository.UserRepository;
 import com.ecommerce.core.service.UserService;
 import com.ecommerce.core.entity.User;
-import java.security.Principal;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

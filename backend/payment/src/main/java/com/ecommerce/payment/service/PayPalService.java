@@ -14,6 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class PayPalService {
     private String clientSecret;
 
     public boolean verifyOrder(String paypalOrderId) {
-        String token = getAccessToken(); // Implement this to get a valid token
+        String token = getAccessToken();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.sandbox.paypal.com/v2/checkout/orders/" + paypalOrderId))
@@ -42,7 +43,6 @@ public class PayPalService {
 
         try {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            // Parse the response and check if the order status is "COMPLETED"
             return response.body().contains("\"status\":\"COMPLETED\"");
         } catch (Exception e) {
             log.info("An error occurred in payment {}", e.getMessage());
@@ -50,8 +50,43 @@ public class PayPalService {
         }
     }
 
-    public String getAccessToken() {
+    public void savePayment(Map<String, String> orderTrackingAndPayPalId) {
+        String token = getAccessToken();
 
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.sandbox.paypal.com/v2/checkout/orders/" + orderTrackingAndPayPalId.get("paypalOrderId")))
+                .header("Authorization", "Bearer " + token)
+                .GET()
+                .build();
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (Objects.nonNull(response) && response.statusCode() == 200) {
+
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(response.body());
+
+                Payment payment = new Payment();
+                payment.setPaypalOrderId(orderTrackingAndPayPalId.get("paypalOrderId"));
+                payment.setOrderTrackingNumber(orderTrackingAndPayPalId.get("orderTracking"));
+                payment.setStatus(jsonNode.get("status").asText());
+                payment.setCurrencyCode(jsonNode.get("purchase_units").get(0).get("amount").get("currency_code").asText());
+                payment.setAmount(new BigDecimal(jsonNode.get("purchase_units").get(0).get("amount").get("value").asText()));
+                payment.setCreateTime(Instant.parse(jsonNode.get("create_time").asText()));
+                payment.setUpdateTime(Instant.parse(jsonNode.get("update_time").asText()));
+                Payment savedPayment = paypalRepository.save(payment);
+
+                // TODO send notification (kafka)
+            }
+        } catch (Exception exc) {
+            log.error("Failed to retrieve access token: {}", exc.getMessage());
+        }
+    }
+
+    private String getAccessToken() {
         // Encode client ID and secret in Base64 for Authorization header
         String auth = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
 
@@ -66,9 +101,9 @@ public class PayPalService {
         HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // Check if the request was successful
+
             if (Objects.nonNull(response) && response.statusCode() == 200) {
-                // Parse the JSON response to extract the access token
+
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonNode = mapper.readTree(response.body());
                 return jsonNode.get("access_token").asText();
@@ -79,39 +114,5 @@ public class PayPalService {
         }
         // should not reach here
         return "Failed to retrieve access token";
-    }
-
-    public void savePayment(OrderIdPayPalIdDTO orderIdPayPalIdDTO) {
-        String token = getAccessToken(); // Obtain the access token
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.sandbox.paypal.com/v2/checkout/orders/" + orderIdPayPalIdDTO.getPaypalOrderId()))
-                .header("Authorization", "Bearer " + token)
-                .GET()
-                .build();
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // Check if the request was successful
-            if (Objects.nonNull(response) && response.statusCode() == 200) {
-                // Parse the JSON response to extract the access token
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode jsonNode = mapper.readTree(response.body());
-                Payment payment = new Payment();
-                payment.setPaypalOrderId(orderIdPayPalIdDTO.getPaypalOrderId());
-                payment.setOrderTrackingNumber(orderIdPayPalIdDTO.getOrderTrackingNumber());
-                payment.setStatus(jsonNode.get("status").asText());
-                payment.setCurrencyCode(jsonNode.get("purchase_units").get(0).get("amount").get("currency_code").asText());
-                payment.setAmount(new BigDecimal(jsonNode.get("purchase_units").get(0).get("amount").get("value").asText()));
-                payment.setCreateTime(Instant.parse(jsonNode.get("create_time").asText()));
-                payment.setUpdateTime(Instant.parse(jsonNode.get("update_time").asText()));
-                Payment savedPayment = paypalRepository.save(payment);
-                // TODO send notification (kafka)
-            }
-        } catch (Exception exc) {
-            log.error("Failed to retrieve access token: {}", exc.getMessage());
-        }
     }
 }
