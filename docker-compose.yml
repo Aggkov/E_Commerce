@@ -1,31 +1,42 @@
-version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest  # Use the latest version of the official PostgreSQL image
-    container_name: postgres_db  # Optional: you can name your container
+  postgres_core:
+    image: postgres:latest
+    container_name: core_postgres_db
     environment:
-      POSTGRES_DB: e-commerce  # This is your database name
-      POSTGRES_USER: ecommerce_user  # This is your username
-      POSTGRES_PASSWORD: ecommerce_user  # Replace with a strong password
+      POSTGRES_DB: e-commerce
+      POSTGRES_USER: ecommerce_user
+      POSTGRES_PASSWORD: ecommerce_user
     ports:
-      - "5432:5432"  # Maps port 5432 on your machine to port 5432 in the container
+      - "5432:5432"  # Maps port 5432 on your machine to port 5432 in the container, diff containers can run on same port since they run on diff network instances
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data  # Persist data on your local filesystem
-#      - ./db_setup.sql:/docker-entrypoint-initdb.d/e-commerce-db.sql  # Run your SQL script during container startup
+      - ./backend/core-service/core-postgres-data:/var/lib/postgresql/data  # Persists data on local filesystem
 
   flyway:
     image: flyway/flyway:latest
     container_name: flyway_migration
     depends_on:
-      - postgres
+      - postgres_core
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/e-commerce  # Point to the postgres service
+      FLYWAY_URL: jdbc:postgresql://postgres_core:5432/e-commerce  # Point to the postgres service
       FLYWAY_USER: ecommerce_user
       FLYWAY_PASSWORD: ecommerce_user
     command: -locations=filesystem:/flyway/sql migrate
     volumes:
       - ./backend/core-service/src/main/resources/sql/migration:/flyway/sql  #Adjust to relative path of SQL files
+
+  # Payment service PostgreSQL container
+  postgres_payment:
+    image: postgres:latest
+    container_name: payment_postgres_db
+    environment:
+      POSTGRES_DB: payment_db  # Payment database name
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: payment_user
+    ports:
+      - "5433:5432"  # Maps localhost:5433 to container's port 5432
+    volumes:
+      - ./backend/payment/payment-postgres-data:/var/lib/postgresql/data
 
   keycloak:
     container_name: keycloak-e_commerce

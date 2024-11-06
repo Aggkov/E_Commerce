@@ -10,8 +10,6 @@ DROP TABLE IF EXISTS billing_address CASCADE;
 DROP TABLE IF EXISTS user_shipping_address CASCADE;
 DROP TABLE IF EXISTS user_billing_address CASCADE;
 
-
-
 -- Enable the pgcrypto extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -28,7 +26,7 @@ ALTER TABLE product_category OWNER TO ecommerce_user;
 -- Table e-commerce.product
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS product (
-                                       "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     "sku" VARCHAR(255) DEFAULT NULL,
     "name" VARCHAR(255) DEFAULT NULL,
     "description" VARCHAR(255) DEFAULT NULL,

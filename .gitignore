@@ -81,3 +81,5 @@ Thumbs.db
 /frontend/.angular/
 /frontend/.vscode/
 **/db_setup.sql/**
+/backend/payment/payment-postgres-data/
+/backend/core-service/core-postgres-data/

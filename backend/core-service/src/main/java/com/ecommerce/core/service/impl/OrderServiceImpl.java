@@ -3,6 +3,7 @@ package com.ecommerce.core.service.impl;
 import com.ecommerce.core.client.PaymentClient;
 import com.ecommerce.core.dto.request.BillingAddressDTO;
 import com.ecommerce.core.dto.request.OrderDTO;
+import com.ecommerce.core.dto.request.OrderIdPayPalIdDTO;
 import com.ecommerce.core.dto.request.OrderItemDTO;
 import com.ecommerce.core.dto.request.ShippingAddressDTO;
 import com.ecommerce.core.dto.response.OrderCreatedDTO;
@@ -131,10 +132,11 @@ public class OrderServiceImpl implements OrderService {
             }
         });
 
-//        }
-
         user.add(order);
         orderRepository.save(order);
+        // TODO call payment client save payment controller with order.getId() && paypalOrderId params
+        OrderIdPayPalIdDTO orderIdPayPalIdDTO = new OrderIdPayPalIdDTO(order.getOrderTrackingNumber(), paypalOrderId);
+        paymentClient.savePayment(orderIdPayPalIdDTO);
 
         OrderSuccessDTO orderSuccessDTO = orderMapper.orderToOrderSuccessDTO(order);
         return orderSuccessDTO;
