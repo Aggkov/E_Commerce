@@ -78,11 +78,9 @@ public class PayPalService {
                 payment.setCreateTime(Instant.parse(jsonNode.get("create_time").asText()));
                 payment.setUpdateTime(Instant.parse(jsonNode.get("update_time").asText()));
                 Payment savedPayment = paypalRepository.save(payment);
-
-                // TODO send notification (kafka)
             }
         } catch (Exception exc) {
-            log.error("Failed to retrieve access token: {}", exc.getMessage());
+            log.error("Failed in sending request or configuring payment entity: {}", exc.getMessage());
         }
     }
 

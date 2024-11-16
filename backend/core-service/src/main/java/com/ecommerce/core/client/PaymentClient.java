@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "payment-service", url = "${payment.service.url}")
+@FeignClient(name = "payment-service", url = "${payment.service.url}/api/v1/payment")
 public interface PaymentClient {
 
     @GetMapping("/verify/{paypalOrderId}")

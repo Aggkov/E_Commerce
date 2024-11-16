@@ -19,7 +19,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "payment")
 public class Payment {
     @Id
-    @ColumnDefault("gen_random_uuid()")
+    @GeneratedValue(generator = "UUID")
     @Column(name = "payment_id", nullable = false)
     private UUID id;
 
