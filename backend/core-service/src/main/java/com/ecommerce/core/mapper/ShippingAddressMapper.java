@@ -13,6 +13,7 @@ public interface ShippingAddressMapper {
     ShippingAddress shippingAddressDTOToAddress(ShippingAddressDTO shippingAddress);
 
     @Mapping(target = "state", source = "state")
+    @Mapping(target = "id", ignore = true)
     ShippingAddressDTO shippingAddressToShippingAddressDTO(ShippingAddress shippingAddress);
 
 }

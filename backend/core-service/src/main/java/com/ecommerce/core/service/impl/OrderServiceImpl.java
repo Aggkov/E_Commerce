@@ -14,6 +14,7 @@ import com.ecommerce.core.entity.User;
 import com.ecommerce.core.exception.BadRequestException;
 import com.ecommerce.core.exception.PaymentVerificationException;
 import com.ecommerce.core.exception.ResourceNotFoundException;
+import com.ecommerce.core.kafka.OrderSuccessEvent;
 import com.ecommerce.core.mapper.OrderMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
 import com.ecommerce.core.repository.ShippingAddressRepository;
@@ -30,14 +31,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -48,6 +52,7 @@ import static com.ecommerce.core.utils.AppConstants.CREATED_AT;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     private final AddressServiceImpl addressService;
@@ -58,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
     private final ShippingAddressRepository shippingAddressRepository;
     private final BillingAddressRepository billingAddressRepository;
     private final PaymentClient paymentClient;
+    private final KafkaTemplate<String, OrderSuccessEvent> kafkaTemplate;
 
     @Override
     @Transactional
@@ -123,12 +129,27 @@ public class OrderServiceImpl implements OrderService {
         user.add(order);
         orderRepository.save(order);
 
-        Map<String,String> orderTrackingAndPayPalId = new HashMap<>();
-        orderTrackingAndPayPalId.put("orderTracking", order.getOrderTrackingNumber());
-        orderTrackingAndPayPalId.put("paypalOrderId", paypalOrderId);
-        paymentClient.savePayment(orderTrackingAndPayPalId);
+        // Execute payment work asynchronously
+        CompletableFuture.runAsync(() -> {
+            Map<String, String> orderTrackingAndPayPalId = new HashMap<>();
+            orderTrackingAndPayPalId.put("orderTracking", order.getOrderTrackingNumber());
+            orderTrackingAndPayPalId.put("paypalOrderId", paypalOrderId);
+            paymentClient.savePayment(orderTrackingAndPayPalId);
+        });
 
         OrderSuccessDTO orderSuccessDTO = orderMapper.orderToOrderSuccessDTO(order);
+        OrderSuccessEvent orderSuccessEvent = orderMapper.orderSuccessDTOtoOrderSuccessEvent(orderSuccessDTO);
+        // Send notification message to Kafka
+//        CompletableFuture.runAsync(() -> {
+        kafkaTemplate.send("order-success-topic", orderSuccessEvent)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to send message", ex);
+                    } else {
+                        log.info("Message sent to topic: {}", result.getRecordMetadata().topic());
+                    }
+                });
+//        });
         return orderSuccessDTO;
     }
 

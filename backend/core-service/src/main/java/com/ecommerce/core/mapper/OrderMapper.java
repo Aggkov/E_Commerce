@@ -9,6 +9,7 @@ import com.ecommerce.core.entity.Order;
 import com.ecommerce.core.entity.OrderItem;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
+import com.ecommerce.core.kafka.OrderSuccessEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +51,8 @@ public interface OrderMapper {
     @Mapping(target = "billingAddress", source = "billingAddress")
     OrderCreatedDTO orderToOrderCreatedDTO(Order order);
 
+    OrderSuccessEvent orderSuccessDTOtoOrderSuccessEvent(OrderSuccessDTO orderSuccessDTO);
+
     // Mapping for each OrderItem to OrderItemDTO
     @Mapping(target = "product", source = "product")
     @Mapping(target = "quantity", source = "quantity")
@@ -78,10 +81,9 @@ public interface OrderMapper {
             String currentWorkingDir = System.getProperty("user.dir");
             Path filePath;
             // If the working directory ends with "core-service", move up to the root directory
-            if (currentWorkingDir.endsWith("core-service")) {
-                // Move two levels up to the project root
-                Path rootDir = Paths.get(currentWorkingDir).getParent().getParent();
-                filePath = Paths.get(rootDir.toString(), product.getImageUrl());
+            if (!currentWorkingDir.endsWith("core-service")) {
+                // Move down if in root
+                filePath = Paths.get(currentWorkingDir, "backend", "core-service", product.getImageUrl());
             } else {
                 filePath = Paths.get(System.getProperty("user.dir"), product.getImageUrl());
             }

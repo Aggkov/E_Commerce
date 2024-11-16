@@ -37,15 +37,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.createNewOrder(orderDTO));
     }
 
-    /*get orders by user return ordersByUserDTO
-    authentication param, hasrole admin or user
-    service:
-        check auth get user by email or throw exception
-        call order repo with user id param
-        map to OrderCreatedDTO
-    repo:
-        query orders made by this user, return List of orders
-     */
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
     @GetMapping()
     PagedResponse<OrderCreatedDTO> getOrdersByUser(

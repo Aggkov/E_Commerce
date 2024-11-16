@@ -21,6 +21,7 @@
         <module>discovery-server</module>
         <module>api-gateway</module>
         <module>payment</module>
+        <module>notification</module>
     </modules>
 
     <properties>

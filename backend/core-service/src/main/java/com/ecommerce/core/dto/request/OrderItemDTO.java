@@ -11,8 +11,6 @@ import lombok.Setter;
 public class OrderItemDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -1033970086784379155L;
-
     private Integer quantity;
-
     private ProductDTO product;
 }

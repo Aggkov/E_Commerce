@@ -293,11 +293,11 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         purchase_units: [{
           amount: {
             currency_code: 'USD',
-            value: this.totalPrice.toString(),
+            value: this.totalPrice.toFixed(2),
             breakdown: {
               item_total: {
                 currency_code: 'USD',
-                value: this.totalPrice.toString()
+                value: this.totalPrice.toFixed(2)
               }
             }
           }

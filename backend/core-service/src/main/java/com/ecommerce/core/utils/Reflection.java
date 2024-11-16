@@ -9,7 +9,6 @@ public class Reflection<T> {
 
     private final Set<String> EXCLUDED_FIELDS = Set.of("serialVersionUID");
 
-    // or use library
     public List<String> getFieldsFromItem(T item) {
         List<String> fieldValues = new ArrayList<>();
 
@@ -23,7 +22,6 @@ public class Reflection<T> {
             try {
                 // Get the field value for the current object
                 Object value = field.get(item);
-                // Convert the field value to string and add to list (handling null values)
                 fieldValues.add(value != null ? value.toString() : "null");
             } catch (IllegalAccessException e) {
                 fieldValues.add("Error: Unable to access field");
