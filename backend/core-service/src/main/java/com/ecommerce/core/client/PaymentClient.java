@@ -1,6 +1,5 @@
 package com.ecommerce.core.client;
 
-import com.ecommerce.core.dto.request.OrderIdPayPalIdDTO;
 import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

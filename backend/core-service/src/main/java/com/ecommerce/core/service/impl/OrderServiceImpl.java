@@ -42,6 +42,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -142,14 +143,14 @@ public class OrderServiceImpl implements OrderService {
         // Send notification message to Kafka
 //        CompletableFuture.runAsync(() -> {
         kafkaTemplate.send("order-success-topic", orderSuccessEvent)
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Failed to send message", ex);
-                    } else {
-                        log.info("Message sent to topic: {}", result.getRecordMetadata().topic());
-                    }
-                });
-//        });
+                        .whenComplete((result, ex) -> {
+                            if (ex != null) {
+                                log.error("Failed to send message", ex);
+                            } else {
+                                log.info("Message sent to topic: {}", result.getRecordMetadata().topic());
+                            }
+                        });
+
         return orderSuccessDTO;
     }
 
@@ -171,8 +172,8 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);
 
         List<OrderCreatedDTO> orderCreatedDTOs = orderPage.getContent().stream()
-                    .map(orderMapper::orderToOrderCreatedDTO)
-                    .toList();
+                .map(orderMapper::orderToOrderCreatedDTO)
+                .toList();
 
         return new PagedResponse<>(
                 orderCreatedDTOs,
