@@ -35,7 +35,7 @@ cd your-repo
 **Backend**
 
 1. Run `docker-compose up -d` to start the docker container and load up keycloak and database migrations.
-2. Go to localhost:9090 and log in with `admin` `admin` as credentials. Create a new realm `E-Commerce` by importing `realm-export.json` file.
+2. Go to localhost:9090 and log in with `admin` `admin` as credentials. Go to the new realm `E-Commerce`.
    Main users are `user` `admin`. You can create more users and assign them roles `user` and `admin` from `frontend client`.
 3. `cd backend`.
 4. Run `mvn clean install`
