@@ -1,6 +1,5 @@
 package com.ecommerce.core.config;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -9,12 +8,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.Customizer;
@@ -28,13 +24,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 
 import static java.util.stream.Collectors.toSet;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless authentication (JWT)
 
                 // Configure authorization rules
@@ -107,6 +98,24 @@ public class SecurityConfig {
             return grantedAuthorities;
         }
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+////        corsConfig.setAllowedOrigins(List.of("https://localhost:4200")); // Restricting origins as needed
+//        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+//        corsConfig.setAllowedHeaders(List.of(
+//                HttpHeaders.ORIGIN,
+//                HttpHeaders.CONTENT_TYPE,
+//                HttpHeaders.ACCEPT,
+//                HttpHeaders.AUTHORIZATION,
+//                HttpHeaders.CONTENT_DISPOSITION
+////                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN
+//        ));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfig); // Apply CORS config to all endpoints
+//        return source;
+//    }
 
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {

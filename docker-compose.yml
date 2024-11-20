@@ -45,14 +45,17 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keycloak-keystore.p12 #specifies the path to the keystore inside the container
-      KC_HTTPS_KEY_STORE_PASSWORD: secret
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
+      KC_IMPORT_REALM: true
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keycloak.p12 #specifies the path to the keystore inside the container
+      KC_HTTPS_KEY_STORE_PASSWORD: changeit
       KC_HOSTNAME: localhost
     volumes:
-      - ./keycloak-keystore.p12:/opt/keycloak/conf/keycloak-keystore.p12 #mount keycloak-keystore.p12 inside container
+      - ./keycloak.p12:/opt/keycloak/conf/keycloak.p12 #mount keycloak-keystore.p12 inside container
       - ./realm-export.json:/opt/keycloak/data/import/realm-export.json # Mount realm-export.json inside container
     command:
       - "start-dev"
+      - "--import-realm"
 
 
   zookeeper:
