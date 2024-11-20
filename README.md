@@ -39,22 +39,10 @@ cd your-repo
    Main users are `user` `admin`. You can create more users and assign them roles `user` and `admin` from `frontend client`.
 3. `cd backend`.
 4. Run `mvn clean install`
-5. Open a terminal with admin privileges and Import Certificates into `cacerts` `JAVA_HOME/lib/security/cacerts`. Also set your IDE to use the JDK specified in `-keystore` command.
-   a) From project root run 
-      `keytool -importcert -trustcacerts -alias keycloak-cert -file ./keycloak-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-   b) `cd backend` and run for all microservices
-      `discovery`
-      `keytool -importcert -trustcacerts -alias discovery-cert -file ./discovery-server/src/main/resources/discovery-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-         
-      `api-gateway`
-      `keytool -importcert -trustcacerts -alias gateway-cert -file ./api-gateway/src/main/resources/gateway-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-    
-      `core`
-      `keytool -importcert -trustcacerts -alias core-cert -file ./api-gateway/src/main/resources/core-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-      
-      `payment`
-      `keytool -importcert -trustcacerts -alias payment-cert -file ./payment/src/main/resources/payment-cert.crt -keystore "Your absolute path to cacerts" -storepass changeit`
-
+5. Open a terminal with admin privileges and Import self-signed Certificate Authority into `cacerts` `JAVA_HOME/lib/security/cacerts`. 
+   Also set your IDE to use the JDK specified in `-keystore` command.
+   From project root run: `keytool -import -trustcacerts -keystore "Your path to jdk/lib/security/cacerts" -storepass changeit -noprompt -alias local-ca -file ./local-ca.crt`
+   Also you might need to import the `local-ca.crt` and `localhost.crt` into your browser.
 6. Create PayPal sandbox accounts and modify `client_id` and `client_secret` in application properties.
 7. Run the app.
 
