@@ -9,9 +9,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface StateMapper {
 
-    StateMapper INSTANCE = Mappers.getMapper(StateMapper.class);
-
-    @Mapping(target = "id", ignore = true)
+//    @Mapping(target = "id", ignore = true)
     StateDTO stateToStateDTO(State state);
 
     State stateDTOToState(StateDTO stateDTO);

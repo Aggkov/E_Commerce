@@ -134,48 +134,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     //   .catch(err => console.error('PayPal SDK failed to load:', err));
   }
 
-  // private loadPayPalScript(): Promise<void> {
-  //   return new Promise((resolve, reject) => {
-  //     if ((window as any).paypal) {
-  //       resolve(); // SDK already loaded
-  //       return;
-  //     }
-  //
-  //     const script = document.createElement('script');
-  //     script.src = 'https://www.sandbox.paypal.com/sdk/js?client-id=AZOIrGdz55roalSkzWF9qbUFBaxrO2uVq3VVWTDhGh9cGf2YIEyB7NbzO9GZp8CHWDi8Iojoe146m1Ja&components=buttons&currency=USD';
-  //     script.onload = () => resolve();
-  //     script.onerror = () => reject(new Error('PayPal SDK failed to load.'));
-  //     document.body.appendChild(script);
-  //   });
-  // }
-
-  // private renderPayPalButtons() {
-  //   if ((window as any).paypal) {
-  //     console.log('Rendering PayPal buttons');
-  //     (window as any).paypal.Buttons({
-  //       createOrder: (data: any, actions: any) => {
-  //         return actions.order.create({
-  //           purchase_units: [{
-  //             amount: {
-  //                value: this.totalPrice.toString()
-  //             }
-  //           }]
-  //         });
-  //       },
-  //       onApprove: async (data: any, actions: any) => {
-  //         const order = await actions.order.capture();
-  //         console.log('Order approved and captured:', order);
-  //         this.onSubmit();
-  //       },
-  //       onError: (err: any) => {
-  //         console.error('PayPal error:', err);
-  //       }
-  //     }).render('#paypal-button-container');
-  //   } else {
-  //     console.error('PayPal SDK is not available');
-  //   }
-  // }
-
   reviewCartTotals() {
     this.cartService.totalPrice.subscribe({
       next: data => this.totalPrice = data
@@ -340,10 +298,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       this.billingAddressStates = this.shippingAddressStates;
       // this.getStatesByCountryCode('billingAddress');
 
-      console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
-      console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
-      console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
-      console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
+      // console.log("shipping address info: ",this.checkoutFormGroup.controls['shippingAddress'].value);
+      // console.log("billing address info: ", this.checkoutFormGroup.controls['billingAddress'].value);
+      // console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
+      // console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
       // console.log("billing array " + this.billingAddressStates)
       // console.log("shipping array " + this.shippingAddressStates)
     } else {
@@ -351,10 +309,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       this.checkoutFormGroup.controls['billingAddress'].reset();
       // bug fix for states
       // this.billingAddressStates = [];
-      console.log(this.checkoutFormGroup.controls['shippingAddress'].value);
-      console.log(this.checkoutFormGroup.controls['billingAddress'].value);
-      console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
-      console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
+      // console.log(this.checkoutFormGroup.controls['shippingAddress'].value);
+      // console.log(this.checkoutFormGroup.controls['billingAddress'].value);
+      // console.log("billing array as json " + JSON.stringify(this.billingAddressStates));
+      // console.log("shipping array as json " + JSON.stringify(this.shippingAddressStates));
     }
   }
 
@@ -378,8 +336,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         }
         // select first item by default
         formGroup?.get('state')?.setValue(data[0]);
-        console.log(`on select country country is: ${JSON.stringify(formGroup.value.country)}`);
-        console.log(`on select state state is: ${JSON.stringify(formGroup.value.state)}`);
+        // console.log(`on select country country is: ${JSON.stringify(formGroup.value.country)}`);
+        // console.log(`on select state state is: ${JSON.stringify(formGroup.value.state)}`);
       },
       error: err => console.log(err)
     });
