@@ -5,7 +5,7 @@
 - HTTPS
 - Docker
 - Payment with PayPal
-- Cart & order management
+- Mailing
 - Checkout
 - Export
 - Filtering
