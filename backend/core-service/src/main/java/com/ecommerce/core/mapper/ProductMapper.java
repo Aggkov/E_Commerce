@@ -1,6 +1,7 @@
 package com.ecommerce.core.mapper;
 
 import com.ecommerce.core.dto.response.ProductDTO;
+import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.dto.response.export.ExportProductDTO;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
@@ -24,6 +25,9 @@ public interface ProductMapper {
     ProductDTO productToProductDTO(Product product
 //            , @Context String uploadDir // pass external parameter from service layer, in service inject properties value
     );
+
+
+    ProductDTOAdminView productToProductDTOAdminView(Product product);
 
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")

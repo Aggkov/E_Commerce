@@ -70,7 +70,6 @@ export class AdminProductTableComponent implements OnInit {
           // this.paginator.pageIndex = response.page;  // Ensure paginator index sync
           this.totalElements = response.totalElements;
           this.paginator.length = response.totalElements;  // Update paginator with total products
-
         },
         error: error => {
           console.error('Error finding products:', error);

@@ -1,0 +1,36 @@
+# Stage 1: Build stage
+FROM maven:3.9.4-openjdk-17 AS builder
+
+# Set the working directory for the build
+WORKDIR /app
+
+# Copy only the Maven configuration files to leverage layer caching
+COPY pom.xml ./
+COPY src/main/resources/application.properties ./src/main/resources/application.properties
+
+# Download and cache dependencies (caching dependencies speeds up rebuilds)
+RUN mvn dependency:resolve
+
+# Copy the entire source code into the build stage
+COPY src ./src
+
+# Build the application (skip tests to save time in Docker build)
+RUN mvn clean package -DskipTests
+
+---
+
+# FINAL OPTIMIZATION
+# Stage 2: Runtime stage
+FROM openjdk:17-jdk-slim AS runtime
+
+# Set the working directory for the runtime
+WORKDIR /app
+
+# Copy only the final JAR file from the build stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose the application port (adjust as per your application's configuration)
+EXPOSE 8444
+
+# Command to run the application
+CMD ["java", "-jar", "app.jar"]

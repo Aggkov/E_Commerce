@@ -2,6 +2,7 @@ package com.ecommerce.core.service;
 
 import com.ecommerce.core.dto.response.PagedResponse;
 import com.ecommerce.core.dto.response.ProductDTO;
+import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.entity.Product;
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
-    PagedResponse<ProductDTO> getAllProductsPaginated(int page, int size);
+    PagedResponse<ProductDTOAdminView> getAllProductsPaginated(int page, int size);
     ProductDTO getProductByName(String name);
     ProductDTO createProduct(ProductDTO productDTO, MultipartFile imageFile) throws IOException;
     void deleteProduct(UUID id);

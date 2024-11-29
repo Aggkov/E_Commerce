@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Order} from "../../interfaces/order/order";
 import {OrderService} from "../../services/order.service";
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
@@ -23,6 +23,8 @@ export class OrderListComponent implements OnInit {
   totalElements: number = 0;
   pageSizes: number[] = [2, 5, 10, 20, 50];
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   constructor(private orderService: OrderService,
               private router: Router) {
   }
@@ -39,6 +41,7 @@ export class OrderListComponent implements OnInit {
         this.pageNumber = response.page;
         this.pageSize = response.size;
         this.totalElements = response.totalElements;
+        this.paginator.length = response.totalElements;  // Update paginator with total products
       },
         error: err => console.log(err)
     });

@@ -83,3 +83,4 @@ Thumbs.db
 **/db_setup.sql/**
 /backend/payment/payment-postgres-data/
 /backend/core-service/core-postgres-data/
+/backend/payment-service/payment-postgres-data/

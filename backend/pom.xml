@@ -20,8 +20,8 @@
         <module>core-service</module>
         <module>discovery-server</module>
         <module>api-gateway</module>
-        <module>payment</module>
-        <module>notification</module>
+        <module>payment-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>

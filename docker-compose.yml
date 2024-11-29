@@ -80,3 +80,21 @@ services:
       KAFKA_MESSAGE_MAX_BYTES: 2097152
     ports:
       - "9092:9092"
+
+  # Core service (custom microservice)
+  core-service:
+    build:
+      context: ./backend/core-service  # Path where the Dockerfile is located
+      dockerfile: Dockerfile  # Dockerfile name (default; optional)
+    container_name: core_service
+    depends_on:
+      - postgres_core
+      - flyway
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_core:5432/e-commerce
+      SPRING_DATASOURCE_USERNAME: ecommerce_user
+      SPRING_DATASOURCE_PASSWORD: ecommerce_user
+      KAFKA_BROKER: localhost:9092  # Example environment variable for Kafka
+    ports:
+      - "8444:8444"

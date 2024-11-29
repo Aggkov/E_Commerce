@@ -2,6 +2,7 @@ package com.ecommerce.core.service.impl;
 
 import com.ecommerce.core.dto.response.PagedResponse;
 import com.ecommerce.core.dto.response.ProductDTO;
+import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.dto.response.export.ExportProductDTO;
 import com.ecommerce.core.utils.Helper;
 import com.ecommerce.core.entity.Product;
@@ -21,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     private String fileUploadPath;
 
     @Override
-    public PagedResponse<ProductDTO> getAllProductsPaginated(int page, int size) {
+    public PagedResponse<ProductDTOAdminView> getAllProductsPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, CREATED_AT);
 
         Page<Product> productsPage = productRepository.findAll(pageable);
@@ -67,8 +67,8 @@ public class ProductServiceImpl implements ProductService {
 //                    , products.isLast()
             );
         }
-        List<ProductDTO> productDTOs = productsPage.getContent().stream()
-                .map(productMapper::productToProductDTO)
+        List<ProductDTOAdminView> productDTOs = productsPage.getContent().stream()
+                .map(productMapper::productToProductDTOAdminView)
                 .toList();
         return new PagedResponse<>(productDTOs, productsPage.getNumber(),
                 productsPage.getSize(), productsPage.getTotalElements(),

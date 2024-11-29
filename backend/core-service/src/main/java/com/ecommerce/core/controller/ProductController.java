@@ -3,6 +3,7 @@ package com.ecommerce.core.controller;
 import com.ecommerce.core.dto.response.PagedResponse;
 import com.ecommerce.core.dto.response.ProductDTO;
 import com.ecommerce.core.dto.request.FilterCriteria;
+import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.service.ProductService;
 import com.ecommerce.core.utils.AppConstants;
@@ -38,7 +39,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public PagedResponse<ProductDTO> getAllProducts(
+    public PagedResponse<ProductDTOAdminView> getAllProducts(
             @RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size
     ) {

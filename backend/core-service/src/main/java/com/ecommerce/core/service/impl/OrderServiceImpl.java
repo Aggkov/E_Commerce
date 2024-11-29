@@ -17,6 +17,7 @@ import com.ecommerce.core.exception.ResourceNotFoundException;
 import com.ecommerce.core.kafka.OrderSuccessEvent;
 import com.ecommerce.core.mapper.OrderMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
+import com.ecommerce.core.repository.OrderItemRepository;
 import com.ecommerce.core.repository.ShippingAddressRepository;
 import com.ecommerce.core.repository.OrderRepository;
 import com.ecommerce.core.repository.ProductRepository;
@@ -63,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
     private final ShippingAddressRepository shippingAddressRepository;
     private final BillingAddressRepository billingAddressRepository;
+    private final OrderItemRepository orderItemRepository;
     private final PaymentClient paymentClient;
     private final KafkaTemplate<String, OrderSuccessEvent> kafkaTemplate;
 
@@ -164,12 +166,18 @@ public class OrderServiceImpl implements OrderService {
                 .map(principal -> (String) principal.getClaim("email"))
                 .orElseThrow(() -> new UsernameNotFoundException("Authentication is missing or invalid"));
 
-        // Fetch user and verify their existence in one step
-//        User registeredUser = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         // find orders made by current user
+        email = "john@email.com";
         Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);
+
+        orderPage.getContent().parallelStream().forEach(order -> {
+            if (order.getOrderItems() == null) {
+                // find order items for a specific order entity
+                List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderTrackingNumber(order.getOrderTrackingNumber());
+                // set order items to order
+                order.setOrderItems(new LinkedHashSet<>(orderItems));
+            }
+        });
 
         List<OrderCreatedDTO> orderCreatedDTOs = orderPage.getContent().stream()
                 .map(orderMapper::orderToOrderCreatedDTO)

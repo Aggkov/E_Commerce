@@ -76,7 +76,6 @@ public interface OrderMapper {
         if (product == null || (product.getImageUrl().isEmpty())) {
             return null;
         }
-
         try {
             String currentWorkingDir = System.getProperty("user.dir");
             Path filePath;

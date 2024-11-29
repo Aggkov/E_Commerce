@@ -1,5 +1,6 @@
 package com.ecommerce.core.unit;
 
+import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.unit.utils.ProductTestHelper;
 import com.ecommerce.core.dto.response.PagedResponse;
 import com.ecommerce.core.dto.response.ProductDTO;
@@ -83,7 +84,7 @@ public class ProductServiceUnitTest {
                     Product product = invocation.getArgument(0);
                     return ProductTestHelper.mapProductToProductDTO(product);
                 });
-        PagedResponse<ProductDTO> response = productService.getAllProductsPaginated(
+        PagedResponse<ProductDTOAdminView> response = productService.getAllProductsPaginated(
                 pageable.getPageNumber(),
                 pageable.getPageSize());
 
