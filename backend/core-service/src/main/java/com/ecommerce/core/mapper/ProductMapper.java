@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
 @Mapper (componentModel = "spring")
 public interface ProductMapper {
-
 
 //    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "imageUrl", source = "product.imageUrl")
@@ -45,16 +45,20 @@ public interface ProductMapper {
             return null;
         }
         try {
-            String currentWorkingDir = System.getProperty("user.dir");
-            Path filePath;
-            // If the working directory does not end with "core-service", means we are in root so go to core
-            if (!currentWorkingDir.endsWith("core-service")) {
-                // Move two levels down
-                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
-                filePath = Paths.get(coreDir.toString(), imageUrl);
-            } else {
-                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
-            }
+            // Docker
+            Path filePath = Paths.get("core-service", imageUrl);
+
+            // Local Development
+//            String currentWorkingDir = System.getProperty("user.dir");
+//            Path filePath;
+//            // If the working directory does not end with "core-service", means we are in root so go to core
+//            if (!currentWorkingDir.endsWith("core-service")) {
+//                // Move two levels down
+//                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
+//                filePath = Paths.get(coreDir.toString(), imageUrl);
+//            } else {
+//                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
+//            }
             if (!Files.exists(filePath)) {
                 throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
             }

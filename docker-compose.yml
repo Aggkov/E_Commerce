@@ -1,6 +1,6 @@
 services:
-  postgres_core:
-    image: postgres:latest
+  postgres-core:
+    image: postgres:16
     container_name: core_postgres_db
     environment:
       POSTGRES_DB: e-commerce
@@ -15,9 +15,9 @@ services:
     image: flyway/flyway:latest
     container_name: flyway_migration
     depends_on:
-      - postgres_core
+      - postgres-core
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres_core:5432/e-commerce  # Point to the postgres service
+      FLYWAY_URL: jdbc:postgresql://postgres-core:5432/e-commerce  # Point to the postgres service
       FLYWAY_USER: ecommerce_user
       FLYWAY_PASSWORD: ecommerce_user
     command: -locations=filesystem:/flyway/sql migrate
@@ -25,8 +25,8 @@ services:
       - ./backend/core-service/src/main/resources/sql/migration:/flyway/sql  #Adjust to relative path of SQL files
 
   # Payment service PostgreSQL container
-  postgres_payment:
-    image: postgres:latest
+  postgres-payment:
+    image: postgres:16
     container_name: payment_postgres_db
     environment:
       POSTGRES_DB: payment_db  # Payment database name
@@ -35,7 +35,7 @@ services:
     ports:
       - "5433:5432"  # Maps localhost:5433 to container's port 5432
     volumes:
-      - ./backend/payment/payment-postgres-data:/var/lib/postgresql/data
+      - ./backend/payment-service/payment-postgres-data:/var/lib/postgresql/data
 
   keycloak:
     container_name: keycloak-e_commerce
@@ -50,12 +50,143 @@ services:
       KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keycloak.p12 #specifies the path to the keystore inside the container
       KC_HTTPS_KEY_STORE_PASSWORD: changeit
       KC_HOSTNAME: localhost
+      # docker
+#      KC_HOSTNAME: keycloak
+      JAVA_OPTS: >
+        -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
     volumes:
       - ./keycloak.p12:/opt/keycloak/conf/keycloak.p12 #mount keycloak-keystore.p12 inside container
       - ./realm-export.json:/opt/keycloak/data/import/realm-export.json # Mount realm-export.json inside container
+      - ./custom-truststore.jks:/app/custom-truststore.jks
+#      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt to a known path inside the container
     command:
       - "start-dev"
       - "--import-realm"
+#    entrypoint: >
+#      sh -c "
+#      chmod u+w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
+#      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt &&
+#      chmod u-w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
+#      start-dev --import-realm"
+
+  ## Eureka Server
+  discovery-server:
+    image: discovery-server:latest
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_OPTS: >
+        -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.debug=ssl
+    volumes:
+      - ./backend/discovery-server/src/main/resources/certs/discovery-server.p12:/certs/discovery-server.p12  # SSL certificates
+      - ./custom-truststore.jks:/app/custom-truststore.jks
+      - ./local-ca.crt:/app/local-ca.crt
+    entrypoint: >
+      sh -c "
+      if ! keytool -list -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -alias local-ca >/dev/null 2>&1; then
+      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt;
+      fi &&
+      java -cp @/app/jib-classpath-file com.ecommerce.discoveryserver.DiscoveryServerApplication"
+
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8440:8440"
+    #    expose:
+    #      - "8440"
+    depends_on:
+      - discovery-server
+      - keycloak
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_OPTS: >
+        -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: TRACE
+    volumes:
+      - ./backend/api-gateway/src/main/resources/certs/api-gateway.p12:/certs/api-gateway.p12  # SSL certificates
+      - ./custom-truststore.jks:/app/custom-truststore.jks
+      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt
+    entrypoint: >
+      sh -c "
+      if ! keytool -list -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -alias local-ca >/dev/null 2>&1; then
+      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt;
+      fi &&
+      java -cp @/app/jib-classpath-file com.ecommerce.api_gateway.ApiGatewayApplication"
+    
+
+  # Core service (custom microservice)
+  core-service:
+    image: core-service:latest  # Image built and tagged by Jib
+    container_name: core-service
+    depends_on:
+      - postgres-core
+      - flyway
+      - kafka
+      - discovery-server
+      - api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_OPTS: >
+        -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.debug=ssl
+      KAFKA_BROKER: kafka:9092  # core-service cannot reach localhost:9092 inside its container. It needs to communicate with the kafka container using its service name (kafka).
+    ports:
+      - "8444:8444"
+    volumes:
+      - ./backend/core-service/src/main/resources/certs/core-service.p12:/certs/core-service.p12 # SSL certificates
+      - ./backend/core-service/uploads:/core-service/uploads # Map uploads directory
+      - ./custom-truststore.jks:/app/custom-truststore.jks
+      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt
+    entrypoint: >
+      sh -c "
+      if ! keytool -list -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -alias local-ca >/dev/null 2>&1; then
+        keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt;
+      fi &&
+      java -cp @/app/jib-classpath-file com.ecommerce.core.CoreApplication"
+
+  # Payment Service
+  payment-service:
+    image: payment-service:latest
+    container_name: payment-service
+    depends_on:
+      - postgres-payment
+      - discovery-server
+      - api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_OPTS: >
+        -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+    ports:
+      - "8445:8445"
+    volumes:
+      - ./backend/payment-service/src/main/resources/certs/payment-service.p12:/certs/payment-service.p12  # SSL certificates
+      - ./custom-truststore.jks:/app/custom-truststore.jks
+      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt
+    entrypoint: >
+      sh -c "
+      if ! keytool -list -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -alias local-ca >/dev/null 2>&1; then
+      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt;
+      fi && java -cp @/app/jib-classpath-file com.ecommerce.payment.PaymentApplication"
+
+  # Notification Service
+  notification-service:
+    image: notification-service:latest
+    container_name: notification-service
+    depends_on:
+      - kafka
+      - discovery-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BROKER: kafka:9092
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -80,21 +211,3 @@ services:
       KAFKA_MESSAGE_MAX_BYTES: 2097152
     ports:
       - "9092:9092"
-
-  # Core service (custom microservice)
-  core-service:
-    build:
-      context: ./backend/core-service  # Path where the Dockerfile is located
-      dockerfile: Dockerfile  # Dockerfile name (default; optional)
-    container_name: core_service
-    depends_on:
-      - postgres_core
-      - flyway
-      - kafka
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_core:5432/e-commerce
-      SPRING_DATASOURCE_USERNAME: ecommerce_user
-      SPRING_DATASOURCE_PASSWORD: ecommerce_user
-      KAFKA_BROKER: localhost:9092  # Example environment variable for Kafka
-    ports:
-      - "8444:8444"
