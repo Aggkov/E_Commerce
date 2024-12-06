@@ -71,11 +71,11 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     // Subscribe to NavigationEnd to trigger refresh when navigating to the same route
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd && event.urlAfterRedirects === '/products') {
-        this.listProducts();
-      }
-    });
+    // this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd && event.urlAfterRedirects === '/products') {
+    //     this.listProducts();
+    //   }
+    // });
     this.productCategoryService.getProductCategories().pipe(
       // tap(response => console.log('Response:', response)),
       map(response => {

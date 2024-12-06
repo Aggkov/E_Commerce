@@ -3,7 +3,6 @@ import {CartService} from "../../services/cart.service";
 import {CartItem} from "../../interfaces/cart-item";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import {environment} from "../../../enviroments/enviroment";
 import {Product} from "../../interfaces/product";
 
 @Component({
