@@ -20,6 +20,8 @@ services:
       FLYWAY_URL: jdbc:postgresql://postgres-core:5432/e-commerce  # Point to the postgres service
       FLYWAY_USER: ecommerce_user
       FLYWAY_PASSWORD: ecommerce_user
+      # This argument specifies where Flyway should look for migration scripts.
+      # filesystem:/flyway/sql tells Flyway to use the directory /flyway/sql inside the container as the location of migration files.
     command: -locations=filesystem:/flyway/sql migrate
     volumes:
       - ./backend/core-service/src/main/resources/sql/migration:/flyway/sql  #Adjust to relative path of SQL files
@@ -51,7 +53,7 @@ services:
       KC_HTTPS_KEY_STORE_PASSWORD: changeit
       KC_HOSTNAME: localhost
       # docker
-#      KC_HOSTNAME: keycloak
+      #      KC_HOSTNAME: keycloak
       JAVA_OPTS: >
         -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
         -Djavax.net.ssl.trustStorePassword=changeit
@@ -59,20 +61,47 @@ services:
       - ./keycloak.p12:/opt/keycloak/conf/keycloak.p12 #mount keycloak-keystore.p12 inside container
       - ./realm-export.json:/opt/keycloak/data/import/realm-export.json # Mount realm-export.json inside container
       - ./custom-truststore.jks:/app/custom-truststore.jks
-#      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt to a known path inside the container
+    #      - ./local-ca.crt:/app/local-ca.crt  # Mount local-ca.crt to a known path inside the container
     command:
       - "start-dev"
       - "--import-realm"
-#    entrypoint: >
-#      sh -c "
-#      chmod u+w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
-#      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt &&
-#      chmod u-w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
-#      start-dev --import-realm"
+  #    entrypoint: >
+  #      sh -c "
+  #      chmod u+w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
+  #      keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt &&
+  #      chmod u-w /usr/lib/jvm/java-21-openjdk-21.0.4.0.7-1.el9.x86_64/lib/security/cacerts &&
+  #      start-dev --import-realm"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_MESSAGE_MAX_BYTES: 2097152
+    ports:
+      - "9092:9092"
+      - "29092:29092"
 
   ## Eureka Server
   discovery-server:
-    image: discovery-server:latest
+    image: aggkov/discovery-server:latest
     container_name: discovery-server
     ports:
       - "8761:8761"
@@ -94,12 +123,12 @@ services:
       java -cp @/app/jib-classpath-file com.ecommerce.discoveryserver.DiscoveryServerApplication"
 
   api-gateway:
-    image: api-gateway:latest
+    image: aggkov/api-gateway:latest
     container_name: api-gateway
     ports:
-      - "8440:8440"
-    #    expose:
-    #      - "8440"
+      - "8080:8080"
+#    expose:
+#      - "8080"
     depends_on:
       - discovery-server
       - keycloak
@@ -119,11 +148,11 @@ services:
       keytool -import -trustcacerts -alias local-ca -file /app/local-ca.crt -cacerts -storepass changeit -noprompt;
       fi &&
       java -cp @/app/jib-classpath-file com.ecommerce.api_gateway.ApiGatewayApplication"
-    
+  
 
   # Core service (custom microservice)
   core-service:
-    image: core-service:latest  # Image built and tagged by Jib
+    image: aggkov/core-service:latest  # Image built and tagged by Jib
     container_name: core-service
     depends_on:
       - postgres-core
@@ -154,7 +183,7 @@ services:
 
   # Payment Service
   payment-service:
-    image: payment-service:latest
+    image: aggkov/payment-service:latest
     container_name: payment-service
     depends_on:
       - postgres-payment
@@ -179,7 +208,7 @@ services:
 
   # Notification Service
   notification-service:
-    image: notification-service:latest
+    image: aggkov/notification-service:latest
     container_name: notification-service
     depends_on:
       - kafka
@@ -187,27 +216,3 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       KAFKA_BROKER: kafka:9092
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_MESSAGE_MAX_BYTES: 2097152
-    ports:
-      - "9092:9092"

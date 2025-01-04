@@ -5,6 +5,8 @@ import com.ecommerce.core.dto.response.ProductDTOAdminView;
 import com.ecommerce.core.dto.response.export.ExportProductDTO;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
+import com.ecommerce.core.service.ProductService;
+import com.ecommerce.core.service.impl.ProductServiceImpl;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,13 +14,16 @@ import java.nio.file.Paths;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public interface ProductMapper {
 
-//    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
+//    ProductService product = new ProductServiceImpl();
+
+    //    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "imageUrl", source = "product.imageUrl")
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
@@ -51,7 +56,7 @@ public interface ProductMapper {
             // Local Development
 //            String currentWorkingDir = System.getProperty("user.dir");
 //            Path filePath;
-//            // If the working directory does not end with "core-service", means we are in root so go to core
+//            // means we are in root so go to core
 //            if (!currentWorkingDir.endsWith("core-service")) {
 //                // Move two levels down
 //                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
@@ -63,8 +68,8 @@ public interface ProductMapper {
                 throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
             }
             return Files.readAllBytes(filePath);
-        }
-        catch (IOException e) {
+
+        } catch (IOException e) {
             System.out.println("IO error occured: " + imageUrl);
             return null;
         }

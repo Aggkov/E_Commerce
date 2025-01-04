@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +41,7 @@ import static com.ecommerce.core.utils.AppConstants.CREATED_AT;
 
 @Service
 @RequiredArgsConstructor
+//@NoArgsConstructor
 @Slf4j
 public class ProductServiceImpl implements ProductService {
 
@@ -49,9 +49,6 @@ public class ProductServiceImpl implements ProductService {
     private final CriteriaProductRepository criteriaProductRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductMapper productMapper;
-
-//    @Value("${file.upload-dir}")
-//    private String fileUploadPath;
 
     @Override
     public PagedResponse<ProductDTOAdminView> getAllProductsPaginated(int page, int size) {
@@ -217,6 +214,7 @@ public class ProductServiceImpl implements ProductService {
         if (!uploadDir.isEmpty() && Files.exists(Paths.get(uploadDir)) && !imageFile.isEmpty()) {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
+            // TODO here add aws url before uploadir
             Path filePath = Paths.get(uploadDir, fileName);
             Files.write(filePath, imageFile.getBytes());
         } else {

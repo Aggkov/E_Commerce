@@ -84,3 +84,6 @@ Thumbs.db
 /backend/payment/payment-postgres-data/
 /backend/core-service/core-postgres-data/
 /backend/payment-service/payment-postgres-data/
+/k8s/manifests/infrastructure/postgres-core-depl.yml
+/k8s/manifests/infrastructure/postgres-core-flyway.yml
+/k8s/manifests/infrastructure/flyway-migrations-configmap.yml

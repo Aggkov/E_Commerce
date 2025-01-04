@@ -43,7 +43,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -166,8 +165,6 @@ public class OrderServiceImpl implements OrderService {
                 .map(principal -> (String) principal.getClaim("email"))
                 .orElseThrow(() -> new UsernameNotFoundException("Authentication is missing or invalid"));
 
-        // find orders made by current user
-        email = "john@email.com";
         Page<Order> orderPage = orderRepository.getOrdersByUserEmail(email, pageable);
 
         orderPage.getContent().parallelStream().forEach(order -> {

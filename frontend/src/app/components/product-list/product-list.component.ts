@@ -70,12 +70,6 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Subscribe to NavigationEnd to trigger refresh when navigating to the same route
-    // this.router.events.subscribe((event) => {
-    //   if (event instanceof NavigationEnd && event.urlAfterRedirects === '/products') {
-    //     this.listProducts();
-    //   }
-    // });
     this.productCategoryService.getProductCategories().pipe(
       // tap(response => console.log('Response:', response)),
       map(response => {
@@ -104,12 +98,12 @@ export class ProductListComponent implements OnInit {
     const hasSearchQuery = queryValue !== null && queryValue.trim() !== '';
 
     if (hasSearchQuery) {
-      this.isFiltered = false;  // Reset isFiltered if a search is done
+      this.isFiltered = false;
       this.showSearchedResults();
     } else if (this.isFiltered && this.filterCriteria) {
       this.showFilteredProducts();
     } else {
-      this.isFiltered = false;  // Reset isFiltered if a search is done
+      this.isFiltered = false;
       this.showProductListByCategory();
     }
   }
