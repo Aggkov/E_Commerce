@@ -9,7 +9,7 @@ import com.ecommerce.core.entity.Order;
 import com.ecommerce.core.entity.OrderItem;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
-import com.ecommerce.core.kafka.OrderSuccessEvent;
+import com.ecommerce.core.kafka.event.order.OrderSuccessEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

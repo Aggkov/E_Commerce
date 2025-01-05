@@ -14,7 +14,7 @@ import com.ecommerce.core.entity.User;
 import com.ecommerce.core.exception.BadRequestException;
 import com.ecommerce.core.exception.PaymentVerificationException;
 import com.ecommerce.core.exception.ResourceNotFoundException;
-import com.ecommerce.core.kafka.OrderSuccessEvent;
+import com.ecommerce.core.kafka.event.order.OrderSuccessEvent;
 import com.ecommerce.core.mapper.OrderMapper;
 import com.ecommerce.core.repository.BillingAddressRepository;
 import com.ecommerce.core.repository.OrderItemRepository;
@@ -70,11 +70,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderSuccessDTO createNewOrder(OrderDTO orderDTO) {
-        String paypalOrderId = orderDTO.getPaypalOrderId();
-        ResponseEntity<Boolean> response = paymentClient.verifyPayment(paypalOrderId);
-        if (!response.getStatusCode().is2xxSuccessful() || Boolean.FALSE.equals(response.getBody())) {
-            throw new PaymentVerificationException("Payment verification failed");
-        }
+//        String paypalOrderId = orderDTO.getPaypalOrderId();
+//        ResponseEntity<Boolean> response = paymentClient.verifyPayment(paypalOrderId);
+//        if (!response.getStatusCode().is2xxSuccessful() || Boolean.FALSE.equals(response.getBody())) {
+//            throw new PaymentVerificationException("Payment verification failed");
+//        }
 
         Order order = orderMapper.orderDTOtoOrder(orderDTO);
         String orderTrackingNumber;
@@ -129,17 +129,19 @@ public class OrderServiceImpl implements OrderService {
         });
 
         user.add(order);
-        orderRepository.save(order);
+//        orderRepository.save(order);
 
         // Execute payment work asynchronously
-        CompletableFuture.runAsync(() -> {
-            Map<String, String> orderTrackingAndPayPalId = new HashMap<>();
-            orderTrackingAndPayPalId.put("orderTracking", order.getOrderTrackingNumber());
-            orderTrackingAndPayPalId.put("paypalOrderId", paypalOrderId);
-            paymentClient.savePayment(orderTrackingAndPayPalId);
-        });
+//        CompletableFuture.runAsync(() -> {
+//            Map<String, String> orderTrackingAndPayPalId = new HashMap<>();
+//            orderTrackingAndPayPalId.put("orderTracking", order.getOrderTrackingNumber());
+//            orderTrackingAndPayPalId.put("paypalOrderId", paypalOrderId);
+//            paymentClient.savePayment(orderTrackingAndPayPalId);
+//        });
 
+        // for frontend
         OrderSuccessDTO orderSuccessDTO = orderMapper.orderToOrderSuccessDTO(order);
+        // event for kafka - email notification
         OrderSuccessEvent orderSuccessEvent = orderMapper.orderSuccessDTOtoOrderSuccessEvent(orderSuccessDTO);
         // Send notification message to Kafka
 //        CompletableFuture.runAsync(() -> {

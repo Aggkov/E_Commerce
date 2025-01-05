@@ -1,4 +1,4 @@
-package com.ecommerce.notification.kafka;
+package com.ecommerce.core.kafka.event.order;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -7,14 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDTO implements Serializable {
+public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = -4921358887322532581L;
     private String firstName;
     private String lastName;
     private String email;
-    private ShippingAddressDTO shippingAddress;
-    private BillingAddressDTO billingAddress;
+    private ShippingAddress shippingAddress;
+    private BillingAddress billingAddress;
 
     @Override
     public String toString() {

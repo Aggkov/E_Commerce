@@ -1,4 +1,4 @@
-package com.ecommerce.notification.kafka;
+package com.ecommerce.notification.kafka.event.order;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderInfoDTO implements Serializable {
+public class OrderInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = 2422113780038892181L;
     private BigDecimal totalPrice;

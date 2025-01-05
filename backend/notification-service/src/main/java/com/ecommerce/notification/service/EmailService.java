@@ -1,6 +1,6 @@
 package com.ecommerce.notification.service;
 
-import com.ecommerce.notification.kafka.OrderSuccessEvent;
+import com.ecommerce.notification.kafka.event.order.OrderSuccessEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

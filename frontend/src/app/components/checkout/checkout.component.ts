@@ -231,7 +231,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
           this.orderTrackingNumber = response.orderTrackingNumber;
           alert(`Your order has been received.\nOrder tracking number:
           ${response.orderTrackingNumber}`);
-
+          console.log(response);
           this.resetCart(response);
         },
         error: err => {

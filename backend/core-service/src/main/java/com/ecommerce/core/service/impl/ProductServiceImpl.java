@@ -168,8 +168,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<byte[]> export(String type) throws Exception {
         ExportService<ExportProductDTO> exportService = Helper.getExportService(type);
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
 
+//        products.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+//        products.sort((p1, p2) -> Long.compare(p2.getCreatedAt().getEpochSecond(), p1.getCreatedAt().getEpochSecond()));
         List<ExportProductDTO> productDTOS = products.stream()
                 .map(productMapper::productToExportProductDTO)
                 .toList();
@@ -214,11 +216,10 @@ public class ProductServiceImpl implements ProductService {
         if (!uploadDir.isEmpty() && Files.exists(Paths.get(uploadDir)) && !imageFile.isEmpty()) {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
-            // TODO here add aws url before uploadir
             Path filePath = Paths.get(uploadDir, fileName);
             Files.write(filePath, imageFile.getBytes());
         } else {
-            throw new BadRequestException("Upload directory not found",
+            throw new BadRequestException("Upload directory: " + uploadDir + " not found",
                     HttpStatus.BAD_REQUEST);
         }
         product = productMapper.productDTOToProduct(productDTO);
@@ -262,34 +263,34 @@ public class ProductServiceImpl implements ProductService {
     // A utility method to determine the correct upload directory
     private String getUploadDir(String categoryName) throws BadRequestException {
         // Docker
-        return switch (categoryName.toLowerCase()) {
-            case "books" -> "/core-service/uploads/images/books";
-            case "coffee mugs" -> "/core-service/uploads/images/coffeemugs";
-            case "luggage tags" -> "/core-service/uploads/images/luggagetags";
-            case "mouse pads" -> "/core-service/uploads/images/mousepads";
-            default -> throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
-        };
+//        return switch (categoryName.toLowerCase()) {
+//            case "books" -> "/core-service/uploads/images/books";
+//            case "coffee mugs" -> "/core-service/uploads/images/coffeemugs";
+//            case "luggage tags" -> "/core-service/uploads/images/luggagetags";
+//            case "mouse pads" -> "/core-service/uploads/images/mousepads";
+//            default -> throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
+//        };
 
         // Local Dev
-//        String currentWorkingDir = System.getProperty("user.dir");
-//        if (!currentWorkingDir.endsWith("core-service")) {
-//            // go down
-//            currentWorkingDir = Paths.get(currentWorkingDir, "backend", "core-service").toString();
-//            // go up
-////            currentWorkingDir = (Paths.get(currentWorkingDir).getParent().getParent()).toString();
-//        }
-//        switch (categoryName.toLowerCase()) {
-//            case "books":
-//                return currentWorkingDir + "/uploads/images/books";
-//            case "coffee mugs":
-//                return currentWorkingDir + "/uploads/images/coffeemugs";
-//            case "luggage tags":
-//                return currentWorkingDir + "/uploads/images/luggagetags";
-//            case "mouse pads":
-//                return currentWorkingDir + "/uploads/images/mousepads";
-//            default:
-//                throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
-//        }
+        String currentWorkingDir = System.getProperty("user.dir");
+        if (!currentWorkingDir.endsWith("core-service")) {
+            // go down
+            currentWorkingDir = Paths.get(currentWorkingDir, "backend", "core-service").toString();
+            // go up
+//            currentWorkingDir = (Paths.get(currentWorkingDir).getParent().getParent()).toString();
+        }
+        switch (categoryName.toLowerCase()) {
+            case "books":
+                return currentWorkingDir + "/uploads/images/books";
+            case "coffee mugs":
+                return currentWorkingDir + "/uploads/images/coffeemugs";
+            case "luggage tags":
+                return currentWorkingDir + "/uploads/images/luggagetags";
+            case "mouse pads":
+                return currentWorkingDir + "/uploads/images/mousepads";
+            default:
+                throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
+        }
     }
 }
 

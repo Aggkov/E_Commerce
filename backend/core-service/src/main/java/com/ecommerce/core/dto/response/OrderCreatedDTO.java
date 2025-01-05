@@ -23,15 +23,4 @@ public class OrderCreatedDTO implements Serializable {
     private List<OrderItemDTO> orderItems;
     private ShippingAddressDTO shippingAddress;
     private BillingAddressDTO billingAddress;
-
-//    public OrderCreatedDTO(String orderTrackingNumber, OrderInfoDTO orderInfo, Instant createdAt,
-//                           ShippingAddressDTO shippingAddress, BillingAddressDTO billingAddress,
-//                           OrderItemDTO orderItem) {
-//        this.orderTrackingNumber = orderTrackingNumber;
-//        this.orderInfo = orderInfo;
-//        this.createdAt = createdAt;
-//        this.shippingAddress = shippingAddress;
-//        this.billingAddress = billingAddress;
-//        this.orderItems = Collections.singletonList(orderItem);  // Single item, you can populate list later
-//    }
 }

@@ -51,19 +51,19 @@ public interface ProductMapper {
         }
         try {
             // Docker
-            Path filePath = Paths.get("core-service", imageUrl);
+//            Path filePath = Paths.get("core-service", imageUrl);
 
             // Local Development
-//            String currentWorkingDir = System.getProperty("user.dir");
-//            Path filePath;
-//            // means we are in root so go to core
-//            if (!currentWorkingDir.endsWith("core-service")) {
-//                // Move two levels down
-//                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
-//                filePath = Paths.get(coreDir.toString(), imageUrl);
-//            } else {
-//                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
-//            }
+            String currentWorkingDir = System.getProperty("user.dir");
+            Path filePath;
+            // means we are in root so go to core
+            if (!currentWorkingDir.endsWith("core-service")) {
+                // Move two levels down
+                Path coreDir = Paths.get(currentWorkingDir, "backend", "core-service");
+                filePath = Paths.get(coreDir.toString(), imageUrl);
+            } else {
+                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
+            }
             if (!Files.exists(filePath)) {
                 throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
             }

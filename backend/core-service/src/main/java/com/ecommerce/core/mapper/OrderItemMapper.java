@@ -13,5 +13,10 @@ public interface OrderItemMapper {
 
 //    @Mapping(target = "product.id", source = "orderItemDTO.productDTO.id")
     @Mapping(target = "product.imageUrl", ignore = true)
+    @Mapping(target = "product.active", ignore = true)
+    @Mapping(target = "product.category", ignore = true)
+    @Mapping(target = "product.orderItems", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "order", ignore = true)
     OrderItem orderItemDTOToOrderItem(OrderItemDTO orderItemDTO);
 }
