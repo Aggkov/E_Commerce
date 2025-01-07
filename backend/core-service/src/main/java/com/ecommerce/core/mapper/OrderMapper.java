@@ -50,7 +50,6 @@ public interface OrderMapper {
     @Mapping(target = "shippingAddress", source = "shippingAddress")
     @Mapping(target = "billingAddress", source = "billingAddress")
     OrderCreatedDTO orderToOrderCreatedDTO(Order order);
-
     OrderSuccessEvent orderSuccessDTOtoOrderSuccessEvent(OrderSuccessDTO orderSuccessDTO);
 
     // Mapping for each OrderItem to OrderItemDTO
@@ -77,17 +76,18 @@ public interface OrderMapper {
             return null;
         }
         try {
-            String currentWorkingDir = System.getProperty("user.dir");
-            Path filePath;
-            // If the working directory ends with "core-service", move up to the root directory
-            if (!currentWorkingDir.endsWith("core-service")) {
-                // Move down if in root
-                filePath = Paths.get(currentWorkingDir, "backend", "core-service", product.getImageUrl());
-            } else {
-                filePath = Paths.get(System.getProperty("user.dir"), product.getImageUrl());
-            }
+            Path filePath = Paths.get("core-service", product.getImageUrl());
+//            String currentWorkingDir = System.getProperty("user.dir");
+//            Path filePath;
+//            // If the working directory ends with "core-service", move up to the root directory
+//            if (!currentWorkingDir.endsWith("core-service")) {
+//                // Move down if in root
+//                filePath = Paths.get(currentWorkingDir, "backend", "core-service", product.getImageUrl());
+//            } else {
+//                filePath = Paths.get(System.getProperty("user.dir"), product.getImageUrl());
+//            }
             if (!Files.exists(filePath)) {
-                throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("File does not exist in this path in " + filePath, HttpStatus.BAD_REQUEST);
             }
             return Files.readAllBytes(filePath);
         }

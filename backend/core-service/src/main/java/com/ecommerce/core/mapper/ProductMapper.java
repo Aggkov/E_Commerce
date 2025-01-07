@@ -65,7 +65,7 @@ public interface ProductMapper {
 //                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
 //            }
             if (!Files.exists(filePath)) {
-                throw new BadRequestException("File does not exist in this path", HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("File does not exist in this path " + filePath, HttpStatus.BAD_REQUEST);
             }
             return Files.readAllBytes(filePath);
 

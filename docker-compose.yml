@@ -101,8 +101,9 @@ services:
 
   ## Eureka Server
   discovery-server:
-    image: aggkov/discovery-server:latest
+    image: aggkov/discovery-server:1.0.1
     container_name: discovery-server
+    pull_policy: always
     ports:
       - "8761:8761"
     environment:
@@ -123,8 +124,9 @@ services:
       java -cp @/app/jib-classpath-file com.ecommerce.discoveryserver.DiscoveryServerApplication"
 
   api-gateway:
-    image: aggkov/api-gateway:latest
+    image: aggkov/api-gateway:1.0.1
     container_name: api-gateway
+    pull_policy: always
     ports:
       - "8080:8080"
 #    expose:
@@ -152,8 +154,9 @@ services:
 
   # Core service (custom microservice)
   core-service:
-    image: aggkov/core-service:latest  # Image built and tagged by Jib
+    image: aggkov/core-service:1.0.1  # Image built and tagged by Jib
     container_name: core-service
+    pull_policy: always
     depends_on:
       - postgres-core
       - flyway
@@ -183,8 +186,9 @@ services:
 
   # Payment Service
   payment-service:
-    image: aggkov/payment-service:latest
+    image: aggkov/payment-service:1.0.1
     container_name: payment-service
+    pull_policy: always
     depends_on:
       - postgres-payment
       - discovery-server
@@ -194,6 +198,7 @@ services:
       JAVA_OPTS: >
         -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
         -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.debug=ssl
     ports:
       - "8445:8445"
     volumes:
@@ -208,8 +213,9 @@ services:
 
   # Notification Service
   notification-service:
-    image: aggkov/notification-service:latest
+    image: aggkov/notification-service:1.0.1
     container_name: notification-service
+    pull_policy: always
     depends_on:
       - kafka
       - discovery-server
