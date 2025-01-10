@@ -168,10 +168,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
   onSubmit(orderId?: string) {
 
-    // if (this.checkoutFormGroup.invalid) {
-    //   this.checkoutFormGroup.markAllAsTouched();
-    //   return;
-    // }
+    if (this.checkoutFormGroup.invalid) {
+      this.checkoutFormGroup.markAllAsTouched();
+      return;
+    }
 
     let shippingState: State = this.checkoutFormGroup.controls['shippingAddress'].value.state;
     let billingState: State = this.checkoutFormGroup.controls['billingAddress'].value.state;

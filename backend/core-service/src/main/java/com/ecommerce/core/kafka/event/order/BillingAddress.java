@@ -11,7 +11,7 @@ import lombok.Setter;
 //@Builder
 public class BillingAddress implements Serializable {
     @Serial
-    private static final long serialVersionUID = 4532319437092512774L;
+    private static final long serialVersionUID = -2036487321606591402L;
 //    private UUID id;
     private String city;
     private String street;

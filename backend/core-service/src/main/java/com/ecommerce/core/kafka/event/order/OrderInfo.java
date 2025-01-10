@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class OrderInfo implements Serializable {
     @Serial
-    private static final long serialVersionUID = 2422113780038892181L;
+    private static final long serialVersionUID = -677352479002726461L;
     private BigDecimal totalPrice;
     private Integer totalQuantity;
     private String status;

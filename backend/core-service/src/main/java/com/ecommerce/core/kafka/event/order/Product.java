@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Product implements Serializable {
     @Serial
-    private static final long serialVersionUID = 5107636052390868741L;
+    private static final long serialVersionUID = 4706045204025475965L;
 //    private UUID id;
 //    private String sku;
     private String name;

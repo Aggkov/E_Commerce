@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class User implements Serializable {
     @Serial
-    private static final long serialVersionUID = -4921358887322532581L;
+    private static final long serialVersionUID = -2087184653858141962L;
     private String firstName;
     private String lastName;
     private String email;

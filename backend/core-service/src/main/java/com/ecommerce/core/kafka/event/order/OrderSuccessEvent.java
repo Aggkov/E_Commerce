@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class OrderSuccessEvent implements Serializable {
     @Serial
-    private static final long serialVersionUID = 8795222511334581276L;
+    private static final long serialVersionUID = -2487833373070762156L;
     private String orderTrackingNumber;
     private OrderInfo orderInfo;
     private List<OrderItem> orderItems;

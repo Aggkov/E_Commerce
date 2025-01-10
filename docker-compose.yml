@@ -169,7 +169,7 @@ services:
         -Djavax.net.ssl.trustStore=/app/custom-truststore.jks
         -Djavax.net.ssl.trustStorePassword=changeit
         -Djavax.net.debug=ssl
-      KAFKA_BROKER: kafka:9092  # core-service cannot reach localhost:9092 inside its container. It needs to communicate with the kafka container using its service name (kafka).
+      KAFKA_BROKER: kafka:29092  # core-service cannot reach localhost:9092 inside its container. It needs to communicate with the kafka container using its service name (kafka).
     ports:
       - "8444:8444"
     volumes:
@@ -221,4 +221,4 @@ services:
       - discovery-server
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      KAFKA_BROKER: kafka:9092
+      KAFKA_BROKER: kafka:29092
