@@ -1,0 +1,47 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: discovery-server-config
+#data:
+#  SPRING_PROFILES_ACTIVE: "docker"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discovery-server
+  template:
+    metadata:
+      labels:
+        app: discovery-server
+    spec:
+      containers:
+        - name: discovery-server
+          image: aggkov/discovery-server:1.0.1
+          ports:
+            - containerPort: 8761
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+#            - name: SPRING_PROFILES_ACTIVE
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: discovery-server-config
+#                  key: SPRING_PROFILES_ACTIVE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-server
+spec:
+  selector:
+    app: discovery-server
+  ports:
+    - protocol: TCP
+      port: 8761
+      targetPort: 8761
+  type: ClusterIP

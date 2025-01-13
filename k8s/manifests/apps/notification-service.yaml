@@ -1,0 +1,47 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: notification-service-config
+#data:
+#  KAFKA_BROKER: "kafka:9092" # Kafka service DNS name
+#---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: aggkov/notification-service:1.0.1
+          ports:
+            - containerPort: 8446
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+#            - name: KAFKA_BROKER
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: notification-service-config
+#                  key: KAFKA_BROKER
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - protocol: TCP
+      port: 8446 # Replace with the actual port if needed
+      targetPort: 8446
+  type: ClusterIP

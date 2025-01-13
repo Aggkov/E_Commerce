@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: core-service-config
+data:
+  #  SPRING_PROFILES_ACTIVE: docker
+#  KAFKA_BROKER: "kafka:9092" # Kafka service DNS name
+  DATABASE_URL: "jdbc:postgresql://your_rds_endpoint/db_name"
+---
+apiVersion: v1
+data:
+  POSTGRES_DB: ZWNvbW1lcmNl
+  POSTGRES_PASSWORD: ZWNvbW1lcmNlX3VzZXI=
+  POSTGRES_USER: ZWNvbW1lcmNlX3VzZXI=
+kind: Secret
+metadata:
+  name: postgres-core-secrets
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: core-service
+  template:
+    metadata:
+      labels:
+        app: core-service
+    spec:
+      containers:
+        - name: core-service
+          image: aggkov/core-service:1.0.1
+          ports:
+            - containerPort: 8444
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: core-service-config
+                  key: DATABASE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-core-secrets
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-core-secrets
+                  key: POSTGRES_PASSWORD
+#            - name: KAFKA_BROKER
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: core-service-config
+#                  key: KAFKA_BROKER
+#          volumeMounts:
+#            - name: uploads
+#              mountPath: /core-service
+#      volumes:
+#        - name: uploads
+#          persistentVolumeClaim:
+#            claimName: core-service-uploads-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-service
+spec:
+  selector:
+    app: core-service
+  ports:
+    - protocol: TCP
+      port: 8444
+      targetPort: 8444
+  type: ClusterIP
+#---
+#apiVersion: storage.k8s.io/v1
+#kind: StorageClass
+#metadata:
+#  name: s3
+#provisioner: s3.csi.k8s.io
+#parameters:
+#  bucket: e-commerce-products-uploads
+#  region: us-east-1
+#  storageClass: STANDARD
+#reclaimPolicy: Retain
+#volumeBindingMode: Immediate
+#---
+#apiVersion: v1
+#kind: PersistentVolume
+#metadata:
+#  name: core-service-uploads-pv
+#spec:
+#  capacity:
+#    storage: 1Gi # Adjust as needed
+#  accessModes:
+#    - ReadWriteMany
+#  persistentVolumeReclaimPolicy: Retain
+#  csi:
+#    driver: s3.csi.k8s.io
+#    volumeHandle: core-service-uploads
+#    volumeAttributes:
+#      bucket: e-commerce-products-uploads
+#      region: us-east-1
+#      storageClass: STANDARD
+#---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: core-service-uploads-pvc
+#spec:
+#  accessModes:
+#    - ReadWriteMany
+#  resources:
+#    requests:
+#      storage: 1Gi
+#  storageClassName: s3 # Ensure the CSI driver uses the correct StorageClass
