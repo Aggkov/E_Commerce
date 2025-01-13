@@ -1,6 +1,7 @@
 # E-Commerce
 
 ## Features
+- AWS
 - REST API
 - HTTPS
 - Docker
