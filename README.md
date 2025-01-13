@@ -32,17 +32,16 @@
 git clone `<repository-url>`
 cd your-repo
 
-**Backend**
+**Deployment**
+1. Create 2 RDS databases for core and payment-service and plug the endpoint username and password to the manifest files.
+   Also run migrate on core `flyway -url=jdbc:postgresql://rds-endpoint/db-name -user=user -password=password -locations=filesystem:. migrate`
+2. Create an S3 Bucket and upload images at `backend/core-service/uploads`
+3. Create a EKS Cluster
+`eksctl create cluster --name a name --region a region --nodegroup-name a group --node-type t3.medium --nodes 1`
+4. cd to k8s/manifests and run `kubectl apply -f .`
+5. Follow instructions at `https://docs.aws.amazon.com/eks/latest/userguide/lbc-manifest.html` and create an aws load balancer
+6. Create a EC2 instance and follow instructions here `https://www.adaltas.com/en/2023/03/14/ec2-deploy-keycloak/` to create a keycloak
+   Docker image. Then modify the url in keycloak.service.ts. Example url: 'http://ec2-public-ip:8080'. Access Keycloak console and import `realm.json`.
+7. Access the app from ALB Controller created previously e.g. `k8s-default-ingress-dc60c41895-2121541636.eu-north-1.elb.amazonaws.com`
+8. Create a PayPal sandbox account and plug `paypal.client-id` and `paypal.client-secret`
 
-1. Run `docker-compose up -d` to start the docker container and load up keycloak and database migrations.
-2. Go to `https://localhost:9090` and log in with `admin` `admin` as credentials. Go to the new realm `E-Commerce`.
-   Main users are `user` `admin`. You can create more users and assign them roles `user` and `admin` from `frontend client`.
-3. You might need to import the `local-ca.crt` and `localhost.crt` into your browser's trusted certificate authorities.
-4. Create PayPal sandbox accounts and modify `client_id` and `client_secret` in application properties.
-5. Test the app.
-
-**Frontend**
-1. Install [Node.js and npm](https://www.npmjs.com/get-npm)
-2. `cd frontend`.
-3. Run `npm install`.
-4. Run `npm start`.

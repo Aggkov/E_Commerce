@@ -7,11 +7,13 @@ import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
 import com.ecommerce.core.service.ProductService;
 import com.ecommerce.core.service.impl.ProductServiceImpl;
+import com.ecommerce.core.service.impl.S3Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,40 +21,44 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 
 @Mapper(componentModel = "spring")
-public interface ProductMapper {
+public abstract class ProductMapper {
 
-//    ProductService product = new ProductServiceImpl();
+    @Autowired
+    protected S3Service s3service;
 
     //    @Mapping(target = "imageUrl", source = "product", qualifiedByName = "imageUrlToBytes")
     @Mapping(target = "imageUrl", source = "product.imageUrl")
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
-    ProductDTO productToProductDTO(Product product
+    public abstract ProductDTO productToProductDTO(Product product
 //            , @Context String uploadDir // pass external parameter from service layer, in service inject properties value
     );
 
 
-    ProductDTOAdminView productToProductDTOAdminView(Product product);
+    public abstract ProductDTOAdminView productToProductDTOAdminView(Product product);
 
     @Mapping(target = "categoryId", source = "product.category.id")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
-    ExportProductDTO productToExportProductDTO(Product product);
+    public abstract ExportProductDTO productToExportProductDTO(Product product);
 
     // Reverse mapping method
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "category.id", ignore = true)
     @Mapping(target = "category.categoryName", ignore = true)
-    Product productDTOToProduct(ProductDTO productDTO);
+    public abstract Product productDTOToProduct(ProductDTO productDTO);
 
     //    @Mapping(target = "imageUrl", source = "product.imageUrl")
-    default byte[] mapImageUrl(String imageUrl) {
+    byte[] mapImageUrl(String imageUrl) {
         if (StringUtils.isBlank(imageUrl)) {
             return null;
         }
         try {
             // Docker
-            Path filePath = Paths.get("core-service", imageUrl);
+//            Path filePath = Paths.get("core-service", imageUrl);
 
+            // aws
+            byte[] imageData = s3service.downloadFile(imageUrl);
+            return imageData;
             // Local Development
 //            String currentWorkingDir = System.getProperty("user.dir");
 //            Path filePath;
@@ -64,10 +70,10 @@ public interface ProductMapper {
 //            } else {
 //                filePath = Paths.get(System.getProperty("user.dir"), imageUrl);
 //            }
-            if (!Files.exists(filePath)) {
-                throw new BadRequestException("File does not exist in this path " + filePath, HttpStatus.BAD_REQUEST);
-            }
-            return Files.readAllBytes(filePath);
+//            if (!Files.exists(filePath)) {
+//                throw new BadRequestException("File does not exist in this path " + filePath, HttpStatus.BAD_REQUEST);
+//            }
+//            return Files.readAllBytes(filePath);
 
         } catch (IOException e) {
             System.out.println("IO error occured: " + imageUrl);

@@ -7,9 +7,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface OrderItemMapper {
+public abstract class OrderItemMapper {
 
-    OrderItemMapper INSTANCE = Mappers.getMapper(OrderItemMapper.class);
+//    OrderItemMapper INSTANCE = Mappers.getMapper(OrderItemMapper.class);
 
 //    @Mapping(target = "product.id", source = "orderItemDTO.productDTO.id")
     @Mapping(target = "product.imageUrl", ignore = true)
@@ -18,5 +18,5 @@ public interface OrderItemMapper {
     @Mapping(target = "product.orderItems", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "order", ignore = true)
-    OrderItem orderItemDTOToOrderItem(OrderItemDTO orderItemDTO);
+    public abstract OrderItem orderItemDTOToOrderItem(OrderItemDTO orderItemDTO);
 }

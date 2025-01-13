@@ -10,6 +10,8 @@ import com.ecommerce.core.entity.OrderItem;
 import com.ecommerce.core.entity.Product;
 import com.ecommerce.core.exception.BadRequestException;
 import com.ecommerce.core.kafka.event.order.OrderSuccessEvent;
+import com.ecommerce.core.service.impl.S3Service;
+import com.netflix.discovery.converters.Auto;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,19 +21,23 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 // Link to the CustomerMapper
 @Mapper(componentModel = "spring", uses = { ShippingAddressMapper.class, BillingAddressMapper.class })
-public interface OrderMapper {
-    OrderDTO orderToOrderDTO(Order order);
+public abstract class OrderMapper {
+    @Autowired
+    protected S3Service s3Service;
+
+    public abstract OrderDTO orderToOrderDTO(Order order);
 
     @Mapping(target = "totalPrice", source = "orderDTO.orderInfo.totalPrice")
     @Mapping(target = "totalQuantity", source = "orderDTO.orderInfo.totalQuantity")
     @Mapping(target = "status", source = "orderDTO.orderInfo.status")
     @Mapping(target = "orderItems", ignore = true)
     @Mapping(target = "user", ignore = true)
-    Order orderDTOtoOrder(OrderDTO orderDTO);
+    public abstract Order orderDTOtoOrder(OrderDTO orderDTO);
 
 //    @Mapping(target = "orderTrackingNumber", source = "order.orderTrackingNumber")
     @Mapping(target = "orderInfo.totalPrice", source = "order.totalPrice")
@@ -41,7 +47,7 @@ public interface OrderMapper {
     @Mapping(target = "user.email", source = "order.user.email")
     @Mapping(target = "user.shippingAddress", source = "shippingAddress")
     @Mapping(target = "user.billingAddress", source = "billingAddress")
-    OrderSuccessDTO orderToOrderSuccessDTO(Order order);
+    public abstract OrderSuccessDTO orderToOrderSuccessDTO(Order order);
 
     @Mapping(target = "orderInfo.totalPrice", source = "order.totalPrice")
     @Mapping(target = "orderInfo.totalQuantity", source = "order.totalQuantity")
@@ -49,13 +55,15 @@ public interface OrderMapper {
     @Mapping(target = "orderItems", source = "order.orderItems")
     @Mapping(target = "shippingAddress", source = "shippingAddress")
     @Mapping(target = "billingAddress", source = "billingAddress")
-    OrderCreatedDTO orderToOrderCreatedDTO(Order order);
-    OrderSuccessEvent orderSuccessDTOtoOrderSuccessEvent(OrderSuccessDTO orderSuccessDTO);
+    public abstract OrderCreatedDTO orderToOrderCreatedDTO(Order order);
+
+
+    public abstract OrderSuccessEvent orderSuccessDTOtoOrderSuccessEvent(OrderSuccessDTO orderSuccessDTO);
 
     // Mapping for each OrderItem to OrderItemDTO
     @Mapping(target = "product", source = "product")
     @Mapping(target = "quantity", source = "quantity")
-    OrderItemDTO orderItemToOrderItemDTO(OrderItem orderItem);
+    public abstract OrderItemDTO orderItemToOrderItemDTO(OrderItem orderItem);
 
     // Mapping only specific fields of Product to ProductDTO for this use case
     @Mapping(target = "name", source = "name")
@@ -68,15 +76,20 @@ public interface OrderMapper {
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    ProductDTO mapLimitedProductFields(Product product);
+    public abstract ProductDTO mapLimitedProductFields(Product product);
 
     @Named("imageUrlToBytes")
-    default byte[] imageUrlToBytes(Product product) {
+    byte[] imageUrlToBytes(Product product) {
         if (product == null || (product.getImageUrl().isEmpty())) {
             return null;
         }
         try {
-            Path filePath = Paths.get("core-service", product.getImageUrl());
+//            Path filePath = Paths.get("core-service", product.getImageUrl());
+
+            // aws
+            byte[] imageData = s3Service.downloadFile(product.getImageUrl());
+            return imageData;
+
 //            String currentWorkingDir = System.getProperty("user.dir");
 //            Path filePath;
 //            // If the working directory ends with "core-service", move up to the root directory
@@ -86,10 +99,10 @@ public interface OrderMapper {
 //            } else {
 //                filePath = Paths.get(System.getProperty("user.dir"), product.getImageUrl());
 //            }
-            if (!Files.exists(filePath)) {
-                throw new BadRequestException("File does not exist in this path in " + filePath, HttpStatus.BAD_REQUEST);
-            }
-            return Files.readAllBytes(filePath);
+//            if (!Files.exists(filePath)) {
+//                throw new BadRequestException("File does not exist in this path in " + filePath, HttpStatus.BAD_REQUEST);
+//            }
+//            return Files.readAllBytes(filePath);
         }
         catch (IOException e) {
             System.out.println("IO error occured: " + product.getImageUrl());

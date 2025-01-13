@@ -15,7 +15,7 @@ import {Product} from "../interfaces/product";
 })
 export class OrderService {
 
-  private orderUrl = environment.gatewayUrl + environment.coreContextPath +  '/order';
+  private orderUrl = environment.coreContextPath +  '/order';
 
   constructor(private httpClient: HttpClient) { }
 

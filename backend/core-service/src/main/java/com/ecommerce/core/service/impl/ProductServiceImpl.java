@@ -49,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
     private final CriteriaProductRepository criteriaProductRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductMapper productMapper;
+    private final S3Service s3Service;
 
     @Override
     public PagedResponse<ProductDTOAdminView> getAllProductsPaginated(int page, int size) {
@@ -211,9 +212,13 @@ public class ProductServiceImpl implements ProductService {
         ProductCategory category = productCategoryRepository.findByCategoryName(productDTO.getCategoryName()).orElseThrow(
                 () -> new ResourceNotFoundException("category with this ID was not found", HttpStatus.NOT_FOUND)
         );
+
+        log.info("Working Directory with k8s: {}", System.getProperty("user.dir"));
         // Get the correct upload directory based on the category
         String uploadDir = getUploadDir(productDTO.getCategoryName());
-        if (!uploadDir.isEmpty() && Files.exists(Paths.get(uploadDir)) && !imageFile.isEmpty()) {
+        if (!uploadDir.isEmpty()
+                && Files.exists(Paths.get(uploadDir))
+                && !imageFile.isEmpty()) {
             // Save the image to the correct directory
             String fileName = imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
@@ -270,6 +275,15 @@ public class ProductServiceImpl implements ProductService {
             case "mouse pads" -> "/core-service/uploads/images/mousepads";
             default -> throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
         };
+
+        // aws
+//        return switch (categoryName.toLowerCase()) {
+//            case "books" -> "/uploads/images/books";
+//            case "coffee mugs" -> "/uploads/images/coffeemugs";
+//            case "luggage tags" -> "/uploads/images/luggagetags";
+//            case "mouse pads" -> "/uploads/images/mousepads";
+//            default -> throw new BadRequestException("Unknown category: " + categoryName, HttpStatus.BAD_REQUEST);
+//        };
 
         // Local Dev
 //        String currentWorkingDir = System.getProperty("user.dir");

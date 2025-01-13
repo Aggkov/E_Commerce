@@ -9,7 +9,7 @@ import {environment} from "../../enviroments/enviroment";
 })
 export class ProductCategoryService {
 
-  private baseUrl = environment.gatewayUrl + environment.coreContextPath + '/product-category'
+  private baseUrl = environment.coreContextPath + '/product-category'
 
   constructor(private httpClient: HttpClient) { }
 

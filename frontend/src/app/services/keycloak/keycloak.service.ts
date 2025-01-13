@@ -19,7 +19,7 @@ export class KeycloakService {
   get keycloak() {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-          url: 'https://localhost:9090',
+          url: 'http://ec2-public-ip:8080',
           realm: 'E-Commerce',
           clientId: 'frontend',
       });

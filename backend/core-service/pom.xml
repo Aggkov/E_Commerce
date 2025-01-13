@@ -79,6 +79,11 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.89</version> <!-- Replace with the latest version -->
+        </dependency>
         <!-- generate OpenAPI (formerly Swagger) documentation-->
         <dependency>
             <groupId>org.springdoc</groupId>

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("product-category")
-//@CrossOrigin(origins = "https://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 public class ProductCategoryController {
 
     private final ProductCategoryService productCategoryService;

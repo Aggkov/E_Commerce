@@ -46,7 +46,8 @@ public class ApiGatewaySecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("https://localhost:4200")); // Restricting origins as needed
+//        corsConfig.applyPermitDefaultValues();
+        corsConfig.setAllowedOrigins(List.of("http://localhost:4200", "https://localhost:4200")); // Restricting origins as needed
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         corsConfig.setAllowedHeaders(List.of(
                 HttpHeaders.ORIGIN,

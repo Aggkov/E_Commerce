@@ -7,7 +7,7 @@ import {environment} from "../../../enviroments/enviroment";
 })
 export class ExportService {
 
-  private readonly exportUrl = environment.gatewayUrl + environment.coreContextPath + '/products';
+  private readonly exportUrl = environment.coreContextPath + '/products';
 
   constructor(private httpClient: HttpClient) {
   }
